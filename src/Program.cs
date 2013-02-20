@@ -36,7 +36,7 @@ namespace SubtitleFetcher
 			var state = serializer.LoadState(options.Files);
 		    
             var dict = state.Dict;
-			var removeKeys = (from entry in dict.Values where ProcessFile(entry.File, options, downloaders, logger, tvdb) select entry.File).ToList();
+			var removeKeys = (from entry in dict.Values where ProcessFile(entry.File, options, downloaders, logger, tvdb, new EpisodeParser()) select entry.File).ToList();
 		    foreach (string key in removeKeys)
 		    {
 		        dict.Remove(key);
@@ -204,10 +204,9 @@ namespace SubtitleFetcher
 
 	    private static readonly string[] AcceptedExtensions = new[] { ".avi", ".mkv", ".mp4" };
 
-	    static bool ProcessFile(string fileName, Options options, IEnumerable<ISubtitleDownloader> subtitleDownloaders, Logger logger, TvdbSearcher tvdb)
+	    static bool ProcessFile(string fileName, Options options, IEnumerable<ISubtitleDownloader> subtitleDownloaders, Logger logger, TvdbSearcher tvdb, EpisodeParser nameParser)
 		{
-	        var nameParser = new EpisodeParser();
-		    var ext = Path.GetExtension(fileName);
+	        var ext = Path.GetExtension(fileName);
 		    if (!AcceptedExtensions.Contains(ext))
 				return true;
 
@@ -229,16 +228,16 @@ namespace SubtitleFetcher
 		        return true;
 		    }
 
-		    var seriesHits = tvdb.FindSeriesExact(episodeIdentity.SeriesName);
+		    //var seriesHits = tvdb.FindSeriesExact(episodeIdentity.SeriesName);
 		    
 		    logger.Log("Processing file {0}...", fileName);
 
 		    var query = new EpisodeSearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, null) {LanguageCodes = new[] { options.Language }};
 
-	        return subtitleDownloaders.Any(downloader => TryDownloadFile(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, episodeIdentity.ReleaseGroup, targetSubtitleFile, query, downloader, nameParser, logger));
+	        return subtitleDownloaders.Any(downloader => TryDownloadFile(targetSubtitleFile, query, downloader, nameParser, logger, episodeIdentity));
 		}
 
-	    private static bool TryDownloadFile(string name, int season, int episode, string releaseGroup, string targetSubtitleFile, EpisodeSearchQuery query, ISubtitleDownloader downloader, EpisodeParser nameParser, Logger logger)
+	    private static bool TryDownloadFile(string targetSubtitleFile, EpisodeSearchQuery query, ISubtitleDownloader downloader, EpisodeParser nameParser, Logger logger, EpisodeIdentity episodeIdentity)
 	    {
 	        try
 	        {
@@ -246,10 +245,7 @@ namespace SubtitleFetcher
 	            foreach (Subtitle subtitle in searchSubtitles)
 	            {
 	                var subtitleInfo = nameParser.ParseEpisodeInfo(subtitle.FileName);
-	                var isMatch = string.Equals(name, subtitleInfo.SeriesName, StringComparison.InvariantCultureIgnoreCase) &&
-	                              season == subtitleInfo.Season && episode == subtitleInfo.Episode &&
-	                              string.Equals(releaseGroup, subtitleInfo.ReleaseGroup, StringComparison.InvariantCultureIgnoreCase);
-	                if (!isMatch)
+	                if (!subtitleInfo.IsEquivalent(episodeIdentity))
 	                    continue;
 
 	                logger.Log("Downloading subtitles from {0}...", downloader.GetName());

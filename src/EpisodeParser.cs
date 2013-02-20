@@ -7,10 +7,10 @@ namespace SubtitleFetcher
     {
         readonly string[] patterns = new[]
                                          {
-                                             @"^(?<SeriesName>[\w\s]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$",
-                                             @"^(?<SeriesName>[\w\s]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])?$",
-                                             @"^(?<SeriesName>[\w\s]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$",
-                                             @"^(?<SeriesName>[\w\s]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])?$"
+                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$",
+                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])?$",
+                                             @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])$",
+                                             @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$"
                                          };
         public EpisodeIdentity ParseEpisodeInfo(string fileName)
         {

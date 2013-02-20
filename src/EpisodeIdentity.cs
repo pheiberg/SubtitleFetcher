@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 
 namespace SubtitleFetcher
 {
@@ -13,7 +14,7 @@ namespace SubtitleFetcher
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.SeriesName, SeriesName) && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
+            return string.Equals(other.SeriesName, SeriesName, StringComparison.InvariantCultureIgnoreCase) && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
         }
 
         public override bool Equals(object obj)
@@ -48,6 +49,19 @@ namespace SubtitleFetcher
         public override string ToString()
         {
             return SeriesName + " - " + Season + " - " + Episode + " - " + ReleaseGroup;
+        }
+
+        public bool IsEquivalent(EpisodeIdentity other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            
+            return string.Equals(Normalize(other.SeriesName),  Normalize(SeriesName), StringComparison.InvariantCultureIgnoreCase) && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
+        }
+
+        private string Normalize(string name)
+        {
+            return Regex.Replace(name, "\\s", "");
         }
     }
 }

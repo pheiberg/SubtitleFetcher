@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EpisodeIdentityTests.cs" />
     <Compile Include="EpisodeParserTests.cs" />
     <Compile Include="TVDBTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
