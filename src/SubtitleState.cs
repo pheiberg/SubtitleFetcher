@@ -1,47 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace srtDownload
+namespace SubtitleFetcher
 {
 	[Serializable]
 	public class SubtitleState
 	{
-		private Dictionary<string, SubtitleStateEntry> _dict;
+		private readonly Dictionary<string, SubtitleStateEntry> dict;
 
 		[XmlIgnore]
 		public Dictionary<string, SubtitleStateEntry> Dict
 		{
-			get { return _dict; }
+			get { return dict; }
 		}
 		public List<SubtitleStateEntry> Entries { get; set; }
 
 		public SubtitleState()
 		{
 			Entries = new List<SubtitleStateEntry>();
-			_dict = new Dictionary<string, SubtitleStateEntry>();
+			dict = new Dictionary<string, SubtitleStateEntry>();
 		}
 
 		public void AddEntry(string file, DateTime timestamp)
 		{
-			if (!_dict.ContainsKey(file))
-				_dict.Add(file, new SubtitleStateEntry(file, timestamp));
+			if (!dict.ContainsKey(file))
+				dict.Add(file, new SubtitleStateEntry(file, timestamp));
 		}
 
 		public void AddEntries(string[] files, DateTime timestamp)
 		{
 			foreach (string file in files)
-				if (!_dict.ContainsKey(file))
-					_dict.Add(file, new SubtitleStateEntry(file, timestamp));
+				if (!dict.ContainsKey(file))
+					dict.Add(file, new SubtitleStateEntry(file, timestamp));
 		}
 
 		public void Cleanup(int days = 7)
 		{
-			List<string> removeKeys = new List<string>();
-			foreach (SubtitleStateEntry entry in _dict.Values)
+			var removeKeys = new List<string>();
+			foreach (SubtitleStateEntry entry in dict.Values)
 			{
 				if (entry.Timestamp.AddDays(days) <= DateTime.Now)
 				{
@@ -55,19 +53,19 @@ namespace srtDownload
 				}
 			}
 			foreach (string key in removeKeys)
-				_dict.Remove(key);
+				dict.Remove(key);
 		}
 
 		public void PostDeserialize()
 		{
 			foreach (var entry in Entries)
-				_dict.Add(entry.File, entry);
+				dict.Add(entry.File, entry);
 		}
 
 		public void PreSerialize()
 		{
 			Entries.Clear();
-			Entries.AddRange(_dict.Values);
+			Entries.AddRange(dict.Values);
 		}
 
 	}
