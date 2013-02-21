@@ -26,14 +26,20 @@ namespace SubtitleFetcher
 		public void AddEntry(string file, DateTime timestamp)
 		{
 			if (!dict.ContainsKey(file))
-				dict.Add(file, new SubtitleStateEntry(file, timestamp));
+			{
+			    dict.Add(file, new SubtitleStateEntry(file, timestamp));
+			}
 		}
 
-		public void AddEntries(string[] files, DateTime timestamp)
+		public void AddEntries(IEnumerable<string> files, DateTime timestamp)
 		{
 			foreach (string file in files)
-				if (!dict.ContainsKey(file))
-					dict.Add(file, new SubtitleStateEntry(file, timestamp));
+			{
+			    if (!dict.ContainsKey(file))
+			    {
+			        dict.Add(file, new SubtitleStateEntry(file, timestamp));
+			    }
+			}
 		}
 
 		public void Cleanup(int days = 7)

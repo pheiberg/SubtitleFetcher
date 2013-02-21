@@ -11,12 +11,14 @@ namespace SubtitleFetcher
         private readonly string stateFileName;
         private readonly Logger logger;
         private readonly int giveUpDays;
+        private readonly IEnumerable<string> acceptedExtensions;
 
-        public StateSerializer(string stateFileName, Logger logger, int giveUpDays)
+        public StateSerializer(string stateFileName, Logger logger, int giveUpDays, IEnumerable<string> acceptedExtensions)
         {
             this.stateFileName = stateFileName;
             this.logger = logger;
             this.giveUpDays = giveUpDays;
+            this.acceptedExtensions = acceptedExtensions;
         }
 
         public SubtitleState LoadState(IEnumerable<string> files)
@@ -76,9 +78,9 @@ namespace SubtitleFetcher
                 if (Directory.Exists(path))
                 {
                     logger.Log("Processing directory {0}...", path);
-                    state.AddEntries(Directory.GetFiles(path), DateTime.Now);
+                    state.AddEntries(Directory.EnumerateFiles(path).Where(f => acceptedExtensions.Any(f.EndsWith)).ToArray(), DateTime.Now);
                 }
-                else if (File.Exists(path))
+                else if (File.Exists(path) && acceptedExtensions.Contains(Path.GetExtension(path)))
                 {
                     state.AddEntry(path, DateTime.Now);
                 }
