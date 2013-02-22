@@ -60,6 +60,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateSerializer.cs" />
+    <Compile Include="SubtitleDownloaderCapabilitiesProvider.cs" />
+    <Compile Include="SubtitleDownloadService.cs" />
     <Compile Include="SubtitleState.cs" />
     <Compile Include="TvdbSearcher.cs" />
     <Compile Include="TvdbSeries.cs" />

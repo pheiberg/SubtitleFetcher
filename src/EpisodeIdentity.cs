@@ -46,17 +46,20 @@ namespace SubtitleFetcher
         {
             return !Equals(left, right);
         }
+
         public override string ToString()
         {
-            return SeriesName + " - " + Season + " - " + Episode + " - " + ReleaseGroup;
+            return SeriesName.Replace(" ", ".") + ".S" + Season.ToString("00") + ".E" + Episode.ToString("00") + "-" + ReleaseGroup;
         }
 
         public bool IsEquivalent(EpisodeIdentity other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (SeriesName == null || other.SeriesName == null) return Equals(other);
             
-            return string.Equals(Normalize(other.SeriesName),  Normalize(SeriesName), StringComparison.InvariantCultureIgnoreCase) && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
+            return string.Equals(Normalize(other.SeriesName),  Normalize(SeriesName), StringComparison.InvariantCultureIgnoreCase) 
+                && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
         }
 
         private string Normalize(string name)

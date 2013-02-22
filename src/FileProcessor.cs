@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher
 {
@@ -10,37 +8,32 @@ namespace SubtitleFetcher
     {
         private readonly EpisodeParser episodeParser;
         private static readonly string[] AcceptedExtensions = new[] { ".avi", ".mkv", ".mp4" };
-        private readonly IEnumerable<ISubtitleDownloader> subtitleDownloaders;
         private readonly Logger logger;
         private readonly IEnumerable<string> ignoredShows;
-        private readonly Options options;
+        private readonly SubtitleDownloadService subtitleService;
 
-        public FileProcessor(EpisodeParser episodeParser, IEnumerable<ISubtitleDownloader> subtitleDownloaders, Logger logger, IEnumerable<string> ignoredShows, Options options)
+        public FileProcessor(EpisodeParser episodeParser, Logger logger, IEnumerable<string> ignoredShows, SubtitleDownloadService subtitleService)
         {
             this.episodeParser = episodeParser;
-            this.subtitleDownloaders = subtitleDownloaders;
             this.logger = logger;
             this.ignoredShows = ignoredShows;
-            this.options = options;
+            this.subtitleService = subtitleService;
         }
 
         public bool ProcessFile(string fileName)
         {
-            var ext = Path.GetExtension(fileName);
-            if (!AcceptedExtensions.Contains(ext))
+            if (!IsFileOfAcceptableType(fileName)) 
                 return true;
 
-            var path = Path.GetDirectoryName(fileName);
-            var file = Path.GetFileNameWithoutExtension(fileName);
-            var targetLocation = Path.Combine(path, file);
-            string targetSubtitleFile = targetLocation + ".srt";
-            string targetNoSubtitleFile = targetLocation + ".nosrt";
-            if (File.Exists(targetSubtitleFile) || File.Exists(targetNoSubtitleFile))
+            if (IsFileAlreadyDownloaded(fileName)) 
                 return true;
 
             var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
-                return false;
+            {
+                logger.Log("Can't parse episode info from {0}. Not on a known format.");
+                return true;
+            }
 
             if (ignoredShows.Any(s => string.Equals(s, episodeIdentity.SeriesName)))
             {
@@ -50,44 +43,31 @@ namespace SubtitleFetcher
 
             logger.Log("Processing file {0}...", fileName);
 
-            var query = new EpisodeSearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, null) { LanguageCodes = new[] { options.Language } };
-
-            return subtitleDownloaders.Any(downloader => TryDownloadFile(targetSubtitleFile, query, downloader, episodeParser, logger, episodeIdentity));
+            var targetLocation = GetTargetFileNamePrefix(fileName);
+            var isSuccessful = subtitleService.DownloadSubtitle(targetLocation + ".srt", episodeIdentity);
+            return isSuccessful;
         }
 
-        private bool TryDownloadFile(string targetSubtitleFile, EpisodeSearchQuery query, ISubtitleDownloader downloader, EpisodeParser nameParser, Logger logger, EpisodeIdentity episodeIdentity)
+        private static bool IsFileAlreadyDownloaded(string fileName)
         {
-            try
-            {
-                var searchSubtitles = downloader.SearchSubtitles(query);
-                foreach (Subtitle subtitle in searchSubtitles)
-                {
-                    var subtitleInfo = nameParser.ParseEpisodeInfo(subtitle.FileName);
-                    if (!subtitleInfo.IsEquivalent(episodeIdentity))
-                        continue;
-
-                    logger.Log("Downloading subtitles from {0}...", downloader.GetName());
-                    try
-                    {
-                        List<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
-                        FileInfo subtitleFile = subtitleFiles.First();
-                        logger.Log("Renaming from {0} to {1}...", subtitleFile.FullName, targetSubtitleFile);
-                        File.Delete(targetSubtitleFile);
-                        File.Move(subtitleFile.FullName, targetSubtitleFile);
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Log("Downloader {0} failed: {1}", downloader.GetName(), e.Message);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logger.Log("Downloader {0} failed: {1}", downloader.GetName(), e.Message);
-            }
+            var targetLocation = GetTargetFileNamePrefix(fileName);
+            if (File.Exists(targetLocation + ".srt") || File.Exists(targetLocation + ".nosrt"))
+                return true;
             return false;
         }
 
+        private static string GetTargetFileNamePrefix(string fileName)
+        {
+            var path = Path.GetDirectoryName(fileName);
+            var file = Path.GetFileNameWithoutExtension(fileName);
+            var targetLocation = Path.Combine(path, file);
+            return targetLocation;
+        }
+
+        private static bool IsFileOfAcceptableType(string fileName)
+        {
+            var ext = Path.GetExtension(fileName);
+            return AcceptedExtensions.Contains(ext);
+        }
     }
 }

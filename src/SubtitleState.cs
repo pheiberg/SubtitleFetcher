@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace SubtitleFetcher
@@ -33,36 +34,41 @@ namespace SubtitleFetcher
 
 		public void AddEntries(IEnumerable<string> files, DateTime timestamp)
 		{
-			foreach (string file in files)
-			{
-			    if (!dict.ContainsKey(file))
-			    {
-			        dict.Add(file, new SubtitleStateEntry(file, timestamp));
-			    }
-			}
+		    foreach (string file in files.Where(file => !dict.ContainsKey(file)))
+		    {
+		        dict.Add(file, new SubtitleStateEntry(file, timestamp));
+		    }
 		}
 
-		public void Cleanup(int days = 7)
+	    public void Cleanup(int days)
 		{
 			var removeKeys = new List<string>();
 			foreach (SubtitleStateEntry entry in dict.Values)
 			{
 				if (entry.Timestamp.AddDays(days) <= DateTime.Now)
 				{
-					string fileName = Path.GetFileNameWithoutExtension(entry.File) + ".nosrt";
-					StreamWriter w = File.CreateText(fileName);
-					w.Write("No subtitle available");
-					w.Flush();
-					w.Close();
-
-					removeKeys.Add(entry.File);
+				    CreateNosrtFile(entry);
+				    removeKeys.Add(entry.File);
 				}
 			}
 			foreach (string key in removeKeys)
-				dict.Remove(key);
+			{
+			    dict.Remove(key);
+			}
 		}
 
-		public void PostDeserialize()
+	    private static void CreateNosrtFile(SubtitleStateEntry entry)
+	    {
+	        string fileName = Path.GetFileNameWithoutExtension(entry.File) + ".nosrt";
+	        using (var w = File.CreateText(fileName))
+	        {
+	            w.Write("No subtitle available");
+	            w.Flush();
+	            w.Close();
+	        }
+	    }
+
+	    public void PostDeserialize()
 		{
 			foreach (var entry in Entries)
 				dict.Add(entry.File, entry);
