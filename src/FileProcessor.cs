@@ -51,9 +51,7 @@ namespace SubtitleFetcher
         private static bool IsFileAlreadyDownloaded(string fileName)
         {
             var targetLocation = GetTargetFileNamePrefix(fileName);
-            if (File.Exists(targetLocation + ".srt") || File.Exists(targetLocation + ".nosrt"))
-                return true;
-            return false;
+            return File.Exists(targetLocation + ".srt") || File.Exists(targetLocation + ".nosrt");
         }
 
         private static string GetTargetFileNamePrefix(string fileName)

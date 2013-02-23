@@ -55,6 +55,7 @@
     <Compile Include="EpisodeIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="FileProcessor.cs" />
+    <Compile Include="FileSystem.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />

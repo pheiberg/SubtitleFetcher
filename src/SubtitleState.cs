@@ -1,85 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace SubtitleFetcher
 {
 	[Serializable]
 	public class SubtitleState
 	{
-		private readonly Dictionary<string, SubtitleStateEntry> dict;
-
-		[XmlIgnore]
-		public Dictionary<string, SubtitleStateEntry> Dict
-		{
-			get { return dict; }
-		}
 		public List<SubtitleStateEntry> Entries { get; set; }
 
 		public SubtitleState()
 		{
 			Entries = new List<SubtitleStateEntry>();
-			dict = new Dictionary<string, SubtitleStateEntry>();
 		}
-
-		public void AddEntry(string file, DateTime timestamp)
+    
+	    public void Cleanup(int days, Action<SubtitleStateEntry> removeAction)
 		{
-			if (!dict.ContainsKey(file))
+			var toBeRemoved = Entries.Where(entry => entry.Timestamp.AddDays(days) <= DateTime.Now).ToList();
+	        foreach (var entry in toBeRemoved)
 			{
-			    dict.Add(file, new SubtitleStateEntry(file, timestamp));
+                removeAction(entry);
+			    Entries.Remove(entry);
 			}
 		}
 
-		public void AddEntries(IEnumerable<string> files, DateTime timestamp)
-		{
-		    foreach (string file in files.Where(file => !dict.ContainsKey(file)))
-		    {
-		        dict.Add(file, new SubtitleStateEntry(file, timestamp));
-		    }
-		}
-
-	    public void Cleanup(int days)
-		{
-			var removeKeys = new List<string>();
-			foreach (SubtitleStateEntry entry in dict.Values)
-			{
-				if (entry.Timestamp.AddDays(days) <= DateTime.Now)
-				{
-				    CreateNosrtFile(entry);
-				    removeKeys.Add(entry.File);
-				}
-			}
-			foreach (string key in removeKeys)
-			{
-			    dict.Remove(key);
-			}
-		}
-
-	    private static void CreateNosrtFile(SubtitleStateEntry entry)
+	    public void Update(IEnumerable<string> failedFiles)
 	    {
-	        string fileName = Path.GetFileNameWithoutExtension(entry.File) + ".nosrt";
-	        using (var w = File.CreateText(fileName))
-	        {
-	            w.Write("No subtitle available");
-	            w.Flush();
-	            w.Close();
-	        }
-	    }
+	        var updatedState = from failed in failedFiles
+	                           join existing in Entries
+	                               on failed equals existing.File into filesToReprocess
+	                           from oldEntry in filesToReprocess.DefaultIfEmpty()
+                               select new SubtitleStateEntry(failed, oldEntry == null ? DateTime.Now : oldEntry.Timestamp);
 
-	    public void PostDeserialize()
-		{
-			foreach (var entry in Entries)
-				dict.Add(entry.File, entry);
-		}
-
-		public void PreSerialize()
-		{
-			Entries.Clear();
-			Entries.AddRange(dict.Values);
-		}
-
+            Entries = new List<SubtitleStateEntry>(updatedState);
+        }
 	}
 
 	[Serializable]
