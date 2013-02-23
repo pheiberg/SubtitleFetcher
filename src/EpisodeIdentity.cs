@@ -58,13 +58,8 @@ namespace SubtitleFetcher
             if (ReferenceEquals(this, other)) return true;
             if (SeriesName == null || other.SeriesName == null) return Equals(other);
             
-            return string.Equals(Normalize(other.SeriesName),  Normalize(SeriesName), StringComparison.InvariantCultureIgnoreCase) 
+            return string.Equals(other.SeriesName.RemoveNonAlphaNumericChars(),  SeriesName.RemoveNonAlphaNumericChars(), StringComparison.InvariantCultureIgnoreCase) 
                 && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
-        }
-
-        private string Normalize(string name)
-        {
-            return Regex.Replace(name, "\\s", "");
         }
     }
 }

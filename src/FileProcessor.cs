@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SubtitleFetcher
 {
@@ -28,7 +30,7 @@ namespace SubtitleFetcher
                 return true;
             }
 
-            if (ignoredShows.Any(s => string.Equals(s, episodeIdentity.SeriesName)))
+            if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.InvariantCultureIgnoreCase)))
             {
                 logger.Log("Ignoring {0}", fileName);
                 return true;
