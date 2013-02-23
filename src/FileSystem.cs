@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace SubtitleFetcher
 {
-    public class FileSystem
+    public class FileSystem : IFileSystem
     {
-        private IEnumerable<string> AcceptedExtensions { get; set; }
+        private readonly IEnumerable<string> acceptedExtensions;
         private readonly Logger logger;
 
         public FileSystem(IEnumerable<string> acceptedExtensions, Logger logger)
         {
-            AcceptedExtensions = acceptedExtensions;
+            this.acceptedExtensions = acceptedExtensions;
             this.logger = logger;
         }
 
@@ -46,7 +46,7 @@ namespace SubtitleFetcher
         private bool IsFileOfAcceptableType(string fileName)
         {
             var ext = Path.GetExtension(fileName);
-            return AcceptedExtensions.Contains(ext);
+            return acceptedExtensions.Contains(ext);
         }
 
         public void CreateNosrtFile(SubtitleStateEntry entry)
@@ -88,6 +88,12 @@ namespace SubtitleFetcher
                 }
             }
             logger.Log("Ignore shows file loaded. {0} shows ignored.", count);
+        }
+
+        public void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)
+        {
+            File.Delete(targetSubtitleFile);
+            File.Move(sourceFileName, targetSubtitleFile);
         }
     }
 }

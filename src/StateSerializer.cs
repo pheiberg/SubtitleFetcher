@@ -7,9 +7,9 @@ namespace SubtitleFetcher
     public class StateSerializer
     {
         private readonly string stateFileName;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
-        public StateSerializer(string stateFileName, Logger logger)
+        public StateSerializer(string stateFileName, ILogger logger)
         {
             this.stateFileName = stateFileName;
             this.logger = logger;

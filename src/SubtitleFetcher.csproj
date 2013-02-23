@@ -56,6 +56,11 @@
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="FileProcessor.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="IEpisodeParser.cs" />
+    <Compile Include="IFileSystem.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="ISubtitleDownloadProvider.cs" />
+    <Compile Include="ISubtitleDownloadService.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
@@ -63,6 +68,7 @@
     <Compile Include="StateSerializer.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="SubtitleDownloaderCapabilitiesProvider.cs" />
+    <Compile Include="SubtitleDownloadProvider.cs" />
     <Compile Include="SubtitleDownloadService.cs" />
     <Compile Include="SubtitleState.cs" />
     <Compile Include="TvdbSearcher.cs" />

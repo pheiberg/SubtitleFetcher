@@ -18,13 +18,13 @@ namespace SubtitleFetcher
         [Option('i', "ignore", MetaValue = "FILE", HelpText = "Path of the FILE containing ignored shows. A text file with a show name on each line. The name is the part of the the filename up to the season/episode id. E.g. \"Criminal.Minds.S08E07.HDTV.x264-LOL.mp4\" will be ignored with a line of \"Criminal Minds\" in the file.")]
         public string IgnoreFileName { get; set; }
 
-        [Option('l', "language", DefaultValue = "eng", HelpText = "The subtitle language requested.")]
-        public string Language { get; set; }
+        [OptionArray('l', "languages", DefaultValue = new []{"eng"}, HelpText = "The subtitle language requested as a list in the order of preference.")]
+        public string[] Languages { get; set; }
 
         [Option('g', "giveupdays", MetaValue = "INT", DefaultValue = 7, HelpText = "The number of days after which the program gives up getting a subtitle and writes a .nosrt file")]
         public int GiveupDays { get; set; }
 
-        [Option('d', "debug", DefaultValue = false, HelpText = "If logging should be turned on")]
+        [Option("debug", DefaultValue = false, HelpText = "If logging should be turned on")]
         public bool Debug { get; set; }
 
         [Option("list-downloaders", HelpText = "Lists the available downloaders", DefaultValue = false)]
@@ -33,7 +33,7 @@ namespace SubtitleFetcher
         [Option("list-languages", HelpText = "Lists the available languages", DefaultValue = false, MutuallyExclusiveSet = "")]
         public bool ListLanguages { get; set; }
 
-        [OptionList('d', "downloaders", Separator = ',')]
+        [OptionList('d', "downloaders", Separator = ' ')]
         public IList<string> DownloaderNames { get; private set; }
 
         [ValueList(typeof(List<string>))]

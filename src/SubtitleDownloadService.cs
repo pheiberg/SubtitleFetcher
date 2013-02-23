@@ -1,81 +1,54 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using SubtitleDownloader.Core;
-using SubtitleDownloader.Implementations.OpenSubtitles;
 
 namespace SubtitleFetcher
 {
-    public class SubtitleDownloadService
+    public class SubtitleDownloadService : ISubtitleDownloadService
     {
-        private readonly IEnumerable<ISubtitleDownloader> subtitleDownloaders;
-        private readonly string language;
-        private readonly Logger logger;
-        private readonly EpisodeParser episodeParser;
+        private readonly IEnumerable<ISubtitleDownloadProvider> subtitleDownloaders;
+        private readonly string[] languages;
 
-        public SubtitleDownloadService(IEnumerable<ISubtitleDownloader> subtitleDownloaders, string language, Logger logger, EpisodeParser episodeParser)
+        public SubtitleDownloadService(IEnumerable<ISubtitleDownloadProvider> subtitleDownloaders, string[] languages)
         {
             this.subtitleDownloaders = subtitleDownloaders;
-            this.language = language;
-            this.logger = logger;
-            this.episodeParser = episodeParser;
+            this.languages = languages;
         }
 
         public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity)
         {
-            var query = new EpisodeSearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, null) { LanguageCodes = new[] { language } };
-            return subtitleDownloaders.Any(downloader => TryDownloadFile(targetSubtitleFile, query, downloader, episodeParser, logger, episodeIdentity));
-        }
-
-        private bool TryDownloadFile(string targetSubtitleFile, EpisodeSearchQuery query, ISubtitleDownloader downloader, EpisodeParser nameParser, Logger logger, EpisodeIdentity episodeIdentity)
-        {
-            List<Subtitle> searchResult;
-            try
+            var matches = new List<DownloaderMatch>();
+            foreach(var downloadProvider in subtitleDownloaders)
             {
-                searchResult = downloader.SearchSubtitles(query);
-            }
-            catch (Exception e)
-            {
-                logger.Log("Query to downloader {0} failed: {1}", downloader.GetName(), e.Message);
-                return false;
+                var downloader = downloadProvider;
+                var subtitles = downloader.SearchSubtitle(episodeIdentity, languages);
+                matches.AddRange(subtitles.Select(subtitle => new DownloaderMatch(downloader, subtitle)));
             }
 
-            var matchingSubtitles = from subtitle in searchResult
-                                    let subtitleInfo = nameParser.ParseEpisodeInfo(subtitle.FileName)
-                                    where subtitleInfo.IsEquivalent(episodeIdentity)
-                                    select subtitle;
+            var orderedMatches =
+                from match in matches
+                orderby Array.FindIndex(languages, l => l == match.Subtitle.LanguageCode) , match.Subtitle.FileName
+                select match;
 
-            foreach (Subtitle subtitle in matchingSubtitles)
+            return DownloadFirstAvailableSubtitle(targetSubtitleFile, orderedMatches);
+        }
+
+        private static bool DownloadFirstAvailableSubtitle(string targetSubtitleFile, IEnumerable<DownloaderMatch> orderedMatches)
+        {
+            return orderedMatches.Any(match =>  match.Downloader.TryDownloadSubtitle(match.Subtitle, targetSubtitleFile));
+        }
+
+        private class DownloaderMatch
+        {
+            public ISubtitleDownloadProvider Downloader { get; private set; }
+            public Subtitle Subtitle { get; private set; }
+
+            public DownloaderMatch(ISubtitleDownloadProvider downloader, Subtitle subtitle)
             {
-                logger.Log("Downloading subtitles from {0}...", downloader.GetName());
-                try
-                {
-                    var subtitleFile = DownloadSubtitleFile(downloader, subtitle);
-                    logger.Log("Renaming from {0} to {1}...", subtitleFile.FullName, targetSubtitleFile);
-                    RenameSubtitleFile(targetSubtitleFile, subtitleFile.FullName);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    logger.Log("Downloading from downloader {0} failed: {1}", downloader.GetName(), e.Message);
-                }
+                Downloader = downloader;
+                Subtitle = subtitle;
             }
-
-            return false;
-        }
-
-        private static FileInfo DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)
-        {
-            List<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
-            FileInfo subtitleFile = subtitleFiles.First();
-            return subtitleFile;
-        }
-
-        private static void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)
-        {
-            File.Delete(targetSubtitleFile);
-            File.Move(sourceFileName, targetSubtitleFile);
         }
     }
 }

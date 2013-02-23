@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace SubtitleFetcher
 {
     public class FileProcessor
     {
-        private readonly EpisodeParser episodeParser;
-        private readonly Logger logger;
+        private readonly IEpisodeParser episodeParser;
+        private readonly ILogger logger;
         private readonly IEnumerable<string> ignoredShows;
-        private readonly SubtitleDownloadService subtitleService;
+        private readonly ISubtitleDownloadService subtitleService;
 
-        public FileProcessor(EpisodeParser episodeParser, Logger logger, IEnumerable<string> ignoredShows, SubtitleDownloadService subtitleService)
+        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, IEnumerable<string> ignoredShows, ISubtitleDownloadService subtitleService)
         {
             this.episodeParser = episodeParser;
             this.logger = logger;

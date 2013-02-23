@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SubtitleFetcher
 {
-    public class EpisodeParser
+    public class EpisodeParser : IEpisodeParser
     {
         readonly string[] patterns = new[]
                                          {

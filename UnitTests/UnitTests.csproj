@@ -45,8 +45,8 @@
   <ItemGroup>
     <Compile Include="EpisodeIdentityTests.cs" />
     <Compile Include="EpisodeParserTests.cs" />
-    <Compile Include="TVDBTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubtitleDownloadServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
