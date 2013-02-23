@@ -26,7 +26,9 @@ namespace SubtitleFetcher
                 if (Directory.Exists(path))
                 {
                     logger.Log("Processing directory {0}...", path);
-                    files.AddRange(Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).Where(IsFileOfAcceptableType));
+                    var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
+                        .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f));
+                    files.AddRange(validFiles);
                 }
                 else if (File.Exists(path) && IsFileOfAcceptableType(path))
                 {
@@ -38,16 +40,7 @@ namespace SubtitleFetcher
 
         public bool HasDownloadedSubtitle(string filePath)
         {
-            var targetLocation = GetTargetFileNamePrefix(filePath);
-            return File.Exists(targetLocation + ".srt") || File.Exists(targetLocation + ".nosrt");
-        }
-
-        private static string GetTargetFileNamePrefix(string fileName)
-        {
-            var path = Path.GetDirectoryName(fileName);
-            var file = Path.GetFileNameWithoutExtension(fileName);
-            var targetLocation = Path.Combine(path, file);
-            return targetLocation;
+            return File.Exists(CreateSubtitleFileName(filePath)) || File.Exists(CreateSubtitleFileName(filePath, ".nosrt"));
         }
 
         private bool IsFileOfAcceptableType(string fileName)
@@ -58,11 +51,25 @@ namespace SubtitleFetcher
 
         public void CreateNosrtFile(SubtitleStateEntry entry)
         {
-            string fileName = Path.GetFileNameWithoutExtension(entry.File) + ".nosrt";
+            string fileName = CreateSubtitleFileName(entry.File, ".nosrt");
             using (var writer = File.CreateText(fileName))
             {
                 writer.Write("No subtitle available");
             }
+        }
+
+        public static string CreateSubtitleFileName(string filePath, string extension = ".srt")
+        {
+            var targetLocation = GetTargetFileNamePrefix(filePath);
+            return targetLocation + ".srt";
+        }
+
+        private static string GetTargetFileNamePrefix(string fileName)
+        {
+            var path = Path.GetDirectoryName(fileName);
+            var file = Path.GetFileNameWithoutExtension(fileName);
+            var targetLocation = Path.Combine(path, file);
+            return targetLocation;
         }
 
         public IEnumerable<string> GetIgnoredShows(string ignoreFileName)
