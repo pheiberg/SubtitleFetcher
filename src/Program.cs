@@ -37,7 +37,7 @@ namespace SubtitleFetcher
             var processor = CreateFileProcessor(options, logger, fileSystem, capabilitiesProvider);
 
             var serializer = new StateSerializer(options.StateFileName, logger);
-            var state = serializer.LoadState(options.Files);
+            var state = serializer.LoadState();
             state.Cleanup(options.GiveupDays, fileSystem.CreateNosrtFile);
 
             var filesToProcess = fileSystem.GetFilesToProcess(options.Files); 

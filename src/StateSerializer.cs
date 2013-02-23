@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -16,8 +15,14 @@ namespace SubtitleFetcher
             this.logger = logger;
         }
 
-        public SubtitleState LoadState(IEnumerable<string> files)
+        public SubtitleState LoadState()
         {
+            if (!File.Exists(stateFileName))
+            {
+                logger.Log("No previous state can be found at {0}.", stateFileName);
+                return new SubtitleState();
+            }
+
             SubtitleState state = null;
             var xs = new XmlSerializer(typeof(SubtitleState));
             try

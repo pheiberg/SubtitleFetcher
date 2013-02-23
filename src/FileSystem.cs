@@ -61,7 +61,7 @@ namespace SubtitleFetcher
         public static string CreateSubtitleFileName(string filePath, string extension = ".srt")
         {
             var targetLocation = GetTargetFileNamePrefix(filePath);
-            return targetLocation + ".srt";
+            return targetLocation + extension;
         }
 
         private static string GetTargetFileNamePrefix(string fileName)
