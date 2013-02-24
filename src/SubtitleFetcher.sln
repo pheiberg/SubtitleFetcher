@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitleFetcher", "SubtitleFetcher.csproj", "{688749A3-A8D0-4BBA-BDB7-1FCDF292409C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitleFetcher", "SubtitleFetcher\SubtitleFetcher.csproj", "{688749A3-A8D0-4BBA-BDB7-1FCDF292409C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "..\UnitTests\UnitTests.csproj", "{C34DA5AA-B012-4E8D-804E-E70882D20677}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C34DA5AA-B012-4E8D-804E-E70882D20677}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3D0216F7-D8F5-4427-A1F8-8F59E38143C7}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
