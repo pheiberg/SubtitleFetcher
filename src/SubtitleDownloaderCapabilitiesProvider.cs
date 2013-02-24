@@ -7,9 +7,9 @@ namespace SubtitleFetcher
 {
     public class SubtitleDownloaderCapabilitiesProvider
     {
-        public IEnumerable<ISubtitleDownloader> GetSubtitleDownloaders(IEnumerable<string> downloaderNames)
+        public IEnumerable<ISubtitleDownloader> GetSubtitleDownloaders(IEnumerable<string> downloaderNames, SubtitleType type = SubtitleType.TvShow)
         {
-            var dowloadersToUse = downloaderNames.Any() ? downloaderNames : SubtitleDownloaderFactory.GetSubtitleDownloaderNames();
+            var dowloadersToUse = downloaderNames.Any() ? downloaderNames : GetDownloadersForType(type);
             foreach (string downloaderName in dowloadersToUse)
             {
                 var downloader = SubtitleDownloaderFactory.GetSubtitleDownloader(downloaderName);
@@ -22,6 +22,19 @@ namespace SubtitleFetcher
                     Console.WriteLine("\"{0}\" is not a known subtitle downloader.", downloaderName);
                 }
             }
+        }
+
+        private static IEnumerable<string> GetDownloadersForType(SubtitleType type)
+        {
+            var subtitleDownloaderNames = SubtitleDownloaderFactory.GetSubtitleDownloaderNames();
+            switch(type)
+            {
+                case SubtitleType.TvShow:
+                    return subtitleDownloaderNames.Where(s => s != "MovieSubtitles");
+                default:
+                    return subtitleDownloaderNames.Where(s => s != "TvSubtitles");
+            }
+            
         }
 
         public void ListAvailableLanguages()
@@ -53,5 +66,11 @@ namespace SubtitleFetcher
                 Console.WriteLine(downloaderName);
             }
         }
+    }
+
+    public enum SubtitleType
+    {
+        Movie,
+        TvShow
     }
 }
