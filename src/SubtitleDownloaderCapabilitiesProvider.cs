@@ -7,15 +7,23 @@ namespace SubtitleFetcher
 {
     public class SubtitleDownloaderCapabilitiesProvider
     {
+        private static readonly IEnumerable<string> EpisodeDownloaders = new[] { "Bierdopje", "OpenSubtitles", "Podnapisi", "S4U.se", "Sublight", "Subscene", "TvSubtitles" };
+        private static readonly IEnumerable<string> MovieDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "S4U.se" };
+        private static readonly IEnumerable<string> GeneralDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "Podnapisi", "S4U.se", "Sublight", "Subscene" };
+
         public IEnumerable<ISubtitleDownloader> GetSubtitleDownloaders(IEnumerable<string> downloaderNames, SubtitleType type = SubtitleType.TvShow)
         {
-            var dowloadersToUse = downloaderNames.Any() ? downloaderNames : GetDownloadersForType(type);
-            foreach (string downloaderName in dowloadersToUse)
+            var compatibleDowloaders = GetDownloadersForType(type).ToList();
+            var chosenDownloaders = downloaderNames.Any() ? downloaderNames : SubtitleDownloaderFactory.GetSubtitleDownloaderNames();
+            
+            foreach (string downloaderName in chosenDownloaders)
             {
                 var downloader = SubtitleDownloaderFactory.GetSubtitleDownloader(downloaderName);
+
                 if (downloader != null)
                 {
-                    yield return downloader;
+                    if(compatibleDowloaders.Contains(downloader.GetName()))
+                        yield return downloader;
                 }
                 else
                 {
@@ -24,17 +32,17 @@ namespace SubtitleFetcher
             }
         }
 
-        private static IEnumerable<string> GetDownloadersForType(SubtitleType type)
+        private IEnumerable<string> GetDownloadersForType(SubtitleType type)
         {
-            var subtitleDownloaderNames = SubtitleDownloaderFactory.GetSubtitleDownloaderNames();
             switch(type)
             {
                 case SubtitleType.TvShow:
-                    return subtitleDownloaderNames.Where(s => s != "MovieSubtitles");
+                    return EpisodeDownloaders;
+                case SubtitleType.Movie:
+                    return MovieDownloaders;
                 default:
-                    return subtitleDownloaderNames.Where(s => s != "TvSubtitles");
+                    return GeneralDownloaders;
             }
-            
         }
 
         public void ListAvailableLanguages()
@@ -71,6 +79,7 @@ namespace SubtitleFetcher
     public enum SubtitleType
     {
         Movie,
-        TvShow
+        TvShow,
+        General
     }
 }
