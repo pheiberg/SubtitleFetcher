@@ -7,9 +7,9 @@ namespace SubtitleFetcher
     public class FileSystem : IFileSystem
     {
         private readonly IEnumerable<string> acceptedExtensions;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
-        public FileSystem(IEnumerable<string> acceptedExtensions, Logger logger)
+        public FileSystem(IEnumerable<string> acceptedExtensions, ILogger logger)
         {
             this.acceptedExtensions = acceptedExtensions;
             this.logger = logger;
@@ -76,6 +76,12 @@ namespace SubtitleFetcher
         {
             if (ignoreFileName == null) 
                 yield break;
+
+            if(!File.Exists(ignoreFileName))
+            {
+                logger.Log("The specified ignore shows file can't be found.");
+                yield break;
+            }
 
             int count = 0;
             using (TextReader reader = new StreamReader(ignoreFileName))
