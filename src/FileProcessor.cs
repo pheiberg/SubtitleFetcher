@@ -31,11 +31,11 @@ namespace SubtitleFetcher
 
             if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.InvariantCultureIgnoreCase)))
             {
-                logger.Log("Ignoring {0}", fileName);
+                logger.Log(string.Format("Ignoring {0}", fileName), LogLevel.Verbose);
                 return true;
             }
 
-            logger.Log("Processing file {0}...", fileName);
+            logger.Log(string.Format("Processing file {0}...", fileName));
 
             var isSuccessful = subtitleService.DownloadSubtitle(FileSystem.CreateSubtitleFileName(fileName) , episodeIdentity);
             return isSuccessful;

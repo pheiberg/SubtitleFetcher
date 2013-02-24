@@ -36,7 +36,7 @@ namespace SubtitleFetcher
             }
             catch (Exception ex)
             {
-                logger.Log("Dowloader search for downloader {0} failed with message: {1}", Name, ex.Message);
+                logger.Log(string.Format("Dowloader search for downloader {0} failed with message: {1}", Name, ex.Message), LogLevel.Verbose);
                 return Enumerable.Empty<Subtitle>();
             }
 
@@ -51,17 +51,17 @@ namespace SubtitleFetcher
 
         public bool TryDownloadSubtitle(Subtitle subtitle, string targetSubtitleFile)
         {
-            logger.Log("Downloading [{1}] subtitles from {0}...", downloader.GetName(), subtitle.LanguageCode);
+            logger.Log(string.Format("Downloading [{1}] subtitles from {0}...", downloader.GetName(), subtitle.LanguageCode), LogLevel.Verbose);
             try
             {
                 var subtitleFile = DownloadSubtitleFile(downloader, subtitle);
-                logger.Log("Renaming from {0} to {1}...", subtitleFile, targetSubtitleFile);
+                logger.Log(string.Format("Renaming from {0} to {1}...", subtitleFile, targetSubtitleFile), LogLevel.Debug);
                 fileSystem.RenameSubtitleFile(targetSubtitleFile, subtitleFile);
                 return true;
             }
             catch (Exception e)
             {
-                logger.Log("Downloading from downloader {0} failed: {1}", downloader.GetName(), e.Message);
+                logger.Log(string.Format("Downloading from downloader {0} failed: {1}", downloader.GetName(), e.Message), LogLevel.Verbose);
             }
             return false;
         }

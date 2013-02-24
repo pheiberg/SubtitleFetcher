@@ -4,17 +4,29 @@ namespace SubtitleFetcher
 {
     public class Logger : ILogger
     {
-        private readonly bool verbose;
+        private readonly LogLevel level;
 
-        public Logger(bool verbose)
+        public Logger(LogLevel level)
         {
-            this.verbose = verbose;
+            this.level = level;
         }
 
-        public void Log(string format, params object[] parms)
+        public void Log(string message, LogLevel visibility)
         {
-            if (verbose)
-                Console.WriteLine(String.Format(format, parms));
+            if (visibility <= level)
+                Console.WriteLine(message);
         }
+
+        public void Debug(string message)
+        {
+            Log(message, LogLevel.Debug);
+        }
+    }
+
+    public enum LogLevel
+    {
+        Minimal = 1,
+        Verbose = 2,
+        Debug = 3
     }
 }

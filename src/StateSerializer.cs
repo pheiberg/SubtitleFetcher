@@ -19,7 +19,7 @@ namespace SubtitleFetcher
         {
             if (!File.Exists(stateFileName))
             {
-                logger.Log("No previous state can be found at {0}.", stateFileName);
+                logger.Debug(string.Format("No previous state can be found at {0}.", stateFileName));
                 return new SubtitleState();
             }
 
@@ -27,19 +27,19 @@ namespace SubtitleFetcher
             var xs = new XmlSerializer(typeof(SubtitleState));
             try
             {
-                logger.Log("Loading state from {0}...", stateFileName);
+                logger.Log(string.Format("Loading state from {0}...", stateFileName), LogLevel.Debug);
                 using (var reader = new StreamReader(stateFileName))
                 {
                     state = (SubtitleState) xs.Deserialize(reader);
                     if (state != null)
                     {
-                        logger.Log("State loaded. {0} entries.", state.Entries.Count);
+                        logger.Log(string.Format("State loaded. {0} entries.", state.Entries.Count), LogLevel.Debug);
                     }
                 }
             }
             catch (Exception e)
             {
-                logger.Log("Could not load state. Exception: {0}.", e.Message);
+                logger.Log(string.Format("Could not load state. Exception: {0}.", e.Message));
             }
             return state ??  new SubtitleState();
         }
@@ -51,14 +51,14 @@ namespace SubtitleFetcher
             {
                 using (var writer = new StreamWriter(stateFileName))
                 {
-                    logger.Log("Saving state to {0}...", stateFileName);
+                    logger.Debug(string.Format("Saving state to {0}...", stateFileName));
                     xs.Serialize(writer, state);
-                    logger.Log("State saved.");
+                    logger.Debug("State saved.");
                 }
             }
             catch (Exception e)
             {
-                logger.Log("Could not save state. Exception: {0}.", e.Message);
+                logger.Log(string.Format("Could not save state. Exception: {0}.", e.Message));
             }
         }
     }

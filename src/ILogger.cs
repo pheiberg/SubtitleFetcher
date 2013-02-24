@@ -2,6 +2,7 @@ namespace SubtitleFetcher
 {
     public interface ILogger
     {
-        void Log(string format, params object[] parms);
+        void Log(string message, LogLevel level = LogLevel.Minimal);
+        void Debug(string message);
     }
 }

@@ -18,14 +18,14 @@ namespace SubtitleFetcher
         [Option('i', "ignore", MetaValue = "FILE", HelpText = "Path of the FILE containing ignored shows. A text file with a show name on each line. The name is the part of the the filename up to the season/episode id. E.g. \"Criminal.Minds.S08E07.HDTV.x264-LOL.mp4\" will be ignored with a line of \"Criminal Minds\" in the file.")]
         public string IgnoreFileName { get; set; }
 
-        [OptionArray('l', "languages", DefaultValue = new []{"eng"}, HelpText = "The subtitle language requested as a list in the order of preference.")]
+        [OptionArray('l', "languages", DefaultValue = new []{"eng"}, HelpText = "The subtitle language requested as a list in the order of preference")]
         public string[] Languages { get; set; }
 
         [Option('g', "giveupdays", MetaValue = "INT", DefaultValue = 7, HelpText = "The number of days after which the program gives up getting a subtitle and writes a .nosrt file")]
         public int GiveupDays { get; set; }
 
-        [Option("debug", DefaultValue = false, HelpText = "If logging should be turned on")]
-        public bool Debug { get; set; }
+        [Option("logging", DefaultValue = LogLevel.Minimal, HelpText = "The level of logging used")]
+        public LogLevel Logging { get; set; }
 
         [Option("list-downloaders", HelpText = "Lists the available downloaders", DefaultValue = false)]
         public bool ListDownloaders { get; set; }

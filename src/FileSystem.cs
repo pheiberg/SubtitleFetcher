@@ -25,7 +25,7 @@ namespace SubtitleFetcher
             {
                 if (Directory.Exists(path))
                 {
-                    logger.Log("Processing directory {0}...", path);
+                    logger.Log(string.Format("Processing directory {0}...", path), LogLevel.Verbose);
                     var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
                         .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f));
                     files.AddRange(validFiles);
@@ -87,7 +87,7 @@ namespace SubtitleFetcher
                     count++;
                 }
             }
-            logger.Log("Ignore shows file loaded. {0} shows ignored.", count);
+            logger.Debug(string.Format("Ignore shows file loaded. {0} shows ignored.", count));
         }
 
         public void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)

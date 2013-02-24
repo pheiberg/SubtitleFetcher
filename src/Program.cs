@@ -31,7 +31,7 @@ namespace SubtitleFetcher
                 Environment.Exit(0);
             }
 
-            var logger = new Logger(options.Debug);
+            var logger = new Logger(options.Logging);
             var fileSystem = new FileSystem(AcceptedExtensions, logger);
             
             var processor = CreateFileProcessor(options, logger, fileSystem, capabilitiesProvider);
