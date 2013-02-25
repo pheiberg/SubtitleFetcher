@@ -25,7 +25,7 @@ namespace SubtitleFetcher
             {
                 if (Directory.Exists(path))
                 {
-                    logger.Log(string.Format("Processing directory {0}...", path), LogLevel.Verbose);
+                    logger.Verbose("Processing directory {0}...", path);
                     var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
                         .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f));
                     files.AddRange(validFiles);
@@ -79,7 +79,7 @@ namespace SubtitleFetcher
 
             if(!File.Exists(ignoreFileName))
             {
-                logger.Log("The specified ignore shows file can't be found.");
+                logger.Error("The specified ignore shows file can't be found.");
                 yield break;
             }
 

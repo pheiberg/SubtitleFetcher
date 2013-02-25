@@ -27,19 +27,19 @@ namespace SubtitleFetcher
             var xs = new XmlSerializer(typeof(SubtitleState));
             try
             {
-                logger.Log(string.Format("Loading state from {0}...", stateFileName), LogLevel.Debug);
+                logger.Debug("Loading state from {0}...", stateFileName);
                 using (var reader = new StreamReader(stateFileName))
                 {
                     state = (SubtitleState) xs.Deserialize(reader);
                     if (state != null)
                     {
-                        logger.Log(string.Format("State loaded. {0} entries.", state.Entries.Count), LogLevel.Debug);
+                        logger.Debug("State loaded. {0} entries.", state.Entries.Count);
                     }
                 }
             }
             catch (Exception e)
             {
-                logger.Log(string.Format("Could not load state. Exception: {0}.", e.Message));
+                logger.Error("Could not load state. Exception: {0}.", e.Message);
             }
             return state ??  new SubtitleState();
         }
@@ -58,7 +58,7 @@ namespace SubtitleFetcher
             }
             catch (Exception e)
             {
-                logger.Log(string.Format("Could not save state. Exception: {0}.", e.Message));
+                logger.Error("Could not save state. Exception: {0}.", e.Message);
             }
         }
     }

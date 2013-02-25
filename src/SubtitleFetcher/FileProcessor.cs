@@ -25,17 +25,17 @@ namespace SubtitleFetcher
             var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
             {
-                logger.Log("Can't parse episode info from {0}. Not on a known format.");
+                logger.Error("Can't parse episode info from {0}. Not on a known format.", fileName);
                 return true;
             }
 
             if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.InvariantCultureIgnoreCase)))
             {
-                logger.Log(string.Format("Ignoring {0}", fileName), LogLevel.Verbose);
+                logger.Verbose("Ignoring {0}", fileName);
                 return true;
             }
 
-            logger.Log(string.Format("Processing file {0}...", fileName));
+            logger.Important("Processing file {0}...", fileName);
 
             var isSuccessful = subtitleService.DownloadSubtitle(FileSystem.CreateSubtitleFileName(fileName) , episodeIdentity);
             return isSuccessful;
