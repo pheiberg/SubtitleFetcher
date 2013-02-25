@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher
@@ -18,13 +19,17 @@ namespace SubtitleFetcher
 
         public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity)
         {
+            var syncRoot = new object();
             var matches = new List<DownloaderMatch>();
-            foreach(var downloadProvider in subtitleDownloaders)
-            {
-                var downloader = downloadProvider;
-                var subtitles = downloader.SearchSubtitle(episodeIdentity, languages);
-                matches.AddRange(subtitles.Select(subtitle => new DownloaderMatch(downloader, subtitle)));
-            }
+            Parallel.ForEach(subtitleDownloaders, downloadProvider =>
+                {
+                    var downloader = downloadProvider;
+                    var subtitles = downloader.SearchSubtitle(episodeIdentity, languages);
+                    lock (syncRoot)
+                    {
+                        matches.AddRange(subtitles.Select(subtitle => new DownloaderMatch(downloader, subtitle)));
+                    }
+                });
 
             var orderedMatches =
                 from match in matches

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SubtitleDownloader.Core;
@@ -32,7 +33,11 @@ namespace SubtitleFetcher
             IEnumerable<Subtitle> searchResult;
             try
             {
+                logger.Debug("Searching with downloader {0}", Name);
+                var watch = Stopwatch.StartNew();
                 searchResult = downloader.SearchSubtitles(query);
+                watch.Stop();
+                logger.Debug("Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
