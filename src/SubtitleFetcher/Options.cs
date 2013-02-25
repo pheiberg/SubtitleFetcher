@@ -12,25 +12,25 @@ namespace SubtitleFetcher
             Files = new List<string>();
         }
 
-        [Option('s', "state", DefaultValue = "FetcherState.xml", MetaValue = "FILE", HelpText = "Path of state FILE (remembers when files were scanned)")]
+        [Option('s', "state", DefaultValue = "FetcherState.xml", MetaValue = "FILE", HelpText = "Path of state FILE. The state file keeps track of previously unresolved scanned files.")]
         public string StateFileName { get; set; }
 
-        [Option('i', "ignore", MetaValue = "FILE", HelpText = "Path of the FILE containing ignored shows. A text file with a show name on each line. The name is the part of the the filename up to the season/episode id. E.g. \"Criminal.Minds.S08E07.HDTV.x264-LOL.mp4\" will be ignored with a line of \"Criminal Minds\" in the file.")]
+        [Option('i', "ignore", MetaValue = "FILE", HelpText = "Path of the FILE containing ignored shows. The file is a text file with a show name on each line. E.g. \"The.IT.Crowd.4x05.(PDTV-FoV).[VTV].mp4\" will be ignored with a line of \"the it crowd\" in the file.")]
         public string IgnoreFileName { get; set; }
 
-        [OptionArray('l', "languages", DefaultValue = new []{"eng"}, HelpText = "The subtitle language requested as a list in the order of preference")]
+        [OptionArray('l', "languages", DefaultValue = new []{"eng"}, HelpText = "The subtitle language requested as a list in the order of preference.")]
         public string[] Languages { get; set; }
 
-        [Option('g', "giveupdays", MetaValue = "INT", DefaultValue = 7, HelpText = "The number of days after which the program gives up getting a subtitle and writes a .nosrt file")]
+        [Option('g', "giveupdays", MetaValue = "INT", DefaultValue = 7, HelpText = "The number of days after which the program gives up getting a subtitle and writes a .nosrt file.")]
         public int GiveupDays { get; set; }
 
-        [Option("logging", DefaultValue = LogLevel.Minimal, HelpText = "The level of logging used")]
+        [Option("logging", DefaultValue = LogLevel.Minimal, HelpText = "The level of logging used.")]
         public LogLevel Logging { get; set; }
 
-        [Option("list-downloaders", HelpText = "Lists the available downloaders", DefaultValue = false)]
+        [Option("list-downloaders", HelpText = "Lists the available downloaders.", DefaultValue = false)]
         public bool ListDownloaders { get; set; }
 
-        [Option("list-languages", HelpText = "Lists the available languages", DefaultValue = false, MutuallyExclusiveSet = "")]
+        [Option("list-languages", HelpText = "Lists the available languages", DefaultValue = false)]
         public bool ListLanguages { get; set; }
 
         [OptionList('d', "downloaders", Separator = ' ')]
