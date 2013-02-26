@@ -19,29 +19,18 @@ namespace SubtitleFetcher
 
         public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity)
         {
-            var syncRoot = new object();
-            var matches = new List<DownloaderMatch>();
-            Parallel.ForEach(subtitleDownloaders, downloadProvider =>
-                {
-                    var downloader = downloadProvider;
-                    var subtitles = downloader.SearchSubtitle(episodeIdentity, languages);
-                    lock (syncRoot)
-                    {
-                        matches.AddRange(subtitles.Select(subtitle => new DownloaderMatch(downloader, subtitle)));
-                    }
-                });
-
-            var orderedMatches =
-                from match in matches
-                orderby Array.FindIndex(languages, l => l == match.Subtitle.LanguageCode) , match.Subtitle.FileName
-                select match;
-
-            return DownloadFirstAvailableSubtitle(targetSubtitleFile, orderedMatches);
+            var matches = subtitleDownloaders.AsParallel()
+                    .SelectMany(downloader => downloader.SearchSubtitle(episodeIdentity, languages)
+                    .Select(match => new DownloaderMatch(downloader, match)))
+                    .OrderBy(pair => Array.FindIndex(languages, arrayItem => arrayItem == pair.Subtitle.LanguageCode))
+                    .ThenBy(pair => pair.Subtitle.FileName);
+            
+           return DownloadFirstAvailableSubtitle(targetSubtitleFile, matches);
         }
 
         private static bool DownloadFirstAvailableSubtitle(string targetSubtitleFile, IEnumerable<DownloaderMatch> orderedMatches)
         {
-            return orderedMatches.Any(match =>  match.Downloader.TryDownloadSubtitle(match.Subtitle, targetSubtitleFile));
+            return orderedMatches.Any(match => match.Downloader.TryDownloadSubtitle(match.Subtitle, targetSubtitleFile));
         }
 
         private class DownloaderMatch
