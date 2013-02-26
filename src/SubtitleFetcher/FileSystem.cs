@@ -83,17 +83,14 @@ namespace SubtitleFetcher
                 yield break;
             }
 
-            int count = 0;
             using (TextReader reader = new StreamReader(ignoreFileName))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     yield return line.Trim();
-                    count++;
                 }
             }
-            logger.Debug(string.Format("Ignore shows file loaded. {0} shows ignored.", count));
         }
 
         public void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)

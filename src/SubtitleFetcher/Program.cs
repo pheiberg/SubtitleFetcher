@@ -52,7 +52,8 @@ namespace SubtitleFetcher
 	        var episodeParser = new EpisodeParser();
 	        var downloaders = capabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
                 .Select(downloader => new SubtitleDownloadProvider(downloader, episodeParser, logger, fileSystem));
-	        var ignoredShows = fileSystem.GetIgnoredShows(options.IgnoreFileName);
+	        var ignoredShows = fileSystem.GetIgnoredShows(options.IgnoreFileName).ToList();
+            logger.Debug(string.Format("Ignore shows file loaded. {0} shows ignored.", ignoredShows.Count()));
 	        var subtitleDownloadService = new SubtitleDownloadService(downloaders, options.Languages);
 	        var processor = new FileProcessor(episodeParser, logger, ignoredShows, subtitleDownloadService);
 	        return processor;
