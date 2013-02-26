@@ -1,5 +1,4 @@
 using System;
-using System.Text.RegularExpressions;
 
 namespace SubtitleFetcher
 {
@@ -9,6 +8,19 @@ namespace SubtitleFetcher
         public int Season { get; set; }
         public int Episode { get; set; }
         public string ReleaseGroup { get; set; }
+
+        public EpisodeIdentity()
+        {
+            
+        }
+
+        public EpisodeIdentity(string seriesName, int season, int episode, string releaseGroup)
+        {
+            SeriesName = seriesName;
+            Season = season;
+            Episode = episode;
+            ReleaseGroup = releaseGroup;
+        }
 
         public bool Equals(EpisodeIdentity other)
         {
