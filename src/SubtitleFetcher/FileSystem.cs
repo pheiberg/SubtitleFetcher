@@ -74,23 +74,26 @@ namespace SubtitleFetcher
 
         public IEnumerable<string> GetIgnoredShows(string ignoreFileName)
         {
-            if (ignoreFileName == null) 
-                yield break;
+            if (ignoreFileName == null)
+                return Enumerable.Empty<string>();
 
             if(!File.Exists(ignoreFileName))
             {
                 logger.Error("The specified ignore shows file can't be found.");
-                yield break;
+                return Enumerable.Empty<string>();
             }
 
+            var ignoredShows = new List<string>();
             using (TextReader reader = new StreamReader(ignoreFileName))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    yield return line.Trim();
+                    ignoredShows.Add(line.Trim());
                 }
             }
+            logger.Debug(string.Format("Ignore shows file loaded. {0} shows ignored.", ignoredShows.Count()));
+            return ignoredShows;
         }
 
         public void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)
