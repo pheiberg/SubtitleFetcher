@@ -1,4 +1,4 @@
-namespace SubtitleFetcher
+namespace TvShowIdentification
 {
     public interface ILogger
     {

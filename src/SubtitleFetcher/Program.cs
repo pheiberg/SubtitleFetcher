@@ -64,7 +64,8 @@ namespace SubtitleFetcher
 	    private static FileProcessor CreateFileProcessor(Options options, Logger logger, FileSystem fileSystem)
 	    {
 	        var episodeParser = new EpisodeParser();
-	        var downloaders = new List<ISubtitleDownloadProvider>{ new SubtitleDownloadProvider(new SwesubDownloader.SwesubDownloader(), episodeParser, logger, fileSystem)}; // CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
+	        var subtitleDownloadProvider = new SubtitleDownloadProvider(new SwesubDownloader.SwesubDownloader(logger, new TvdbSearcher()), episodeParser, logger, fileSystem);
+	        var downloaders = new List<ISubtitleDownloadProvider>{ subtitleDownloadProvider}; CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
                 //.Select(downloader => new SubtitleDownloadProvider(downloader, episodeParser, logger, fileSystem));
 	        var ignoredShows = fileSystem.GetIgnoredShows(options.IgnoreFileName);
 	        var subtitleDownloadService = new SubtitleDownloadService(downloaders, options.Languages);

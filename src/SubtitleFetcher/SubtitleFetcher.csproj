@@ -89,10 +89,8 @@
     <Compile Include="FileProcessor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IFileSystem.cs" />
-    <Compile Include="ILogger.cs" />
     <Compile Include="ISubtitleDownloadProvider.cs" />
     <Compile Include="ISubtitleDownloadService.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

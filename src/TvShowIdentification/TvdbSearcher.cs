@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace TvShowIdentification
 {
-    public class TvdbSearcher
+    public class TvdbSearcher : ITvdbSearcher
     {
         private const string ApiKey = "E1644B56FF8A498A";
         private const string ServiceLocation = "http://thetvdb.com/api/GetSeries.php?seriesname={0}";
