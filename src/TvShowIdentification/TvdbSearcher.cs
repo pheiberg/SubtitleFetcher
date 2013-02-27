@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 
-namespace SubtitleFetcher
+namespace TvShowIdentification
 {
     public class TvdbSearcher
     {

@@ -33,7 +33,7 @@ namespace SubtitleFetcher
         [Option("list-languages", HelpText = "Lists the available languages", DefaultValue = false)]
         public bool ListLanguages { get; set; }
 
-        [OptionList('d', "downloaders", Separator = ' ')]
+        [OptionList('d', "downloaders", Separator = ',')]
         public IList<string> DownloaderNames { get; private set; }
 
         [ValueList(typeof(List<string>))]

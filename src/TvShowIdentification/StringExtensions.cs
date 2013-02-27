@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace SubtitleFetcher
+namespace TvShowIdentification
 {
     public static class StringExtensions
     {

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using SubtitleFetcher;
+using TvShowIdentification;
 
 namespace UnitTests
 {

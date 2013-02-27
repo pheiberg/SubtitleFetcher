@@ -1,3 +1,5 @@
+using TvShowIdentification;
+
 namespace SubtitleFetcher
 {
     public interface ISubtitleDownloadService

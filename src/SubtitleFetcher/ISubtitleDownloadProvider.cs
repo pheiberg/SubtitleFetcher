@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SubtitleDownloader.Core;
+using TvShowIdentification;
 
 namespace SubtitleFetcher
 {

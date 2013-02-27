@@ -1,6 +1,6 @@
 using System;
 
-namespace SubtitleFetcher
+namespace TvShowIdentification
 {
     public class EpisodeIdentity
     {

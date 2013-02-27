@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SubtitleDownloader.Core;
+using TvShowIdentification;
 
 namespace SubtitleFetcher
 {
@@ -41,7 +42,7 @@ namespace SubtitleFetcher
             }
             catch (Exception ex)
             {
-                logger.Verbose("Dowloader search for downloader {0} failed with message: {1}", Name, ex.Message);
+                logger.Verbose("Downloader search for downloader {0} failed with message: {1}", Name, ex.Message);
                 return Enumerable.Empty<Subtitle>();
             }
 

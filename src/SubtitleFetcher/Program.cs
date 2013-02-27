@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
+using TvShowIdentification;
 
 namespace SubtitleFetcher
 {
@@ -62,8 +64,8 @@ namespace SubtitleFetcher
 	    private static FileProcessor CreateFileProcessor(Options options, Logger logger, FileSystem fileSystem)
 	    {
 	        var episodeParser = new EpisodeParser();
-	        var downloaders = CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
-                .Select(downloader => new SubtitleDownloadProvider(downloader, episodeParser, logger, fileSystem));
+	        var downloaders = new List<ISubtitleDownloadProvider>{ new SubtitleDownloadProvider(new SwesubDownloader.SwesubDownloader(), episodeParser, logger, fileSystem)}; // CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
+                //.Select(downloader => new SubtitleDownloadProvider(downloader, episodeParser, logger, fileSystem));
 	        var ignoredShows = fileSystem.GetIgnoredShows(options.IgnoreFileName);
 	        var subtitleDownloadService = new SubtitleDownloadService(downloaders, options.Languages);
 	        var processor = new FileProcessor(episodeParser, logger, ignoredShows, subtitleDownloadService);
