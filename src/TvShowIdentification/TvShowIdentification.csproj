@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="EpisodeIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
+    <Compile Include="IDownloadCapabilitiesProvider.cs" />
     <Compile Include="IEpisodeParser.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ITvdbSearcher.cs" />

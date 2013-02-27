@@ -38,7 +38,7 @@ namespace SwesubDownloader
 
         public List<Subtitle> SearchSubtitles(EpisodeSearchQuery query)
         {
-            if(!query.LanguageCodes.Contains("swe"))
+            if (!query.LanguageCodes.Contains("swe"))
             {
                 logger.Debug("The Swesub downloader only provides swedish texts. Aborting search.");
                 return new List<Subtitle>();
@@ -46,7 +46,7 @@ namespace SwesubDownloader
 
             logger.Debug("Looking up the show imdb id");
             var series = tvdbSearcher.FindSeriesExact(query.SerieTitle);
-            if(string.IsNullOrEmpty(series.ImdbId))
+            if (string.IsNullOrEmpty(series.ImdbId))
             {
                 logger.Debug("Could not find imdb id");
                 return new List<Subtitle>();
@@ -71,7 +71,7 @@ namespace SwesubDownloader
         {
             var url = string.Format(DownloadUrlFormat, subtitle.Id);
             logger.Debug("Saving file from {0}", url);
-            var client = new WebClient();
+            var client = CreateWebClient();
             byte[] data = client.DownloadData(url);
             using (Stream s = new MemoryStream(data))
             using (var reader = ReaderFactory.Open(s))
@@ -107,11 +107,11 @@ namespace SwesubDownloader
 
             var url = string.Format(EpisodeListFormat, id);
             logger.Debug("Requesting TV show page from {0}", url);
-            
+
             string seriesList;
             try
             {
-                seriesList = new WebClient().DownloadString(url);
+                seriesList = CreateWebClient().DownloadString(url);
             }
             catch (WebException ex)
             {
@@ -120,15 +120,25 @@ namespace SwesubDownloader
             }
             var matches = SubtitleRegex.Matches(seriesList);
             var subtitles = (from Match match in matches
-                            select new Subtitle(match.Groups["id"].Value, "Swesub", match.Groups["release"].Value, "swe")).ToList();
-            cache[id] = subtitles; 
+                             select new Subtitle(match.Groups["id"].Value, "Swesub", match.Groups["release"].Value, "swe")).ToList();
+            cache[id] = subtitles;
             return subtitles;
+        }
+
+        private WebClient CreateWebClient()
+        {
+            var webClient = new WebDownloader();
+            if(SearchTimeout > 0)
+            {
+                webClient.Timeout = SearchTimeout;
+            }
+            return webClient;
         }
 
         private void LogWebClientError(WebException ex)
         {
             if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
-                ((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                ((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
             {
                 logger.Debug("Show page could not be found");
             }

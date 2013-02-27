@@ -65,7 +65,8 @@ namespace SubtitleFetcher
 	    {
 	        var episodeParser = new EpisodeParser();
 	        var subtitleDownloadProvider = new SubtitleDownloadProvider(new SwesubDownloader.SwesubDownloader(logger, new TvdbSearcher()), episodeParser, logger, fileSystem);
-	        var downloaders = new List<ISubtitleDownloadProvider>{ subtitleDownloadProvider}; CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames)
+            var downloaders = new List<ISubtitleDownloadProvider> { subtitleDownloadProvider };
+	        //CapabilitiesProvider.GetSubtitleDownloaders(options.DownloaderNames);
                 //.Select(downloader => new SubtitleDownloadProvider(downloader, episodeParser, logger, fileSystem));
 	        var ignoredShows = fileSystem.GetIgnoredShows(options.IgnoreFileName);
 	        var subtitleDownloadService = new SubtitleDownloadService(downloaders, options.Languages);
