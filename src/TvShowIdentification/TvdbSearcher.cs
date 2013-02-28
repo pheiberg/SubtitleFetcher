@@ -38,7 +38,7 @@ namespace TvShowIdentification
         public TvdbSeries FindSeriesExact(string name)
         {
             var seriesHits = FindSeries(name);
-            var exactHit = seriesHits.SingleOrDefault(s => string.Equals(s.SeriesName, name, StringComparison.InvariantCultureIgnoreCase)) ?? new TvdbSeries();
+            var exactHit = seriesHits.SingleOrDefault(s => string.Equals(s.SeriesName, name, StringComparison.OrdinalIgnoreCase)) ?? new TvdbSeries();
             return exactHit;
         }
     }

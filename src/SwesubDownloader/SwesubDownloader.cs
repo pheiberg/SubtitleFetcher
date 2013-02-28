@@ -80,7 +80,7 @@ namespace SwesubDownloader
                 while (reader.MoveToNextEntry())
                 {
                     var extension = Path.GetExtension(reader.Entry.FilePath);
-                    if (string.Equals(extension, ".srt", StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(extension, ".srt", StringComparison.OrdinalIgnoreCase))
                     {
                         logger.Debug("Extracting file {0}", reader.Entry.FilePath);
                         var filePath = Path.Combine(Path.GetTempPath(), subtitle.FileName + ".srt");

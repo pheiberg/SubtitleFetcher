@@ -12,7 +12,7 @@ namespace TvShowIdentification
 
         public static string TrimSuffix(this string text, string suffix)
         {
-            return text.EndsWith(suffix, StringComparison.InvariantCultureIgnoreCase) ? text.Substring(0, text.Length - suffix.Length) : text;
+            return text.EndsWith(suffix, StringComparison.OrdinalIgnoreCase) ? text.Substring(0, text.Length - suffix.Length) : text;
         }
     }
 }

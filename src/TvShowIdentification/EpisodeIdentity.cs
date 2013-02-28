@@ -26,7 +26,7 @@ namespace TvShowIdentification
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(other.SeriesName, SeriesName, StringComparison.InvariantCultureIgnoreCase) && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
+            return string.Equals(other.SeriesName, SeriesName, StringComparison.OrdinalIgnoreCase) && other.Season == Season && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) && other.Episode == Episode;
         }
 
         public override bool Equals(object obj)
@@ -61,7 +61,7 @@ namespace TvShowIdentification
 
         public override string ToString()
         {
-            return SeriesName.Replace(" ", ".") + ".S" + Season.ToString("00") + ".E" + Episode.ToString("00") + "-" + ReleaseGroup;
+            return SeriesName.Replace(" ", ".") + ".S" + Season.ToString("00") + "E" + Episode.ToString("00") + "-" + ReleaseGroup;
         }
 
         public bool IsEquivalent(EpisodeIdentity other)
@@ -70,8 +70,8 @@ namespace TvShowIdentification
             if (ReferenceEquals(this, other)) return true;
             if (SeriesName == null || other.SeriesName == null) return Equals(other);
             
-            return string.Equals(other.SeriesName.RemoveNonAlphaNumericChars(),  SeriesName.RemoveNonAlphaNumericChars(), StringComparison.InvariantCultureIgnoreCase) 
-                && other.Season == Season && Equals(other.ReleaseGroup, ReleaseGroup) && other.Episode == Episode;
+            return string.Equals(other.SeriesName.RemoveNonAlphaNumericChars(),  SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase) 
+                && other.Season == Season && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) && other.Episode == Episode;
         }
     }
 }
