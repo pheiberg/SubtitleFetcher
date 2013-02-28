@@ -4,7 +4,7 @@ using TvShowIdentification;
 
 namespace SubtitleFetcher
 {
-    public interface ISubtitleDownloadProvider
+    public interface IEpisodeSubtitleDownloader
     {
         IEnumerable<Subtitle> SearchSubtitle(EpisodeIdentity episodeIdentity, string[] languages);
 

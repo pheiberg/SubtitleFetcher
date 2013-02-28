@@ -10,9 +10,9 @@ namespace SubtitleFetcher
         private readonly IEnumerable<string> acceptedExtensions;
         private readonly ILogger logger;
 
-        public FileSystem(IEnumerable<string> acceptedExtensions, ILogger logger)
+        public FileSystem(FileTypeSettings fileTypeSettings, ILogger logger)
         {
-            this.acceptedExtensions = acceptedExtensions;
+            this.acceptedExtensions = fileTypeSettings.AcceptedExtensions;
             this.logger = logger;
         }
 
@@ -101,6 +101,21 @@ namespace SubtitleFetcher
         {
             File.Delete(targetSubtitleFile);
             File.Move(sourceFileName, targetSubtitleFile);
+        }
+    }
+
+    public class FileTypeSettings
+    {
+        private readonly IEnumerable<string> acceptedExtensions;
+
+        public FileTypeSettings(IEnumerable<string> acceptedExtensions)
+        {
+            this.acceptedExtensions = acceptedExtensions;
+        }
+
+        public IEnumerable<string> AcceptedExtensions
+        {
+            get { return acceptedExtensions; }
         }
     }
 }

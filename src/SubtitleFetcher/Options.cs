@@ -34,8 +34,8 @@ namespace SubtitleFetcher
         [Option("list-languages", HelpText = "Lists the available languages", DefaultValue = false)]
         public bool ListLanguages { get; set; }
 
-        [OptionList('d', "downloaders", Separator = ',')]
-        public IList<string> DownloaderNames { get; private set; }
+        [OptionList('d', "downloaders")]
+        public IList<string> DownloaderNames { get; set; }
 
         [ValueList(typeof(List<string>))]
         public IList<string> Files { get; set; }
@@ -48,5 +48,7 @@ namespace SubtitleFetcher
         {
             return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
+
+        public readonly IList<string> AcceptedExtensions = new List<string> { ".avi", ".mkv", ".mp4" };
     }
 }

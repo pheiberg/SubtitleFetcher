@@ -11,40 +11,6 @@ namespace SubtitleFetcher
         private static readonly IEnumerable<string> MovieDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "S4U.se" };
         private static readonly IEnumerable<string> GeneralDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "Podnapisi", "S4U.se", "Sublight", "Subscene" };
 
-        public IEnumerable<ISubtitleDownloader> GetSubtitleDownloaders(IEnumerable<string> downloaderNames, SubtitleType type = SubtitleType.TvShow)
-        {
-            var compatibleDowloaders = GetDownloadersForType(type).ToList();
-            var chosenDownloaders = downloaderNames.Any() ? downloaderNames : SubtitleDownloaderFactory.GetSubtitleDownloaderNames();
-            
-            foreach (string downloaderName in chosenDownloaders)
-            {
-                var downloader = SubtitleDownloaderFactory.GetSubtitleDownloader(downloaderName);
-
-                if (downloader != null)
-                {
-                    if(compatibleDowloaders.Contains(downloader.GetName()))
-                        yield return downloader;
-                }
-                else
-                {
-                    Console.WriteLine("\"{0}\" is not a known subtitle downloader.", downloaderName);
-                }
-            }
-        }
-
-        private IEnumerable<string> GetDownloadersForType(SubtitleType type)
-        {
-            switch(type)
-            {
-                case SubtitleType.TvShow:
-                    return EpisodeDownloaders;
-                case SubtitleType.Movie:
-                    return MovieDownloaders;
-                default:
-                    return GeneralDownloaders;
-            }
-        }
-
         public void ListAvailableLanguages()
         {
             Console.WriteLine("The following languages are possible:");
@@ -74,12 +40,5 @@ namespace SubtitleFetcher
                 Console.WriteLine(downloaderName);
             }
         }
-    }
-
-    public enum SubtitleType
-    {
-        Movie,
-        TvShow,
-        General
     }
 }

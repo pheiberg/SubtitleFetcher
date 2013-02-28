@@ -5,7 +5,7 @@ using TvShowIdentification;
 
 namespace SubtitleFetcher
 {
-    public class StateSerializer
+    public class StateSerializer : IStateSerializer
     {
         private readonly string stateFileName;
         private readonly ILogger logger;

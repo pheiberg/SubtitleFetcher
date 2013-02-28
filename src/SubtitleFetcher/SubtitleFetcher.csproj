@@ -73,6 +73,9 @@
     <Reference Include="CommandLine">
       <HintPath>packages\CommandLineParser.1.9.4.229-beta\lib\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="SubtitleDownloader">
       <HintPath>external\SubtitleDownloader.dll</HintPath>
     </Reference>
@@ -86,17 +89,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DownloaderApplication.cs" />
     <Compile Include="FileProcessor.cs" />
+    <Compile Include="FileProcessorFactory.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IFileSystem.cs" />
-    <Compile Include="ISubtitleDownloadProvider.cs" />
+    <Compile Include="IEpisodeSubtitleDownloader.cs" />
+    <Compile Include="IStateSerializer.cs" />
     <Compile Include="ISubtitleDownloadService.cs" />
+    <Compile Include="LanguageSettings.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateSerializer.cs" />
     <Compile Include="SubtitleDownloaderCapabilitiesProvider.cs" />
-    <Compile Include="SubtitleDownloadProvider.cs" />
+    <Compile Include="EpisodeSubtitleDownloader.cs" />
+    <Compile Include="SubtitleDownloaderRegistry.cs" />
     <Compile Include="SubtitleDownloadService.cs" />
     <Compile Include="SubtitleState.cs" />
   </ItemGroup>

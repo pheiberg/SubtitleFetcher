@@ -8,13 +8,13 @@ namespace SubtitleFetcher
 {
     public class SubtitleDownloadService : ISubtitleDownloadService
     {
-        private readonly IEnumerable<ISubtitleDownloadProvider> subtitleDownloaders;
+        private readonly IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders;
         private readonly string[] languages;
 
-        public SubtitleDownloadService(IEnumerable<ISubtitleDownloadProvider> subtitleDownloaders, string[] languages)
+        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders, LanguageSettings languageSettings)
         {
             this.subtitleDownloaders = subtitleDownloaders;
-            this.languages = languages;
+            languages = languageSettings.Languages;
         }
 
         public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity)
@@ -39,10 +39,10 @@ namespace SubtitleFetcher
 
         private class DownloaderMatch
         {
-            public ISubtitleDownloadProvider Downloader { get; private set; }
+            public IEpisodeSubtitleDownloader Downloader { get; private set; }
             public Subtitle Subtitle { get; private set; }
 
-            public DownloaderMatch(ISubtitleDownloadProvider downloader, Subtitle subtitle)
+            public DownloaderMatch(IEpisodeSubtitleDownloader downloader, Subtitle subtitle)
             {
                 Downloader = downloader;
                 Subtitle = subtitle;
