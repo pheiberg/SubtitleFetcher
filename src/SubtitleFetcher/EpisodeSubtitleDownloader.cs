@@ -8,14 +8,14 @@ using TvShowIdentification;
 
 namespace SubtitleFetcher
 {
-    public class SubtitleDownloadProvider : ISubtitleDownloadProvider
+    public class EpisodeSubtitleDownloader : IEpisodeSubtitleDownloader
     {
         private readonly ISubtitleDownloader downloader;
         private readonly IEpisodeParser nameParser;
         private readonly ILogger logger;
         private readonly IFileSystem fileSystem;
 
-        public SubtitleDownloadProvider(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileSystem fileSystem)
+        public EpisodeSubtitleDownloader(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileSystem fileSystem)
         {
             this.downloader = downloader;
             this.nameParser = nameParser;
