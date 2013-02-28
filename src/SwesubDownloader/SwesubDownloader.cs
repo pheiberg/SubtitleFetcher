@@ -6,7 +6,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using SharpCompress.Reader;
 using SubtitleDownloader.Core;
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace SwesubDownloader
 {

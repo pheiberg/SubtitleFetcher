@@ -3,7 +3,7 @@ using FakeItEasy;
 using NUnit.Framework;
 using SubtitleDownloader.Core;
 using SubtitleFetcher;
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace UnitTests
 {

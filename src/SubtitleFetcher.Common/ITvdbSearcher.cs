@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TvShowIdentification
+namespace SubtitleFetcher.Common
 {
     public interface ITvdbSearcher
     {

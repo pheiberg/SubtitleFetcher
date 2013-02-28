@@ -84,9 +84,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TvShowIdentification\TvShowIdentification.csproj">
+    <ProjectReference Include="..\SubtitleFetcher.Common\SubtitleFetcher.Common.csproj">
       <Project>{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}</Project>
-      <Name>TvShowIdentification</Name>
+      <Name>SubtitleFetcher.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

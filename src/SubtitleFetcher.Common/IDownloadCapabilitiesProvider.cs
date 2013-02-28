@@ -1,4 +1,4 @@
-namespace TvShowIdentification
+namespace SubtitleFetcher.Common
 {
     public interface IDownloadCapabilitiesProvider
     {

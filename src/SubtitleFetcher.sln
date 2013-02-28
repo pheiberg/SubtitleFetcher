@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3D0216
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwesubDownloader", "SwesubDownloader\SwesubDownloader.csproj", "{EB68F951-2D2C-40EE-A6F7-F848DA63A84D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvShowIdentification", "TvShowIdentification\TvShowIdentification.csproj", "{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitleFetcher.Common", "SubtitleFetcher.Common\SubtitleFetcher.Common.csproj", "{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

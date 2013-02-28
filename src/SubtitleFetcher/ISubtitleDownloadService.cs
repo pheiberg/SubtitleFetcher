@@ -1,4 +1,4 @@
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
 {

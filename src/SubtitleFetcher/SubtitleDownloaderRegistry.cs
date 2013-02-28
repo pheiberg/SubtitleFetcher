@@ -5,7 +5,7 @@ using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleDownloader.Core;
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
 {

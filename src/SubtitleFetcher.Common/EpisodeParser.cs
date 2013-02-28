@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace TvShowIdentification
+namespace SubtitleFetcher.Common
 {
     public class EpisodeParser : IEpisodeParser
     {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SubtitleDownloader.Core;
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
 {

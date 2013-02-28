@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
-using TvShowIdentification;
+using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
 {

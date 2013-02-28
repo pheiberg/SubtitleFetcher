@@ -1,6 +1,6 @@
 using System;
 
-namespace TvShowIdentification
+namespace SubtitleFetcher.Common
 {
     public class Logger : ILogger
     {
