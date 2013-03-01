@@ -3,7 +3,7 @@ using StructureMap;
 
 namespace SubtitleFetcher
 {
-    public class FileProcessorFactory
+    public class FileProcessorFactory : IFileProcessorFactory
     {
         private readonly IContainer container;
 
@@ -12,7 +12,7 @@ namespace SubtitleFetcher
             this.container = container;
         }
 
-        public FileProcessor Create(IEnumerable<string> ignoredShows)
+        public IFileProcessor Create(IEnumerable<string> ignoredShows)
         {
             return container.With("ignoredShows").EqualTo(ignoredShows).GetInstance<FileProcessor>();
         }

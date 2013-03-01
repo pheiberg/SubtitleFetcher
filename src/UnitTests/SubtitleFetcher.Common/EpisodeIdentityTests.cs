@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
-using SubtitleFetcher;
 using SubtitleFetcher.Common;
 
-namespace UnitTests
+namespace UnitTests.SubtitleFetcher.Common
 {
     [TestFixture]
     public class EpisodeIdentityTests

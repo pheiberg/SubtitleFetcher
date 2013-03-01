@@ -5,7 +5,7 @@ using SubtitleDownloader.Core;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
 
-namespace UnitTests
+namespace UnitTests.SubtitleFetcher
 {
     [TestFixture]
     public class SubtitleDownloadServiceTests

@@ -6,13 +6,13 @@ namespace SubtitleFetcher
     {
         private readonly IFileSystem fileSystem;
         private readonly IStateSerializer serializer;
-        private readonly FileProcessorFactory fileProcessorFactory;
+        private readonly IFileProcessor fileProcessor;
 
-        public DownloaderApplication(IFileSystem fileSystem, IStateSerializer serializer, FileProcessorFactory fileProcessorFactory)
+        public DownloaderApplication(IFileSystem fileSystem, IStateSerializer serializer, IFileProcessor fileProcessor)
         {
             this.fileSystem = fileSystem;
             this.serializer = serializer;
-            this.fileProcessorFactory = fileProcessorFactory;
+            this.fileProcessor = fileProcessor;
         }
 
         public void Run(Options options)
@@ -22,8 +22,7 @@ namespace SubtitleFetcher
             state.Cleanup(options.GiveupDays, fileSystem.CreateNosrtFile);
 
             var filesToProcess = fileSystem.GetFilesToProcess(options.Files, options.Languages);
-            var fileProcessor = fileProcessorFactory.Create(ignoredShows);
-            var failedFiles = (filesToProcess.Where(file => !fileProcessor.ProcessFile(file))).ToList();
+            var failedFiles = (filesToProcess.Where(file => !fileProcessor.ProcessFile(file, ignoredShows))).ToList();
 
             state.Update(failedFiles);
             serializer.SaveState(state);

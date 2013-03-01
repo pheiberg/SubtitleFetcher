@@ -6,22 +6,20 @@ using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
 {
-    public class FileProcessor
+    public class FileProcessor : IFileProcessor
     {
         private readonly IEpisodeParser episodeParser;
         private readonly ILogger logger;
-        private readonly IEnumerable<string> ignoredShows;
         private readonly ISubtitleDownloadService subtitleService;
 
-        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, IEnumerable<string> ignoredShows, ISubtitleDownloadService subtitleService)
+        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService)
         {
             this.episodeParser = episodeParser;
             this.logger = logger;
-            this.ignoredShows = ignoredShows;
             this.subtitleService = subtitleService;
         }
 
-        public bool ProcessFile(string fileName)
+        public bool ProcessFile(string fileName, IEnumerable<string> ignoredShows)
         {
             var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
