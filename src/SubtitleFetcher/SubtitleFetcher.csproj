@@ -86,10 +86,8 @@
   <ItemGroup>
     <Compile Include="DownloaderApplication.cs" />
     <Compile Include="FileProcessor.cs" />
-    <Compile Include="FileProcessorFactory.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IFileProcessor.cs" />
-    <Compile Include="IFileProcessorFactory.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IEpisodeSubtitleDownloader.cs" />
     <Compile Include="IStateSerializer.cs" />
