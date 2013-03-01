@@ -13,7 +13,7 @@ namespace UnitTests.SubtitleFetcher
         {
             var episodeParser = new EpisodeParser();
             var logger = A.Fake<ILogger>();
-            var processor = new FileProcessor(episodeParser, logger, null);
+            var processor = new FileProcessor(episodeParser, logger, null, new LanguageSettings(new string[0]));
 
             bool result = processor.ProcessFile("Unparsable.avi", new string[0]);
 
@@ -25,7 +25,7 @@ namespace UnitTests.SubtitleFetcher
         {
             IEpisodeParser episodeParser = new EpisodeParser();
             var logger = A.Fake<ILogger>();
-            var processor = new FileProcessor(episodeParser, logger, null);
+            var processor = new FileProcessor(episodeParser, logger, null, new LanguageSettings(new string[0]));
 
             bool result = processor.ProcessFile("ignored S01E01-group.avi", new []{"ignored"});
 
@@ -38,8 +38,8 @@ namespace UnitTests.SubtitleFetcher
             IEpisodeParser episodeParser = new EpisodeParser();
             var logger = A.Fake<ILogger>();
             var subtitleService = A.Fake<ISubtitleDownloadService>();
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, new EpisodeIdentity("show", 1, 1, "group"))).Returns(true);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, new EpisodeIdentity("show", 1, 1, "group"), A<string[]>._)).Returns(true);
+            var processor = new FileProcessor(episodeParser, logger, subtitleService, new LanguageSettings(new string[0]));
 
             bool result = processor.ProcessFile("show S01E01-group.avi", new string[0]);
 
@@ -52,8 +52,8 @@ namespace UnitTests.SubtitleFetcher
             IEpisodeParser episodeParser = new EpisodeParser();
             var logger = A.Fake<ILogger>();
             var subtitleService = A.Fake<ISubtitleDownloadService>();
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._)).Returns(false);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, new string[0])).Returns(false);
+            var processor = new FileProcessor(episodeParser, logger, subtitleService, new LanguageSettings(new string[0]));
 
             bool result = processor.ProcessFile("show S01E01-group.avi", new string[0]);
 

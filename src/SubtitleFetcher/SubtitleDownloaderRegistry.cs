@@ -43,7 +43,7 @@ namespace SubtitleFetcher
         {
             Func<ISubtitleDownloader, EpisodeSubtitleDownloader> createSubtitleDownloader = sd => new EpisodeSubtitleDownloader(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
             IEnumerable<EpisodeSubtitleDownloader> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
-            return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<LanguageSettings>());
+            return new SubtitleDownloadService(episodeSubtitleDownloaders);
         }
 
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention

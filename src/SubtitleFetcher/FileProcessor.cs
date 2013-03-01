@@ -11,12 +11,14 @@ namespace SubtitleFetcher
         private readonly IEpisodeParser episodeParser;
         private readonly ILogger logger;
         private readonly ISubtitleDownloadService subtitleService;
+        private readonly LanguageSettings languageSettings;
 
-        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService)
+        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService, LanguageSettings languageSettings)
         {
             this.episodeParser = episodeParser;
             this.logger = logger;
             this.subtitleService = subtitleService;
+            this.languageSettings = languageSettings;
         }
 
         public bool ProcessFile(string fileName, IEnumerable<string> ignoredShows)
@@ -36,7 +38,7 @@ namespace SubtitleFetcher
 
             logger.Important("Processing file {0}...", fileName);
 
-            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity);
+            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity, languageSettings.Languages);
             return isSuccessful;
         }
     }

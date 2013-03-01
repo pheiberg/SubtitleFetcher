@@ -17,9 +17,9 @@ namespace UnitTests.SubtitleFetcher
             var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(Enumerable.Empty<Subtitle>());
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, new LanguageSettings(new string[0]));
+            var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity());
+            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity(), new string[0]);
 
             Assert.That(success, Is.False);
         }
@@ -32,9 +32,9 @@ namespace UnitTests.SubtitleFetcher
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, new LanguageSettings(new string[0]));
+            var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity());
+            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity(), new string[0]);
 
             Assert.That(success, Is.True);
         }
@@ -47,9 +47,9 @@ namespace UnitTests.SubtitleFetcher
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(false);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, new LanguageSettings(new string[0]));
+            var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity());
+            bool success = service.DownloadSubtitle("Anything", new EpisodeIdentity(), new string[0]);
 
             Assert.That(success, Is.False);
         }
@@ -66,9 +66,9 @@ namespace UnitTests.SubtitleFetcher
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, new LanguageSettings(languages));
+            var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Target name", new EpisodeIdentity("", 1, 1, ""));
+            bool success = service.DownloadSubtitle("Target name", new EpisodeIdentity("", 1, 1, ""), languages);
 
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>.That.Matches(s => s.LanguageCode == "swe"), "Target name"))
                 .MustHaveHappened(Repeated.Exactly.Once);

@@ -9,21 +9,19 @@ namespace SubtitleFetcher
     public class SubtitleDownloadService : ISubtitleDownloadService
     {
         private readonly IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders;
-        private readonly string[] languages;
 
-        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders, LanguageSettings languageSettings)
+        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders)
         {
             this.subtitleDownloaders = subtitleDownloaders;
-            languages = languageSettings.Languages;
         }
 
-        public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity)
+        public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity, string[] languages)
         {
-            var matches = FindMatchingSubtitlesOrderedByLanguageCode(episodeIdentity);
+            var matches = FindMatchingSubtitlesOrderedByLanguageCode(episodeIdentity, languages);
            return DownloadFirstAvailableSubtitle(targetSubtitleFile, matches);
         }
 
-        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(EpisodeIdentity episodeIdentity)
+        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(EpisodeIdentity episodeIdentity, string[] languages)
         {
             return subtitleDownloaders.AsParallel()
                 .SelectMany(downloader => downloader.SearchSubtitle(episodeIdentity, languages)
