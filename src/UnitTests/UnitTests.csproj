@@ -52,6 +52,7 @@
     <Compile Include="SubtitleFetcher.Common\EpisodeParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubtitleFetcher\DownloaderApplicationTests.cs" />
+    <Compile Include="SubtitleFetcher\EpisodeSubtitleDownloaderTests.cs" />
     <Compile Include="SubtitleFetcher\SubtitleDownloadServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
