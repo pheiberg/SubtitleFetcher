@@ -48,6 +48,12 @@ namespace SubtitleFetcher
                 yield return CreateSubtitleFileName(filePath, "." + lang + ".srt");
         }
 
+        public IEnumerable<string> GetDowloadedSubtitleLanguages(string filePath, IEnumerable<string> languages)
+        {
+            var filesToCheck = languages.ToDictionary(language => language, language => CreateSubtitleFileName(filePath, string.Format(".{0}.srt", language)));
+            return filesToCheck.Where(item => File.Exists(item.Value)).Select(item => item.Key);
+        }
+
         public bool HasDownloadedSubtitle(string filePath, IEnumerable<string> languages)
         {
             var subNames = GetSubtitleNamesIndicatingNoDownloadShouldBeMade(filePath, languages);

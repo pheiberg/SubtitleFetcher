@@ -9,5 +9,6 @@ namespace SubtitleFetcher
         void CreateNosrtFile(SubtitleStateEntry entry);
         IEnumerable<string> GetIgnoredShows(string ignoreFileName);
         void RenameSubtitleFile(string sourceFileName, string targetSubtitleFile);
+        IEnumerable<string> GetDowloadedSubtitleLanguages(string filePath, IEnumerable<string> languages);
     }
 }
