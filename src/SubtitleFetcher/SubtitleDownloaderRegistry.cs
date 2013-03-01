@@ -42,7 +42,8 @@ namespace SubtitleFetcher
         private static SubtitleDownloadService CreateSubtitleDownloadService(IContext context)
         {
             Func<ISubtitleDownloader, EpisodeSubtitleDownloader> createSubtitleDownloader = sd => new EpisodeSubtitleDownloader(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
-            return new SubtitleDownloadService(context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader), context.GetInstance<LanguageSettings>());
+            IEnumerable<EpisodeSubtitleDownloader> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
+            return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<LanguageSettings>());
         }
 
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention
