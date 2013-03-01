@@ -16,7 +16,7 @@ namespace SubtitleFetcher
             this.logger = logger;
         }
 
-        public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations)
+        public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, IEnumerable<string> languages)
         {
             var inPaths = fileLocations.ToList();
             var paths = inPaths.Any() ? inPaths : new List<string> { "." };
@@ -28,7 +28,7 @@ namespace SubtitleFetcher
                 {
                     logger.Verbose("Processing directory {0}...", path);
                     var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
-                        .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f));
+                        .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f, languages));
                     files.AddRange(validFiles);
                 }
                 else if (File.Exists(path) && IsFileOfAcceptableType(path))
@@ -39,9 +39,19 @@ namespace SubtitleFetcher
             return files;
         }
 
-        public bool HasDownloadedSubtitle(string filePath)
+        public IEnumerable<string> GetSubtitleNamesIndicatingNoDownloadShouldBeMade(string filePath, IEnumerable<string> languages)
         {
-            return File.Exists(CreateSubtitleFileName(filePath)) || File.Exists(CreateSubtitleFileName(filePath, ".nosrt"));
+            yield return CreateSubtitleFileName(filePath);
+            yield return CreateSubtitleFileName(filePath, ".nosrt");
+            var lang = languages.FirstOrDefault();
+            if(lang != null)
+                yield return CreateSubtitleFileName(filePath, "." + lang + ".srt");
+        }
+
+        public bool HasDownloadedSubtitle(string filePath, IEnumerable<string> languages)
+        {
+            var subNames = GetSubtitleNamesIndicatingNoDownloadShouldBeMade(filePath, languages);
+            return subNames.Any(File.Exists);
         }
 
         private bool IsFileOfAcceptableType(string fileName)
@@ -97,7 +107,7 @@ namespace SubtitleFetcher
             return ignoredShows;
         }
 
-        public void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName)
+        public void RenameSubtitleFile(string sourceFileName, string targetSubtitleFile)
         {
             File.Delete(targetSubtitleFile);
             File.Move(sourceFileName, targetSubtitleFile);

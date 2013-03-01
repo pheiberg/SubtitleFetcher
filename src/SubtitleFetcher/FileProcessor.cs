@@ -38,7 +38,7 @@ namespace SubtitleFetcher
 
             logger.Important("Processing file {0}...", fileName);
 
-            var isSuccessful = subtitleService.DownloadSubtitle(FileSystem.CreateSubtitleFileName(fileName) , episodeIdentity);
+            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity);
             return isSuccessful;
         }
     }

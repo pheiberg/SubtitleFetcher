@@ -61,8 +61,9 @@ namespace SubtitleFetcher
             try
             {
                 var subtitleFile = DownloadSubtitleFile(downloader, subtitle);
-                logger.Debug("Renaming from {0} to {1}...", subtitleFile, targetSubtitleFile);
-                fileSystem.RenameSubtitleFile(targetSubtitleFile, subtitleFile);
+                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.LanguageCode + ".srt");
+                logger.Debug("Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
+                fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
             }
             catch (Exception e)

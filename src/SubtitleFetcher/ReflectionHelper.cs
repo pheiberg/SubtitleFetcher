@@ -12,7 +12,7 @@ namespace SubtitleFetcher
         {
             var assemblies = GetAllAssemblies();
             var type = typeof(T);
-            var types = assemblies.ToList()
+            var types = assemblies
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(implementor => type.IsAssignableFrom(implementor) && !implementor.IsInterface && !implementor.IsAbstract)
                 .OrderBy(implementor => implementor.Name);

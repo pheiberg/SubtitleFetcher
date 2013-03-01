@@ -4,10 +4,10 @@ namespace SubtitleFetcher
 {
     public interface IFileSystem
     {
-        IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations);
-        bool HasDownloadedSubtitle(string filePath);
+        IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, IEnumerable<string> languages);
+        bool HasDownloadedSubtitle(string filePath, IEnumerable<string> languages);
         void CreateNosrtFile(SubtitleStateEntry entry);
         IEnumerable<string> GetIgnoredShows(string ignoreFileName);
-        void RenameSubtitleFile(string targetSubtitleFile, string sourceFileName);
+        void RenameSubtitleFile(string sourceFileName, string targetSubtitleFile);
     }
 }
