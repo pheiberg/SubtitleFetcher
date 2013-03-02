@@ -21,15 +21,15 @@ namespace SwesubDownloader
 
         protected override string GetShowId(string name)
         {
-            logger.Debug("Looking up the show imdb id");
+            logger.Debug(Name, "Looking up the show imdb id");
             var series = tvdbSearcher.FindSeriesExact(name);
             if(string.IsNullOrEmpty(series.ImdbId))
             {
-                logger.Debug("No Imdb id found");
+                logger.Debug(Name, "No Imdb id found");
                 return null;
             }
 
-            logger.Debug("Imdb id found: {0}", series.ImdbId);
+            logger.Debug(Name, "Imdb id found: {0}", series.ImdbId);
             return series.ImdbId;
         }
 

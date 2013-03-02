@@ -28,21 +28,21 @@ namespace SubtitleFetcher
             var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
             {
-                logger.Error("Can't parse episode info from {0}. Not on a known format.", fileName);
+                logger.Error("File format", "Can't parse episode info from {0}. Not on a known format.", fileName);
                 return true;
             }
 
             if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase)))
             {
-                logger.Verbose("Ignoring {0}", fileName);
+                logger.Verbose("FileProcessor", "Ignoring {0}", fileName);
                 return true;
             }
 
-            logger.Important("Processing file {0}...", fileName);
+            logger.Important("FileProcessor", "Processing file {0}...", fileName);
 
             var dowloadedLanguages = fileSystem.GetDowloadedSubtitleLanguages(fileName, languageSettings.Languages);
             var languagesToDowload = languageSettings.Languages.Except(dowloadedLanguages).ToArray();
-            logger.Debug("Looking for subtitles in: {0}", string.Join(", ", languagesToDowload));
+            logger.Debug("FileProcessor", "Looking for subtitles in: {0}", string.Join(", ", languagesToDowload));
             var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDowload);
             return isSuccessful;
         }

@@ -33,14 +33,14 @@ namespace SubtitleFetcher.Common
         {
             if (!query.LanguageCodes.Contains("swe"))
             {
-                logger.Debug("The {0} downloader only provides swedish texts. Aborting search.", name);
+                logger.Debug(name, "The downloader only provides swedish texts. Aborting search.");
                 return new List<Subtitle>();
             }
 
             var id = getShowId(query.SerieTitle);
             if (string.IsNullOrEmpty(id))
             {
-                logger.Debug("Could not find show id");
+                logger.Debug(name, "Could not find show id");
                 return new List<Subtitle>();
             }
 
@@ -59,7 +59,7 @@ namespace SubtitleFetcher.Common
                 return cached;
 
             var url = string.Format(episodeListUrlFormat, id);
-            logger.Debug("Requesting TV show page from {0}", url);
+            logger.Debug(name, "Requesting TV show page from {0}", url);
 
             string seriesList;
             try
@@ -81,20 +81,20 @@ namespace SubtitleFetcher.Common
         public List<FileInfo> SaveSubtitle(Subtitle subtitle, int timeout)
         {
             var url = string.Format(downloadUrlFormat, subtitle.Id);
-            logger.Debug("Saving file from {0}", url);
+            logger.Debug(name, "Saving file from {0}", url);
             var client = CreateWebClient(timeout);
             byte[] data = client.DownloadData(url);
             using (Stream s = new MemoryStream(data))
             using (var reader = ReaderFactory.Open(s))
             {
-                logger.Debug("Unpacking {0} file", reader.ArchiveType);
+                logger.Debug(name, "Unpacking {0} file", reader.ArchiveType);
                 while (reader.MoveToNextEntry())
                 {
                     var extension = Path.GetExtension(reader.Entry.FilePath);
                     if (!string.Equals(extension, ".srt", StringComparison.OrdinalIgnoreCase)) 
                         continue;
 
-                    logger.Debug("Extracting file {0}", reader.Entry.FilePath);
+                    logger.Debug(name, "Extracting file {0}", reader.Entry.FilePath);
                     var filePath = Path.Combine(Path.GetTempPath(), subtitle.FileName + ".srt");
                     reader.WriteEntryTo(filePath);
                     return new List<FileInfo> { new FileInfo(filePath) };
@@ -118,11 +118,11 @@ namespace SubtitleFetcher.Common
             if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
                 ((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
             {
-                logger.Debug("Show page could not be found");
+                logger.Debug(name, "Show page could not be found");
             }
             else
             {
-                logger.Important("Error occured in downloader {0}: {1}", name, ex.Message);
+                logger.Important(name, "Error occured in downloader {0}: {1}", name, ex.Message);
             }
         }
     }

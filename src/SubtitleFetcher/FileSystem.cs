@@ -26,7 +26,7 @@ namespace SubtitleFetcher
             {
                 if (Directory.Exists(path))
                 {
-                    logger.Verbose("Processing directory {0}...", path);
+                    logger.Verbose("FileSystem", "Processing directory {0}...", path);
                     var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
                         .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f, languages));
                     files.AddRange(validFiles);
@@ -96,7 +96,7 @@ namespace SubtitleFetcher
 
             if(!File.Exists(ignoreFileName))
             {
-                logger.Error("The specified ignore shows file can't be found.");
+                logger.Error("Options", "The specified ignore shows file can't be found.");
                 return Enumerable.Empty<string>();
             }
 
@@ -109,7 +109,7 @@ namespace SubtitleFetcher
                     ignoredShows.Add(line.Trim());
                 }
             }
-            logger.Debug(string.Format("Ignore shows file loaded. {0} shows ignored.", ignoredShows.Count()));
+            logger.Debug("FileSystem", string.Format("Ignore shows file loaded. {0} shows ignored.", ignoredShows.Count()));
             return ignoredShows;
         }
 

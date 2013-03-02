@@ -35,15 +35,15 @@ namespace SubtitleFetcher
             IEnumerable<Subtitle> searchResult;
             try
             {
-                logger.Debug("Searching with downloader {0}", Name);
+                logger.Debug("EpisodeSubtitleDownloader", "Searching with downloader {0}", Name);
                 var watch = Stopwatch.StartNew();
                 searchResult = downloader.SearchSubtitles(query);
                 watch.Stop();
-                logger.Debug("Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
+                logger.Debug("EpisodeSubtitleDownloader", "Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
-                logger.Verbose("Downloader search for downloader {0} failed with message: {1}", Name, ex.Message);
+                logger.Verbose("EpisodeSubtitleDownloader", "Downloader search for downloader {0} failed with message: {1}", Name, ex.Message);
                 return Enumerable.Empty<Subtitle>();
             }
 
@@ -58,18 +58,18 @@ namespace SubtitleFetcher
 
         public bool TryDownloadSubtitle(Subtitle subtitle, string targetSubtitleFile)
         {
-            logger.Verbose("Downloading [{1}] subtitles from {0}...", downloader.GetName(), subtitle.LanguageCode);
+            logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", downloader.GetName(), subtitle.LanguageCode);
             try
             {
                 var subtitleFile = DownloadSubtitleFile(downloader, subtitle);
                 string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.LanguageCode + ".srt");
-                logger.Debug("Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
+                logger.Debug("EpisodeSubtitleDownloader", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
                 fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
             }
             catch (Exception e)
             {
-                logger.Verbose("Downloading from downloader {0} failed: {1}", downloader.GetName(), e.Message);
+                logger.Verbose("EpisodeSubtitleDownloader", "Downloading from downloader {0} failed: {1}", downloader.GetName(), e.Message);
             }
             return false;
         }

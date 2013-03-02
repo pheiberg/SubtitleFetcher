@@ -20,7 +20,7 @@ namespace SubtitleFetcher
         {
             if (!File.Exists(stateFileName))
             {
-                logger.Debug(string.Format("No previous state can be found at {0}.", stateFileName));
+                logger.Debug("StateSerializer", string.Format("No previous state can be found at {0}.", stateFileName));
                 return new SubtitleState();
             }
 
@@ -28,19 +28,19 @@ namespace SubtitleFetcher
             var xs = new XmlSerializer(typeof(SubtitleState));
             try
             {
-                logger.Debug("Loading state from {0}...", stateFileName);
+                logger.Debug("StateSerializer", "Loading state from {0}...", stateFileName);
                 using (var reader = new StreamReader(stateFileName))
                 {
                     state = (SubtitleState) xs.Deserialize(reader);
                     if (state != null)
                     {
-                        logger.Debug("State loaded. {0} entries.", state.Entries.Count);
+                        logger.Debug("StateSerializer", "State loaded. {0} entries.", state.Entries.Count);
                     }
                 }
             }
             catch (Exception e)
             {
-                logger.Error("Could not load state. Exception: {0}.", e.Message);
+                logger.Error("StateSerializer", "Could not load state. Exception: {0}.", e.Message);
             }
             return state ??  new SubtitleState();
         }
@@ -52,14 +52,14 @@ namespace SubtitleFetcher
             {
                 using (var writer = new StreamWriter(stateFileName))
                 {
-                    logger.Debug(string.Format("Saving state to {0}...", stateFileName));
+                    logger.Debug("StateSerializer", string.Format("Saving state to {0}...", stateFileName));
                     xs.Serialize(writer, state);
-                    logger.Debug("State saved.");
+                    logger.Debug("StateSerializer", "State saved.");
                 }
             }
             catch (Exception e)
             {
-                logger.Error("Could not save state. Exception: {0}.", e.Message);
+                logger.Error("StateSerializer", "Could not save state. Exception: {0}.", e.Message);
             }
         }
     }

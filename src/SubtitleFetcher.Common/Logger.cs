@@ -11,30 +11,30 @@ namespace SubtitleFetcher.Common
             this.level = level;
         }
 
-        public void Log(string message, LogLevel visibility)
+        public void Log(string source, string message, LogLevel visibility)
         {
             if (visibility <= level)
-                Console.WriteLine(message);
+                Console.WriteLine("{{{0}}} - {1}", source, message);
         }
 
-        public void Error(string message, params object[] args)
+        public void Error(string source, string message, params object[] args)
         {
             Console.Error.WriteLine(message, args);
         }
 
-        public void Debug(string message, params object[] args)
+        public void Debug(string source, string message, params object[] args)
         {
-            Log(string.Format(message, args), LogLevel.Debug);
+            Log(source, string.Format(message, args), LogLevel.Debug);
         }
-        
-        public void Verbose(string message, params object[] args)
+
+        public void Verbose(string source, string message, params object[] args)
         {
-            Log(string.Format(message, args), LogLevel.Verbose);
+            Log(source, string.Format(message, args), LogLevel.Verbose);
         }
-        
-        public void Important(string message, params object[] args)
+
+        public void Important(string source, string message, params object[] args)
         {
-            Log(string.Format(message, args), LogLevel.Minimal);
+            Log(source, string.Format(message, args), LogLevel.Minimal);
         }
     }
 
