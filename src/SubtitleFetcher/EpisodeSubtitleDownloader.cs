@@ -74,6 +74,16 @@ namespace SubtitleFetcher
             return false;
         }
 
+        public bool CanHandleAtLeastOneOf(IEnumerable<string> languages)
+        {
+            var extended = downloader as IExtendedSubtitleDownloader;
+
+            if (extended == null)
+                return true;
+
+            return extended.LanguageLimitations.Intersect(languages).Any();
+        }
+
         private static string DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)
         {
             List<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);

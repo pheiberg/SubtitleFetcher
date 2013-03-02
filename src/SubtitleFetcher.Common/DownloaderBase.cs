@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher.Common
 {
-    public abstract class DownloaderBase
+    public abstract class DownloaderBase : IExtendedSubtitleDownloader
     {
         private readonly string name;
         private readonly GenericDownloader downloader;
+        private readonly ILogger logger;
 
-        protected DownloaderBase(string name, ILogger logger, IEpisodeParser parser, string episodeListUrlFormat, string subtitleRegex, string downloadUrlFormat) 
+        protected DownloaderBase(string name, ILogger logger, IEpisodeParser parser, string episodeListUrlFormat, string subtitleRegex, string downloadUrlFormat)
         {
+            this.logger = logger;
             downloader = new GenericDownloader(name, logger, parser, episodeListUrlFormat, subtitleRegex, downloadUrlFormat);
             this.name = name;
         }
@@ -38,6 +41,11 @@ namespace SubtitleFetcher.Common
 
         public List<Subtitle> SearchSubtitles(EpisodeSearchQuery query)
         {
+            if (LanguageLimitations.Any() && !query.LanguageCodes.Intersect(LanguageLimitations).Any())
+            {
+                logger.Debug(name, "The downloader only provides texts for the languages: {0}. Aborting search.", string.Join(", ", LanguageLimitations.ToArray()));
+                return new List<Subtitle>();
+            }
             return downloader.SearchSubtitles(query, GetShowId, SearchTimeout);
         }
 
@@ -56,6 +64,11 @@ namespace SubtitleFetcher.Common
         protected WebClient GetWebClient()
         {
             return downloader.CreateWebClient(SearchTimeout);
+        }
+
+        public virtual IEnumerable<string> LanguageLimitations
+        {
+            get { return Enumerable.Empty<string>(); }
         }
     }
 }

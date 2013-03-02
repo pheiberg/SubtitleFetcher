@@ -13,9 +13,9 @@ namespace UnitTests.SubtitleFetcher
         [Test]
         public void DownloadSubtitle_NoMatchingSubtitles_ShouldReturnFalse()
         {
-
             var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(Enumerable.Empty<Subtitle>());
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
@@ -31,6 +31,7 @@ namespace UnitTests.SubtitleFetcher
             var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
@@ -46,6 +47,7 @@ namespace UnitTests.SubtitleFetcher
             var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(false);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
@@ -65,6 +67,7 @@ namespace UnitTests.SubtitleFetcher
             var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
@@ -72,6 +75,28 @@ namespace UnitTests.SubtitleFetcher
 
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>.That.Matches(s => s.LanguageCode == "swe"), "Target name"))
                 .MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
+        public void DownloadSubtitle_SomeDowloadersCantHandleLanguages_OnlyCallsDownloadersThatHandlesLanguages()
+        {
+            var matches = new[] { 
+                new Subtitle("Anything", "Anything", "Anything", "eng"), 
+                new Subtitle("Anything", "Anything", "Anything", "swe"), 
+            };
+            var languages = new[] { "swe", "eng" };
+            var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
+            A.CallTo(() => fakeDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).Returns(matches);
+            A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            var incapableDownloader = A.Fake<IEpisodeSubtitleDownloader>();
+            A.CallTo(() => incapableDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(false);
+            var downloaders = new[] { fakeDownloader, incapableDownloader };
+            var service = new SubtitleDownloadService(downloaders);
+
+            bool success = service.DownloadSubtitle("Target name", new EpisodeIdentity("", 1, 1, ""), languages);
+
+            A.CallTo(() => incapableDownloader.SearchSubtitle(A<EpisodeIdentity>._, A<string[]>._)).MustNotHaveHappened();
         }
     }
 }

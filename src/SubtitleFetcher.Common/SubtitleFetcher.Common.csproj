@@ -46,6 +46,7 @@
     <Compile Include="GenericDownloader.cs" />
     <Compile Include="IDownloadCapabilitiesProvider.cs" />
     <Compile Include="IEpisodeParser.cs" />
+    <Compile Include="IExtendedSubtitleDownloader.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ITvdbSearcher.cs" />
     <Compile Include="Logger.cs" />

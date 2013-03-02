@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SubtitleDownloader.Core;
 using SubtitleFetcher.Common;
 
 namespace UndertexterSeDownloader
 {
-    public class UndertexterSeDownloader : DownloaderBase, ISubtitleDownloader, IDownloadCapabilitiesProvider
+    public class UndertexterSeDownloader : DownloaderBase
     {
         private const string GetShowsPage = "http://undertexter.se";
         private const string ShowPageUrl = "http://www.undertexter.se/?p=serier&id={0}";
@@ -54,6 +53,11 @@ namespace UndertexterSeDownloader
         public override bool CanHandleSearchQuery
         {
             get { return false; }
+        }
+
+        public override IEnumerable<string> LanguageLimitations
+        {
+            get { return new[] { "swe" }; }
         }
 
         private class Series

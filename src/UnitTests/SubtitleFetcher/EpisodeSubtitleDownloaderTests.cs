@@ -122,5 +122,40 @@ namespace UnitTests.SubtitleFetcher
 
             Assert.That(result, Is.True);
         }
+
+        [Test]
+        public void CanHandleAtLeastOneOf_NotExtended_ReturnsTrue()
+        {
+            var downloader = A.Fake<ISubtitleDownloader>();
+            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
+
+            bool result = episodeDowloader.CanHandleAtLeastOneOf(new string[0]);
+
+            Assert.That(result, Is.True);
+        }
+        
+        [Test]
+        public void CanHandleAtLeastOneOf_ExtendedCanHandle_ReturnsTrue()
+        {
+            var downloader = A.Fake<IExtendedSubtitleDownloader>();
+            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] { "swe" });
+            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
+
+            bool result = episodeDowloader.CanHandleAtLeastOneOf(new[]{ "eng", "swe" });
+
+            Assert.That(result, Is.True);
+        }
+        
+        [Test]
+        public void CanHandleAtLeastOneOf_ExtendedCanNotHandle_ReturnsFalse()
+        {
+            var downloader = A.Fake<IExtendedSubtitleDownloader>();
+            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] { "swe" }); 
+            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
+
+            bool result = episodeDowloader.CanHandleAtLeastOneOf(new [] { "eng" });
+
+            Assert.That(result, Is.False);
+        }
     }
 }

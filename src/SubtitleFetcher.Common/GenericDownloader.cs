@@ -31,12 +31,6 @@ namespace SubtitleFetcher.Common
 
         public List<Subtitle> SearchSubtitles(EpisodeSearchQuery query, Func<string, string> getShowId, int timeout)
         {
-            if (!query.LanguageCodes.Contains("swe"))
-            {
-                logger.Debug(name, "The downloader only provides swedish texts. Aborting search.");
-                return new List<Subtitle>();
-            }
-
             var id = getShowId(query.SerieTitle);
             if (string.IsNullOrEmpty(id))
             {

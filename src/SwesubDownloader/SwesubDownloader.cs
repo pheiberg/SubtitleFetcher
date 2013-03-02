@@ -1,9 +1,9 @@
-﻿using SubtitleDownloader.Core;
+﻿using System.Collections.Generic;
 using SubtitleFetcher.Common;
 
 namespace SwesubDownloader
 {
-    public class SwesubDownloader : DownloaderBase, ISubtitleDownloader, IDownloadCapabilitiesProvider
+    public class SwesubDownloader : DownloaderBase
     {
         private readonly ILogger logger;
         private readonly ITvdbSearcher tvdbSearcher;
@@ -46,6 +46,11 @@ namespace SwesubDownloader
         public override bool CanHandleSearchQuery
         {
             get { return false; }
+        }
+
+        public override IEnumerable<string> LanguageLimitations
+        {
+            get { return new []{ "swe" }; }
         }
     }
 }

@@ -24,7 +24,9 @@ namespace SubtitleFetcher
         private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
-            return subtitleDownloaders.AsParallel()
+            return subtitleDownloaders
+                .Where(s => s.CanHandleAtLeastOneOf(languageArray))
+                .AsParallel()
                 .SelectMany(downloader => downloader.SearchSubtitle(episodeIdentity, languageArray)
                     .Select(match => new DownloaderMatch(downloader, match)))
                 .OrderBy(pair => Array.FindIndex(languageArray, arrayItem => arrayItem == pair.Subtitle.LanguageCode))
