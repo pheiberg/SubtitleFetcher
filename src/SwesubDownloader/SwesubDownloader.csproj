@@ -79,9 +79,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwesubDownloader.cs" />
-    <Compile Include="WebDownloader.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SubtitleFetcher.Common\SubtitleFetcher.Common.csproj">

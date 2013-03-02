@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 
-namespace SwesubDownloader
+namespace SubtitleFetcher.Common
 {
-    internal class WebDownloader : WebClient
+    public class WebDownloader : WebClient
     {
 
         /// <summary>

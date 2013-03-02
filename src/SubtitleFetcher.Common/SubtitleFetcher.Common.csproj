@@ -31,14 +31,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SubtitleDownloader">
+      <HintPath>..\lib\SubtitleDownloader.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DownloaderBase.cs" />
     <Compile Include="EpisodeIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
+    <Compile Include="GenericDownloader.cs" />
     <Compile Include="IDownloadCapabilitiesProvider.cs" />
     <Compile Include="IEpisodeParser.cs" />
     <Compile Include="ILogger.cs" />
@@ -48,6 +53,9 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TvdbSearcher.cs" />
     <Compile Include="TvdbSeries.cs" />
+    <Compile Include="WebDownloader.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
