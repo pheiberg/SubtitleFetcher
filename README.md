@@ -10,3 +10,5 @@ subtitlefetcher.exe directoryContainingTvShows
 See 
 subtitlefetcher.exe --help  
 for more options
+
+This project begun as an attempt to refactor https://github.com/trudslev/srtDownload , but ended up as almost a complete rewrite.
