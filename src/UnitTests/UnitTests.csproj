@@ -41,9 +41,11 @@
       <HintPath>..\packages\FakeItEasy.1.8.0\lib\NET40\FakeItEasy.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\src\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SubtitleDownloader, Version=3.0.9.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="SubtitleDownloader">
+      <HintPath>..\lib\SubtitleDownloader.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>

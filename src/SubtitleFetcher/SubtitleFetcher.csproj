@@ -71,13 +71,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine">
-      <HintPath>packages\CommandLineParser.1.9.4.229-beta\lib\CommandLine.dll</HintPath>
+      <HintPath>..\lib\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="SubtitleDownloader">
-      <HintPath>external\SubtitleDownloader.dll</HintPath>
+      <HintPath>..\lib\SubtitleDownloader.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

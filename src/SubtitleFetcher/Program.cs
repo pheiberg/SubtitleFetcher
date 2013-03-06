@@ -19,12 +19,13 @@ namespace SubtitleFetcher
 
         private static Options ParseOptions(string[] args)
         {
-            var options = new Options();
-            var parser = new Parser(new ParserSettings(Console.Error));
-            if (!parser.ParseArgumentsStrict(args, options))
-            {
-                Environment.Exit(1);
-            }
+            var parser = new Parser(settings =>
+                                        {
+                                            settings.IgnoreUnknownArguments = false;
+                                            settings.HelpWriter = Console.Error;
+                                            settings.MutuallyExclusive = true;
+                                        });
+            var options = parser.ParseArguments<Options>(args, () => Environment.Exit(1));
             return options;
         }
 
