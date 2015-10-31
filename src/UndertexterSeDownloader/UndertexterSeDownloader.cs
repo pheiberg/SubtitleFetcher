@@ -26,7 +26,7 @@ namespace UndertexterSeDownloader
         {
             var shows = GetAllSeries();
             var matching = shows.SingleOrDefault(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
-            return matching == null ? null : matching.Id.ToString(CultureInfo.InvariantCulture);
+            return matching?.Id.ToString(CultureInfo.InvariantCulture);
         }
 
         private IEnumerable<Series> GetAllSeries()
@@ -40,46 +40,25 @@ namespace UndertexterSeDownloader
                    select new Series(id, name);
         }
 
-        public override bool CanHandleEpisodeSearchQuery
-        {
-            get { return true; }
-        }
+        public override bool CanHandleEpisodeSearchQuery => true;
 
-        public override bool CanHandleImdbSearchQuery
-        {
-            get { return false; }
-        }
+        public override bool CanHandleImdbSearchQuery => false;
 
-        public override bool CanHandleSearchQuery
-        {
-            get { return false; }
-        }
+        public override bool CanHandleSearchQuery => false;
 
-        public override IEnumerable<string> LanguageLimitations
-        {
-            get { return new[] { "swe" }; }
-        }
+        public override IEnumerable<string> LanguageLimitations => new[] { "swe" };
 
         private class Series
         {
-            private readonly int id;
-            private readonly string name;
-
             public Series(int id, string name)
             {
-                this.id = id;
-                this.name = name;
+                Id = id;
+                Name = name;
             }
 
-            public string Name
-            {
-                get { return name; }
-            }
+            public string Name { get; }
 
-            public int Id
-            {
-                get { return id; }
-            }
+            public int Id { get; }
         }
     }
 }

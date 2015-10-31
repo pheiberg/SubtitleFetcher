@@ -8,15 +8,15 @@ namespace SubtitleFetcher.Common
 {
     public abstract class DownloaderBase : IExtendedSubtitleDownloader
     {
-        private readonly string name;
-        private readonly GenericDownloader downloader;
-        private readonly ILogger logger;
+        private readonly string _name;
+        private readonly GenericDownloader _downloader;
+        private readonly ILogger _logger;
 
         protected DownloaderBase(string name, ILogger logger, IEpisodeParser parser, string episodeListUrlFormat, string subtitleRegex, string downloadUrlFormat)
         {
-            this.logger = logger;
-            downloader = new GenericDownloader(name, logger, parser, episodeListUrlFormat, subtitleRegex, downloadUrlFormat);
-            this.name = name;
+            _logger = logger;
+            _downloader = new GenericDownloader(name, logger, parser, episodeListUrlFormat, subtitleRegex, downloadUrlFormat);
+            _name = name;
         }
 
         public int SearchTimeout
@@ -30,39 +30,31 @@ namespace SubtitleFetcher.Common
 
         public string GetName()
         {
-            return name;
+            return _name;
         }
         
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             if (LanguageLimitations.Any() && !query.LanguageCodes.Intersect(LanguageLimitations).Any())
             {
-                logger.Debug(name, "The downloader only provides texts for the languages: {0}. Aborting search.", string.Join(", ", LanguageLimitations.ToArray()));
-                return new List<Subtitle>();
+                _logger.Debug(_name, "The downloader only provides texts for the languages: {0}. Aborting search.", string.Join(", ", LanguageLimitations.ToArray()));
+                return Enumerable.Empty<Subtitle>();
             }
-            return downloader.SearchSubtitles(query, GetShowId, SearchTimeout);
+            return _downloader.SearchSubtitles(query, GetShowId, SearchTimeout);
         }
 
         protected abstract string GetShowId(string name);
 
-        public List<FileInfo> SaveSubtitle(Subtitle subtitle)
+        public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            return downloader.SaveSubtitle(subtitle, SearchTimeout);
+            return _downloader.SaveSubtitle(subtitle, SearchTimeout);
         }
 
         protected WebClient GetWebClient()
         {
-            return downloader.CreateWebClient(SearchTimeout);
+            return _downloader.CreateWebClient(SearchTimeout);
         }
 
-        IEnumerable<FileInfo> ISubtitleDownloader.SaveSubtitle(Subtitle subtitle)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual IEnumerable<string> LanguageLimitations
-        {
-            get { return Enumerable.Empty<string>(); }
-        }
+        public virtual IEnumerable<string> LanguageLimitations => Enumerable.Empty<string>();
     }
 }
