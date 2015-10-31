@@ -110,10 +110,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SwesubDownloader\SwesubDownloader.csproj">
-      <Project>{EB68F951-2D2C-40EE-A6F7-F848DA63A84D}</Project>
-      <Name>SwesubDownloader</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SubtitleFetcher.Common\SubtitleFetcher.Common.csproj">
       <Project>{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}</Project>
       <Name>SubtitleFetcher.Common</Name>
