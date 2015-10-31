@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using SharpCompress.Reader;
-using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher.Common
 {
@@ -29,7 +28,7 @@ namespace SubtitleFetcher.Common
             this.subtitleRegex = new Regex(subtitleRegex);
         }
 
-        public List<Subtitle> SearchSubtitles(EpisodeSearchQuery query, Func<string, string> getShowId, int timeout)
+        public List<Subtitle> SearchSubtitles(SearchQuery query, Func<string, string> getShowId, int timeout)
         {
             var id = getShowId(query.SerieTitle);
             if (string.IsNullOrEmpty(id))
@@ -84,11 +83,11 @@ namespace SubtitleFetcher.Common
                 logger.Debug(name, "Unpacking {0} file", reader.ArchiveType);
                 while (reader.MoveToNextEntry())
                 {
-                    var extension = Path.GetExtension(reader.Entry.FilePath);
+                    var extension = Path.GetExtension(reader.Entry.Key);
                     if (!string.Equals(extension, ".srt", StringComparison.OrdinalIgnoreCase)) 
                         continue;
 
-                    logger.Debug(name, "Extracting file {0}", reader.Entry.FilePath);
+                    logger.Debug(name, "Extracting file {0}", reader.Entry.Key);
                     var filePath = Path.Combine(Path.GetTempPath(), subtitle.FileName + ".srt");
                     reader.WriteEntryTo(filePath);
                     return new List<FileInfo> { new FileInfo(filePath) };

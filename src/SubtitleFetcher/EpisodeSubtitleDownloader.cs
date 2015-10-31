@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SubtitleDownloader.Core;
 using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher
@@ -31,7 +30,7 @@ namespace SubtitleFetcher
         public IEnumerable<Subtitle> SearchSubtitle(EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
-            var query = new EpisodeSearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, null) { LanguageCodes = languageArray };
+            var query = new SearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode) { LanguageCodes = languageArray };
             IEnumerable<Subtitle> searchResult;
             try
             {
@@ -86,7 +85,7 @@ namespace SubtitleFetcher
 
         private static string DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)
         {
-            List<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
+            IEnumerable<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
             FileInfo subtitleFile = subtitleFiles.First();
             return subtitleFile.FullName;
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher.Common
 {
@@ -33,13 +32,8 @@ namespace SubtitleFetcher.Common
         {
             return name;
         }
-
-        public List<Subtitle> SearchSubtitles(SearchQuery query)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Subtitle> SearchSubtitles(EpisodeSearchQuery query)
+        
+        public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             if (LanguageLimitations.Any() && !query.LanguageCodes.Intersect(LanguageLimitations).Any())
             {
@@ -51,11 +45,6 @@ namespace SubtitleFetcher.Common
 
         protected abstract string GetShowId(string name);
 
-        public List<Subtitle> SearchSubtitles(ImdbSearchQuery query)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
             return downloader.SaveSubtitle(subtitle, SearchTimeout);
@@ -64,6 +53,11 @@ namespace SubtitleFetcher.Common
         protected WebClient GetWebClient()
         {
             return downloader.CreateWebClient(SearchTimeout);
+        }
+
+        IEnumerable<FileInfo> ISubtitleDownloader.SaveSubtitle(Subtitle subtitle)
+        {
+            throw new NotImplementedException();
         }
 
         public virtual IEnumerable<string> LanguageLimitations

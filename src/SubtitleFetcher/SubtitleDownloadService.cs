@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SubtitleDownloader.Core;
 using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher

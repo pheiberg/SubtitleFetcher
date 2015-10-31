@@ -4,7 +4,6 @@ using System.Linq;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
-using SubtitleDownloader.Core;
 using SubtitleFetcher.Common;
 
 namespace SubtitleFetcher

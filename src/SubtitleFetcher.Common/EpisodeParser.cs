@@ -21,8 +21,8 @@ namespace SubtitleFetcher.Common
                     continue;
 
                 var seriesName = match.Groups["SeriesName"].Value.Replace('.', ' ').Replace('_', ' ').Trim();
-                var season = Int32.Parse(match.Groups["Season"].Value);
-                var episode = Int32.Parse(match.Groups["Episode"].Value);
+                var season = int.Parse(match.Groups["Season"].Value);
+                var episode = int.Parse(match.Groups["Episode"].Value);
                 var releaseGroup = match.Groups["ReleaseGroup"].Value;
                 return new EpisodeIdentity { SeriesName = seriesName, Season = season, Episode = episode, ReleaseGroup = releaseGroup};
             }

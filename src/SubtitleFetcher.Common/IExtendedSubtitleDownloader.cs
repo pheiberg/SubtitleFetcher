@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SubtitleDownloader.Core;
 
 namespace SubtitleFetcher.Common
 {

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
-using SubtitleDownloader.Core;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
 

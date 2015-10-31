@@ -5,7 +5,6 @@ using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
-using SubtitleDownloader.Core;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
 
@@ -18,7 +17,7 @@ namespace UnitTests.SubtitleFetcher
         public void SearchSubtitle_ThrowsException_ReturnEmptyResultSet()
         {
             var downloader = A.Fake<ISubtitleDownloader>();
-            A.CallTo(() => downloader.SearchSubtitles(A<EpisodeSearchQuery>._)).Throws<Exception>();
+            A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Throws<Exception>();
             var nameParser = A.Fake<IEpisodeParser>();
             var logger = A.Fake<ILogger>();
             var fileSystem = A.Fake<IFileSystem>();
@@ -44,7 +43,7 @@ namespace UnitTests.SubtitleFetcher
                 new Subtitle(id, programName, episodeIdentity.ToString(), "dan"),
                 new Subtitle(id, programName, episodeIdentity.ToString(), "swe")
             };
-            A.CallTo(() => downloader.SearchSubtitles(A<EpisodeSearchQuery>._)).Returns(subtitles);
+            A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             var languages = new [] { "swe", "ger", "dan", "eng" };
 
             var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
@@ -64,7 +63,7 @@ namespace UnitTests.SubtitleFetcher
             };
 
             var downloader = A.Fake<ISubtitleDownloader>();
-            A.CallTo(() => downloader.SearchSubtitles(A<EpisodeSearchQuery>._)).Returns(subtitles);
+            A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             var nameParser = new EpisodeParser();
             var logger = A.Fake<ILogger>();
             var fileSystem = A.Fake<IFileSystem>();
