@@ -40,12 +40,6 @@ namespace UndertexterSeDownloader
                    select new Series(id, name);
         }
 
-        public override bool CanHandleEpisodeSearchQuery => true;
-
-        public override bool CanHandleImdbSearchQuery => false;
-
-        public override bool CanHandleSearchQuery => false;
-
         public override IEnumerable<string> LanguageLimitations => new[] { "swe" };
 
         private class Series

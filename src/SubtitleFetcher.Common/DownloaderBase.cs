@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,10 +22,6 @@ namespace SubtitleFetcher.Common
         {
             get; set;
         }
-
-        public abstract bool CanHandleEpisodeSearchQuery { get; }
-        public abstract bool CanHandleImdbSearchQuery { get; }
-        public abstract bool CanHandleSearchQuery { get; }
 
         public string GetName()
         {
