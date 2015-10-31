@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Castle.Components.DictionaryAdapter;
 using FakeItEasy;
 using NUnit.Framework;
+using Ploeh.AutoFixture.NUnit2;
 using SubtitleDownloader.Core;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
@@ -29,23 +29,22 @@ namespace UnitTests.SubtitleFetcher
             Assert.That(results, Is.Empty);
         }
         
-        [Test]
-        public void SearchSubtitle_MultipleValidSubtitlesFound_OrderedByLanguagePriority()
+        [Test, AutoFakeData]
+        public void SearchSubtitle_MultipleValidSubtitlesFound_OrderedByLanguagePriority(
+            EpisodeIdentity episodeIdentity,
+            string id,
+            string programName,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader episodeDownloader
+            )
         {
-            var episodeIdentity = new EpisodeIdentity("Show", 1, 1, "group");
-            var subtitles = new List<Subtitle>()
+            var subtitles = new List<Subtitle>
             {
-                new Subtitle("anything", "anything", episodeIdentity.ToString(), "eng"),
-                new Subtitle("anything", "anything", episodeIdentity.ToString(), "dan"),
-                new Subtitle("anything", "anything", episodeIdentity.ToString(), "swe")
+                new Subtitle(id, programName, episodeIdentity.ToString(), "eng"),
+                new Subtitle(id, programName, episodeIdentity.ToString(), "dan"),
+                new Subtitle(id, programName, episodeIdentity.ToString(), "swe")
             };
-
-            var downloader = A.Fake<ISubtitleDownloader>();
             A.CallTo(() => downloader.SearchSubtitles(A<EpisodeSearchQuery>._)).Returns(subtitles);
-            var nameParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
             var languages = new [] { "swe", "ger", "dan", "eng" };
 
             var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
