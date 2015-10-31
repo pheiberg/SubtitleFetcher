@@ -22,15 +22,12 @@ namespace SubtitleFetcher
             this.fileSystem = fileSystem;
         }
 
-        public string Name
-        {
-            get { return downloader.GetName(); }
-        }
+        public string Name => downloader.GetName();
 
         public IEnumerable<Subtitle> SearchSubtitle(EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
-            var query = new SearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode) { LanguageCodes = languageArray };
+            var query = new SearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, episodeIdentity.ReleaseGroup) { LanguageCodes = languageArray };
             IEnumerable<Subtitle> searchResult;
             try
             {
@@ -75,12 +72,9 @@ namespace SubtitleFetcher
 
         public bool CanHandleAtLeastOneOf(IEnumerable<string> languages)
         {
-            var extended = downloader as IExtendedSubtitleDownloader;
-
-            if (extended == null)
+            if (!languages.Any())
                 return true;
-
-            return extended.LanguageLimitations.Intersect(languages).Any();
+           return downloader.LanguageLimitations.Intersect(languages).Any();
         }
 
         private static string DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)

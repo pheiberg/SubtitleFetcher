@@ -6,7 +6,7 @@ using System.Net;
 
 namespace SubtitleFetcher.Common
 {
-    public abstract class DownloaderBase : IExtendedSubtitleDownloader
+    public abstract class DownloaderBase : ISubtitleDownloader
     {
         private readonly string _name;
         private readonly GenericDownloader _downloader;

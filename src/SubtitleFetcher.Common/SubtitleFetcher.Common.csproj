@@ -45,9 +45,7 @@
     <Compile Include="EpisodeIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="GenericDownloader.cs" />
-    <Compile Include="IDownloadCapabilitiesProvider.cs" />
     <Compile Include="IEpisodeParser.cs" />
-    <Compile Include="IExtendedSubtitleDownloader.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISubtitleDownloader.cs" />
     <Compile Include="ITvdbSearcher.cs" />

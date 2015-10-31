@@ -13,17 +13,16 @@ namespace UnitTests.SubtitleFetcher
     [TestFixture]
     public class EpisodeSubtitleDownloaderTests
     {
-        [Test]
-        public void SearchSubtitle_ThrowsException_ReturnEmptyResultSet()
+        [Test, AutoFakeData]
+        public void SearchSubtitle_ThrowsException_ReturnEmptyResultSet(
+            EpisodeIdentity episodeIdentity,
+            string[] languages,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader episodeDownloader)
         {
-            var downloader = A.Fake<ISubtitleDownloader>();
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Throws<Exception>();
-            var nameParser = A.Fake<IEpisodeParser>();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
-
-            var results = episodeDownloader.SearchSubtitle(new EpisodeIdentity(), new string[0]);
+            
+            var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
 
             Assert.That(results, Is.Empty);
         }
@@ -33,125 +32,127 @@ namespace UnitTests.SubtitleFetcher
             EpisodeIdentity episodeIdentity,
             string id,
             string programName,
+            string[] expectedLanguages,
+            string missingLanguage,
+            [Frozen]IEpisodeParser nameParser,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader episodeDownloader
             )
         {
-            var subtitles = new List<Subtitle>
-            {
-                new Subtitle(id, programName, episodeIdentity.ToString(), "eng"),
-                new Subtitle(id, programName, episodeIdentity.ToString(), "dan"),
-                new Subtitle(id, programName, episodeIdentity.ToString(), "swe")
-            };
+            var subtitles = expectedLanguages.Select(l => new Subtitle(id, programName, episodeIdentity.ToString(), l));
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
-            var languages = new [] { "swe", "ger", "dan", "eng" };
+            A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(episodeIdentity);
+            var languages = new [] { expectedLanguages[0], missingLanguage, expectedLanguages[1], expectedLanguages[2] };
 
             var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
 
-            Assert.That(results.Select(s => s.LanguageCode), Is.EqualTo(new [] { "swe", "dan", "eng" }));
+            Assert.That(results.Select(s => s.LanguageCode), Is.EquivalentTo(expectedLanguages));
         }
         
-        [Test]
-        public void SearchSubtitle_NonEquivalentSubtitlesFound_OnlyIncludesEquivalent()
+        [Test, AutoFakeData]
+        public void SearchSubtitle_NonEquivalentSubtitlesFound_OnlyIncludesEquivalent(
+            EpisodeIdentity episodeIdentity,
+            string id,
+            string programName,
+            string[] supportedLanguages,
+            string otherShow,
+            [Frozen]IEpisodeParser nameParser,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader episodeDownloader)
         {
-            var episodeIdentity = new EpisodeIdentity("Show", 1, 1, "group");
+            var anyOfTheSupportedLanguages = supportedLanguages.First();
             var subtitles = new List<Subtitle>
                                 {
-                new Subtitle("anything", "anything", episodeIdentity.ToString(), "eng"),
-                new Subtitle("anything", "anything", episodeIdentity.ToString(), "dan"),
-                new Subtitle("anything", "anything", "Another Show S01 E01", "swe")
+                new Subtitle(id, programName, episodeIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, programName, episodeIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, programName, otherShow, anyOfTheSupportedLanguages)
             };
-
-            var downloader = A.Fake<ISubtitleDownloader>();
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
-            var nameParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
-            var languages = new [] { "swe", "ger", "dan", "eng" };
+            
+            var results = episodeDownloader.SearchSubtitle(episodeIdentity, supportedLanguages);
 
-            var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
-
-            Assert.That(results.Select(s => s.FileName), Has.All.StringStarting("Show"));
+            Assert.That(results.Select(s => s.FileName), Has.All.StringStarting(episodeIdentity.ToString()));
         }
         
-        [Test]
-        public void TryDownloadSubtitle_DownloaderThrowsException_ReturnsFalse()
+        [Test, AutoFakeData]
+        public void TryDownloadSubtitle_DownloaderThrowsException_ReturnsFalse(
+            Subtitle subtitle,
+            string fileName,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader sut)
         {
-            var downloader = A.Fake<ISubtitleDownloader>();
             A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Throws<Exception>();
-            var nameParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
-
-            bool result = episodeDownloader.TryDownloadSubtitle(new Subtitle("anything", "anything", "anything", "swe"), "targetFileName");
+         
+            bool result = sut.TryDownloadSubtitle(subtitle, fileName);
 
             Assert.That(result, Is.False);
         }
 
-        [Test]
-        public void TryDownloadSubtitle_DownloadSuccessful_RenamesFile()
+        [Test, AutoFakeData]
+        public void TryDownloadSubtitle_DownloadSuccessful_RenamesFile(
+            Subtitle subtitle,
+            string resultFile,
+            string fileName,
+            [Frozen]ISubtitleDownloader downloader,
+            [Frozen]IFileSystem fileSystem,
+            EpisodeSubtitleDownloader sut)
         {
-            var downloader = A.Fake<ISubtitleDownloader>();
-            var fileInfo = new FileInfo("fileName");
+            var fileInfo = new FileInfo(resultFile);
             A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Returns(new List<FileInfo> { fileInfo });
-            var nameParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
 
-            episodeDownloader.TryDownloadSubtitle(new Subtitle("anything", "anything", "anything", "swe"), "targetFileName");
+            sut.TryDownloadSubtitle(subtitle, fileName);
 
-            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, "targetFileName.swe.srt")).MustHaveHappened();
+            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.LanguageCode + ".srt")).MustHaveHappened();
         }
         
-        [Test]
-        public void TryDownloadSubtitle_DownloadSuccessful_ReturnsTrue()
+        [Test, AutoFakeData]
+        public void TryDownloadSubtitle_DownloadSuccessful_ReturnsTrue(
+            Subtitle subtitle,
+            string resultFile,
+            string fileName,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader sut)
         {
-            var downloader = A.Fake<ISubtitleDownloader>();
-            A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Returns(new List<FileInfo>{new FileInfo("anything")});
-            var nameParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var episodeDownloader = new EpisodeSubtitleDownloader(downloader, nameParser, logger, fileSystem);
+            A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Returns(new [] { new FileInfo(resultFile) });
             
-            var result = episodeDownloader.TryDownloadSubtitle(new Subtitle("anything", "anything", "anything", "swe"), "targetFileName");
+            var result = sut.TryDownloadSubtitle(subtitle, fileName);
 
             Assert.That(result, Is.True);
         }
 
-        [Test]
-        public void CanHandleAtLeastOneOf_NotExtended_ReturnsTrue()
+        [Test, AutoFakeData]
+        public void CanHandleAtLeastOneOf_NoLanguages_ReturnsTrue(
+            EpisodeSubtitleDownloader sut)
         {
-            var downloader = A.Fake<ISubtitleDownloader>();
-            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
-
-            bool result = episodeDowloader.CanHandleAtLeastOneOf(new string[0]);
-
-            Assert.That(result, Is.True);
-        }
-        
-        [Test]
-        public void CanHandleAtLeastOneOf_ExtendedCanHandle_ReturnsTrue()
-        {
-            var downloader = A.Fake<IExtendedSubtitleDownloader>();
-            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] { "swe" });
-            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
-
-            bool result = episodeDowloader.CanHandleAtLeastOneOf(new[]{ "eng", "swe" });
+            bool result = sut.CanHandleAtLeastOneOf(new string[0]);
 
             Assert.That(result, Is.True);
         }
         
-        [Test]
-        public void CanHandleAtLeastOneOf_ExtendedCanNotHandle_ReturnsFalse()
+        [Test, AutoFakeData]
+        public void CanHandleAtLeastOneOf_HasOneOfTheLanguages_ReturnsTrue(
+            string handledLanguage,
+            string unhandledLanguage,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader sut)
         {
-            var downloader = A.Fake<IExtendedSubtitleDownloader>();
-            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] { "swe" }); 
-            var episodeDowloader = new EpisodeSubtitleDownloader(downloader, null, null, null);
+            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] {handledLanguage});
 
-            bool result = episodeDowloader.CanHandleAtLeastOneOf(new [] { "eng" });
+            bool result = sut.CanHandleAtLeastOneOf(new[]{ unhandledLanguage, handledLanguage });
+
+            Assert.That(result, Is.True);
+        }
+        
+        [Test, AutoFakeData]
+        public void CanHandleAtLeastOneOf_DoesNotHaveLanguage_ReturnsFalse(
+            string[] downloaderLanguages,
+            string[] otherLanguages,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader sut)
+        {
+            A.CallTo(() => downloader.LanguageLimitations).Returns(downloaderLanguages); 
+            
+            bool result = sut.CanHandleAtLeastOneOf(otherLanguages);
 
             Assert.That(result, Is.False);
         }
