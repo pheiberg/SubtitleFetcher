@@ -7,10 +7,6 @@ namespace SubtitleFetcher
 {
     public class SubtitleDownloaderCapabilitiesProvider
     {
-        private static readonly IEnumerable<string> EpisodeDownloaders = new[] { "Bierdopje", "OpenSubtitles", "Podnapisi", "S4U.se", "Sublight", "Subscene", "Swesub", "TvSubtitles" };
-        private static readonly IEnumerable<string> MovieDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "S4U.se" };
-        private static readonly IEnumerable<string> GeneralDownloaders = new[] { "MovieSubtitles", "OpenSubtitles", "Podnapisi", "S4U.se", "Sublight", "Subscene" };
-
         public void ListAvailableLanguages()
         {
             Console.WriteLine("The following languages are possible:");
