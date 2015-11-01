@@ -18,7 +18,7 @@ namespace PortedSubtitleDownloaders.Subscene
 
         public IEnumerable<SubtitleFetcher.Common.Subtitle> SearchSubtitles(SubtitleFetcher.Common.SearchQuery query)
         {
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode);
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = query.LanguageCodes };
             var results = _downloaderImpl.SearchSubtitles(episodeSearchQuery);
             return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.ProgramName, r.FileName, r.LanguageCode));
         }

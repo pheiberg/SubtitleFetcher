@@ -26,8 +26,7 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode);
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = query.LanguageCodes };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
             return results.Select(r => new Subtitle(r.Id, r.ProgramName, r.FileName, r.LanguageCode));
         }
