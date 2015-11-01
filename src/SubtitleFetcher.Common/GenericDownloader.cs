@@ -28,13 +28,13 @@ namespace SubtitleFetcher.Common
             this.subtitleRegex = new Regex(subtitleRegex);
         }
 
-        public List<Subtitle> SearchSubtitles(SearchQuery query, Func<string, string> getShowId, int timeout)
+        public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query, Func<string, string> getShowId, int timeout)
         {
             var id = getShowId(query.SerieTitle);
             if (string.IsNullOrEmpty(id))
             {
                 logger.Debug(name, "Could not find show id");
-                return new List<Subtitle>();
+                return Enumerable.Empty<Subtitle>();
             }
 
             var subtitles = ListSeriesSubtitles(id, timeout);
@@ -42,7 +42,7 @@ namespace SubtitleFetcher.Common
                           let identity = parser.ParseEpisodeInfo(title.FileName)
                           where identity.Season == query.Season && identity.Episode == query.Episode
                           select title;
-            return matches.ToList();
+            return matches;
         }
 
         public IEnumerable<Subtitle> ListSeriesSubtitles(string id, int timeout)
