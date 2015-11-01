@@ -15,7 +15,7 @@ namespace PortedSubtitleDownloaders.S4U
         
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.ProgramName, subtitle.FileName, subtitle.LanguageCode);
+            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.LanguageCode);
             return _downloader.SaveSubtitle(legacySubtitle);
         }
 
@@ -28,7 +28,7 @@ namespace PortedSubtitleDownloaders.S4U
         {
             var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = query.LanguageCodes };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new Subtitle(r.Id, r.ProgramName, r.FileName, r.LanguageCode));
+            return results.Select(r => new Subtitle(r.Id, r.Title, r.FileName, r.LanguageCode));
         }
 
         public IEnumerable<string> LanguageLimitations => new[] { "swe" };

@@ -20,12 +20,12 @@ namespace PortedSubtitleDownloaders.Subscene
         {
             var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = query.LanguageCodes };
             var results = _downloaderImpl.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.ProgramName, r.FileName, r.LanguageCode));
+            return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.Title, r.FileName, r.LanguageCode));
         }
 
         public IEnumerable<FileInfo> SaveSubtitle(SubtitleFetcher.Common.Subtitle subtitle)
         {
-            var localSubtitle = new Subtitle(subtitle.Id, subtitle.ProgramName, subtitle.FileName, subtitle.LanguageCode);
+            var localSubtitle = new Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.LanguageCode);
             return _downloaderImpl.SaveSubtitle(localSubtitle);
         }
 

@@ -6,13 +6,13 @@ namespace PortedSubtitleDownloaders.Legacy
     {
         public string Id { get; }
 
-        public string ProgramName { get; private set; }
+        public string Title { get; private set; }
 
         public string FileName { get; private set; }
 
         public string LanguageCode { get; private set; }
 
-        public Subtitle(string id, string programName, string fileName, string languageCode)
+        public Subtitle(string id, string title, string fileName, string languageCode)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("ID cannot be null or empty!");
@@ -25,7 +25,7 @@ namespace PortedSubtitleDownloaders.Legacy
             if (!Languages.IsSupportedLanguageCode(languageCode))
                 throw new ArgumentException("Language code '" + languageCode + "' is not supported!");
             Id = id;
-            ProgramName = programName;
+            Title = title;
             FileName = fileName;
             LanguageCode = languageCode;
         }

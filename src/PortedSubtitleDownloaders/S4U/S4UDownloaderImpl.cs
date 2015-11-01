@@ -57,7 +57,7 @@ namespace PortedSubtitleDownloaders.S4U
         private static Subtitle CreateSubtitle(XmlNode xmlNode)
         {
             string id = null;
-            string programName = null;
+            string title = null;
             string fileName = null;
 
             foreach (XmlNode node in xmlNode.ChildNodes)
@@ -68,14 +68,14 @@ namespace PortedSubtitleDownloaders.S4U
                 }
                 if (node.LocalName.Equals("ep_title"))
                 {
-                    programName = node.InnerText;
+                    title = node.InnerText;
                 }
                 if (node.LocalName.Equals("file_name"))
                 {
                     fileName = node.InnerText;
                 }
             }
-            var subtitle = new Subtitle(id, programName, fileName, SwedishLanguageCode);
+            var subtitle = new Subtitle(id, title, fileName, SwedishLanguageCode);
             return subtitle;
         }
 
