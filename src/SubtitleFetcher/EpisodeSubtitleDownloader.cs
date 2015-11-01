@@ -72,7 +72,7 @@ namespace SubtitleFetcher
 
         public bool CanHandleAtLeastOneOf(IEnumerable<string> languages)
         {
-            if (!languages.Any())
+            if (!languages.Any() || !downloader.LanguageLimitations.Any())
                 return true;
            return downloader.LanguageLimitations.Intersect(languages).Any();
         }

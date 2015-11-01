@@ -156,5 +156,18 @@ namespace UnitTests.SubtitleFetcher
 
             Assert.That(result, Is.False);
         }
+
+        [Test, AutoFakeData]
+        public void CanHandleAtLeastOneOf_DoesNotHaveLanguageLimitations_ReturnsTrue(
+            string[] anyLanguages,
+            [Frozen]ISubtitleDownloader downloader,
+            EpisodeSubtitleDownloader sut)
+        {
+            A.CallTo(() => downloader.LanguageLimitations).Returns(new string[0]);
+
+            bool result = sut.CanHandleAtLeastOneOf(anyLanguages);
+
+            Assert.That(result, Is.True);
+        }
     }
 }
