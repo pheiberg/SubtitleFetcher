@@ -66,7 +66,7 @@ namespace SubtitleFetcher.Common
             }
             var matches = subtitleRegex.Matches(seriesList);
             var subtitles = (from Match match in matches
-                             select new Subtitle(match.Groups["id"].Value, "Swesub", match.Groups["release"].Value, "swe")).ToList();
+                             select new Subtitle(match.Groups["id"].Value, name, match.Groups["release"].Value, "swe")).ToList();
             cachedSubtitleLists[id] = subtitles;
             return subtitles;
         }

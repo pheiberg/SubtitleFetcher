@@ -16,6 +16,6 @@ namespace SubtitleFetcher.Common
 
         public string FileName { get; set; }
         public string LanguageCode { get; set; }
-        public object Id { get; set; }
+        public string Id { get; set; }
     }
 }

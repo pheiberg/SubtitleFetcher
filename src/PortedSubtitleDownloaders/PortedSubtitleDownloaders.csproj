@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7B1F9024-08ED-42E3-9D53-48F534347AE2}</ProjectGuid>
+    <ProjectGuid>{1F92747B-92BF-4EF4-AB50-9AE5C7763B6C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UndertexterSeDownloader</RootNamespace>
-    <AssemblyName>UndertexterSeDownloader</AssemblyName>
+    <RootNamespace>PortedSubtitleDownloaders</RootNamespace>
+    <AssemblyName>PortedSubtitleDownloaders</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -33,27 +32,44 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
+      <HintPath>..\packages\sharpcompress.0.11.1\lib\net40\SharpCompress.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UndertexterSeDownloader.cs" />
+    <Compile Include="Legacy\EpisodeSearchQuery.cs" />
+    <Compile Include="Legacy\FileUtils.cs" />
+    <Compile Include="Legacy\Languages.cs" />
+    <Compile Include="Legacy\SearchQuery.cs" />
+    <Compile Include="Legacy\SubLang.cs" />
+    <Compile Include="Subscene\SubsceneDownloader.cs" />
+    <Compile Include="Subscene\SubsceneDownloaderImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Legacy\Subtitle.cs" />
+    <Compile Include="Legacy\SubtitleSearchQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SubtitleFetcher.Common\SubtitleFetcher.Common.csproj">
       <Project>{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}</Project>
       <Name>SubtitleFetcher.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
