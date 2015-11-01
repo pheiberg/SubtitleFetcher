@@ -130,7 +130,7 @@ namespace PortedSubtitleDownloaders.Subscene
             return list1;
         }
         
-        public List<FileInfo> SaveSubtitle(Subtitle subtitle)
+        public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
             string archiveFile = DownloadSubtitle(subtitle.Id);
             if (archiveFile != null)

@@ -30,7 +30,7 @@ namespace PortedSubtitleDownloaders.Legacy
             return $"{directoryName}{Path.DirectorySeparatorChar}{withoutExtension}.{languageName}{extension}";
         }
 
-        public static List<FileInfo> ExtractFilesFromZipOrRarFile(string archiveFile)
+        public static IEnumerable<FileInfo> ExtractFilesFromZipOrRarFile(string archiveFile)
         {
             string str = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(str);

@@ -56,6 +56,8 @@
     <Compile Include="Legacy\Languages.cs" />
     <Compile Include="Legacy\SearchQuery.cs" />
     <Compile Include="Legacy\SubLang.cs" />
+    <Compile Include="S4U\S4UDownloader.cs" />
+    <Compile Include="S4U\S4UDownloaderImpl.cs" />
     <Compile Include="Subscene\SubsceneDownloader.cs" />
     <Compile Include="Subscene\SubsceneDownloaderImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
