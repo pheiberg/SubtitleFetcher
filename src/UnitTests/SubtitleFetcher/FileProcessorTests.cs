@@ -1,5 +1,8 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
+using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
 
@@ -8,75 +11,149 @@ namespace UnitTests.SubtitleFetcher
     [TestFixture]
     public class FileProcessorTests
     {
-        [Test]
-        public void ProcessFile_CannotParseName_ReturnsTrue()
+        [Test, AutoFakeData]
+        public void ProcessFile_CannotParseName_ReturnsTrue(
+            string fileName,
+            string[] ignored,
+            EpisodeIdentity episode,
+            [Frozen] IEpisodeParser episodeParser,
+            FileProcessor sut)
         {
-            var episodeParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var processor = new FileProcessor(episodeParser, logger, null, null, null);
+            var emptyEpisode = new EpisodeIdentity();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(emptyEpisode);
 
-            bool result = processor.ProcessFile("Unparsable.avi", new string[0]);
+            bool result = sut.ProcessFile(fileName, ignored);
 
             Assert.That(result, Is.True);
         }
 
-        [Test]
-        public void ProcessFile_ShowIsIgnored_ReturnsTrue()
+        [Test, AutoFakeData]
+        public void ProcessFile_CannotParseName_IsNotDownloaded(
+            string fileName,
+            string[] ignored,
+            EpisodeIdentity episode,
+            [Frozen] IEpisodeParser episodeParser,
+            [Frozen] ISubtitleDownloadService subtitleService,
+            FileProcessor sut)
         {
-            IEpisodeParser episodeParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var processor = new FileProcessor(episodeParser, logger, null, null, null);
+            var emptyEpisode = new EpisodeIdentity();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(emptyEpisode);
 
-            bool result = processor.ProcessFile("ignored S01E01-group.avi", new[] { "ignored" });
+            sut.ProcessFile(fileName, ignored);
+
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+        }
+
+        [Test, AutoFakeData]
+        public void ProcessFile_ShowIsIgnored_ReturnsTrue(
+            string fileName,
+            [Frozen]string[] ignored,
+            EpisodeIdentity episode,
+            [Frozen] IEpisodeParser episodeParser,
+            FileProcessor sut)
+        {
+            episode.SeriesName = ignored.First();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(episode);
+
+            bool result = sut.ProcessFile(fileName, ignored);
 
             Assert.That(result, Is.True);
         }
 
-        [Test]
-        public void ProcessFile_DownloadsSuccesfully_ReturnsTrue()
+        [Test, AutoFakeData]
+        public void ProcessFile_ShowIsIgnored_DoesNotDownload(
+            string fileName,
+            string[] ignored,
+            EpisodeIdentity episode,
+            [Frozen] IEpisodeParser episodeParser,
+            [Frozen] ISubtitleDownloadService subtitleService,
+            FileProcessor sut)
         {
-            IEpisodeParser episodeParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var subtitleService = A.Fake<ISubtitleDownloadService>();
-            var fileSystem = A.Fake<IFileSystem>();
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, new EpisodeIdentity("show", 1, 1, "group"), A<string[]>._)).Returns(true);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, new LanguageSettings(new string[0]));
+            episode.SeriesName = ignored.First();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(episode);
 
-            bool result = processor.ProcessFile("show S01E01-group.avi", new string[0]);
+            sut.ProcessFile(fileName, ignored);
+
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+        }
+
+        [Test, AutoFakeData]
+        public void ProcessFile_DownloadsSuccesfully_ReturnsTrue(
+            string fileName,
+            string[] ignored,
+            EpisodeIdentity episode,
+            [Frozen] IEpisodeParser episodeParser,
+            [Frozen] ISubtitleDownloadService subtitleService,
+            FileProcessor sut)
+        {
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._))
+                .Returns(true);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+
+            var result = sut.ProcessFile(fileName, ignored);
 
             Assert.That(result, Is.True);
         }
 
-        [Test]
-        public void ProcessFile_NotDownloaded_ReturnsFalse()
+        [Test, AutoFakeData]
+        public void ProcessFile_NotDownloaded_ReturnsFalse(
+            string fileName,
+            string[] ignored,            
+            EpisodeIdentity episode,
+            [Frozen]IEpisodeParser episodeParser,
+            [Frozen]ISubtitleDownloadService subtitleService,
+            FileProcessor sut)
         {
-            IEpisodeParser episodeParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var fileSystem = A.Fake<IFileSystem>();
-            var subtitleService = A.Fake<ISubtitleDownloadService>();
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<string[]>._)).Returns(false);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, new LanguageSettings(new string[0]));
-
-            bool result = processor.ProcessFile("show S01E01-group.avi", new string[0]);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).Returns(false);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            
+            var result = sut.ProcessFile(fileName, ignored);
 
             Assert.That(result, Is.False);
         }
 
-        [Test]
-        public void ProcessFile_SomeLanguagesAlreadyDownloaded_TriesToDownloadOnlyNotDownloaded()
+        [Test, AutoFakeData]
+        public void ProcessFile_SomeLanguagesAlreadyDownloaded_TriesToDownloadOnlyNotDownloaded(
+            [Frozen]string[] languages,
+            string fileName,
+            EpisodeIdentity episode,
+            [Frozen]IEpisodeParser episodeParser,
+            [Frozen]ISubtitleDownloadService subtitleService,
+            [Frozen]IFileSystem fileSystem,
+            FileProcessor sut)
         {
-            var languagesToFetch = new[] { "swe", "dan", "nor", "eng" };
-            var downloadedLanguages = new[] { "dan", "eng" };
-            IEpisodeParser episodeParser = new EpisodeParser();
-            var logger = A.Fake<ILogger>();
-            var subtitleService = A.Fake<ISubtitleDownloadService>();
-            var fileSystem = A.Fake<IFileSystem>();
-            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languagesToFetch)).Returns(downloadedLanguages);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, new LanguageSettings(languagesToFetch));
+            var alreadyDownloadedLanguages = languages.Skip(1);
+            var expected = languages.Take(1);
+            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages))
+                .Returns(alreadyDownloadedLanguages);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
 
-            bool result = processor.ProcessFile("show S01E01-group.avi", new string[0]);
+            sut.ProcessFile(fileName, new string[0]);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<string[]>.That.IsSameSequenceAs(new[] { "swe", "nor" }))).MustHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<string[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
+        }
+
+        [Test, AutoFakeData]
+        public void ProcessFile_AllLanguagesAlreadyDownloaded_ReturnsTrue(
+            string[] languages,
+            string fileName,
+            EpisodeIdentity episode,
+            ILogger logger,
+            IEpisodeParser episodeParser,
+            ISubtitleDownloadService subtitleService,
+            [Frozen]IFileSystem fileSystem,
+            FileProcessor sut)
+        {
+            var settings = new LanguageSettings(languages);
+            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages)).Returns(languages);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._))
+                .Returns(false);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings);
+
+            bool result = processor.ProcessFile(fileName, new string[0]);
+
+            Assert.That(result, Is.True);
         }
     }
 }

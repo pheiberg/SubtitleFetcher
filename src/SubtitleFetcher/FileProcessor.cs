@@ -28,22 +28,31 @@ namespace SubtitleFetcher
             var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
             {
-                logger.Error("File format", "Can't parse episode info from {0}. Not on a known format.", fileName);
+                logger.Error("File format", $"Can't parse episode info from {fileName}. Not on a known format.");
                 return true;
             }
 
             if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase)))
             {
-                logger.Verbose("FileProcessor", "Ignoring {0}", fileName);
+                logger.Verbose("FileProcessor", $"Ignoring {fileName}");
                 return true;
             }
 
-            logger.Important("FileProcessor", "Processing file {0}...", fileName);
+            logger.Important("FileProcessor", $"Processing file {fileName}...");
 
             var dowloadedLanguages = fileSystem.GetDowloadedSubtitleLanguages(fileName, languageSettings.Languages);
-            var languagesToDowload = languageSettings.Languages.Except(dowloadedLanguages).ToArray();
-            logger.Debug("FileProcessor", "Looking for subtitles in: {0}", string.Join(", ", languagesToDowload));
-            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDowload);
+            var languagesToDownload = languageSettings.Languages.Except(dowloadedLanguages).ToArray();
+
+            if (!languagesToDownload.Any())
+            {
+                logger.Verbose("FileProcessor", $"All languages already downloaded. Skipping {fileName}.");
+                return true;
+            }
+
+            var languageList = string.Join(", ", languagesToDownload);
+            logger.Debug("FileProcessor", $"Looking for subtitles in: {languageList}");
+
+            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDownload);
             return isSuccessful;
         }
     }
