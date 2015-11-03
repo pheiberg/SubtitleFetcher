@@ -6,10 +6,10 @@ namespace SubtitleFetcher.Common
     public class EpisodeParser : IEpisodeParser
     {
         readonly string[] _patterns = {
-                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(-(?<ReleaseGroup>\w+))?$",
-                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(\[(?<ReleaseGroup>\w+)\])?$",
-                                             @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])$",
-                                             @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$"
+                                             @"^(?<SeriesName>[\w\s\._\-]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(-(?<ReleaseGroup>\w+))?$",
+                                             @"^(?<SeriesName>[\w\s\._\-]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(\[(?<ReleaseGroup>\w+)\])?$",
+                                             @"^(?<SeriesName>[\w\s\._\-]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])$",
+                                             @"^(?<SeriesName>[\w\s\._\-]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$"
                                          };
         public EpisodeIdentity ParseEpisodeInfo(string fileName)
         {

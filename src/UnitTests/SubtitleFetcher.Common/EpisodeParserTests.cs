@@ -18,7 +18,7 @@ namespace UnitTests.SubtitleFetcher.Common
         [TestCase("Glee S03E14 Some title", "Glee", 3, 14, 14, "")]
         [TestCase("Glee 3X14 Some title", "Glee", 3, 14, 14, "")]
         [TestCase("Mythbusters S05E04 Speed Cameras WS DSR XviD-2SD", "Mythbusters", 5, 4, 4, "2SD")]
-        [TestCase("Da.Vincis.Demons.S03E07.HDTV.x264-KILLERS", "Da Vincis Demons", 3, 7, 7, "KILLERS")]
+        [TestCase("be.cool.scooby-doo.s01e01.mystery.101.hdtv.x264-w4f", "be cool scooby-doo", 1, 1, 1, "w4f")]
         [TestCase("MultiEp.S01E01-E03.HDTV.x264-Group", "MultiEp", 1, 1, 3, "Group")]
         public void Parse_ParsableName_PopulatedEpisodeInfo(string name, string seriesName, int season, int episode, int endEpisodeNumber, string releaseGroup)
         {
