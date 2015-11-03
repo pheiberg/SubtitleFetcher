@@ -25,35 +25,58 @@ namespace SubtitleFetcher
 
         public bool ProcessFile(string fileName, IEnumerable<string> ignoredShows)
         {
-            var episodeIdentity = episodeParser.ParseEpisodeInfo(Path.GetFileNameWithoutExtension(fileName));
+            var episodeIdentity = ParseReleaseIdentity(fileName);
             if (string.IsNullOrEmpty(episodeIdentity.SeriesName))
             {
                 logger.Error("File format", $"Can't parse episode info from {fileName}. Not on a known format.");
                 return true;
             }
 
-            if (ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase)))
+            if (CheckIfShowIsIgnored(ignoredShows, episodeIdentity))
             {
                 logger.Verbose("FileProcessor", $"Ignoring {fileName}");
                 return true;
             }
 
-            logger.Important("FileProcessor", $"Processing file {fileName}...");
-
-            var dowloadedLanguages = fileSystem.GetDowloadedSubtitleLanguages(fileName, languageSettings.Languages);
-            var languagesToDownload = languageSettings.Languages.Except(dowloadedLanguages).ToArray();
-
+            var languagesToDownload = DetermineLanguagesToDownload(fileName);
             if (!languagesToDownload.Any())
             {
                 logger.Verbose("FileProcessor", $"All languages already downloaded. Skipping {fileName}.");
                 return true;
             }
-
+            
             var languageList = string.Join(", ", languagesToDownload);
+            logger.Important("FileProcessor", $"Processing file {fileName}...");
             logger.Debug("FileProcessor", $"Looking for subtitles in: {languageList}");
 
-            var isSuccessful = subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDownload);
-            return isSuccessful;
+            return DownloadSubtitle(fileName, episodeIdentity, languagesToDownload);
+        }
+
+        private string[] DetermineLanguagesToDownload(string fileName)
+        {
+            var dowloadedLanguages = GetAlreadyDownloadedLanguages(fileName);
+            return languageSettings.Languages.Except(dowloadedLanguages).ToArray();
+        }
+
+        private EpisodeIdentity ParseReleaseIdentity(string fileName)
+        {
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            return episodeParser.ParseEpisodeInfo(fileNameWithoutExtension);
+        }
+
+        private static bool CheckIfShowIsIgnored(IEnumerable<string> ignoredShows, EpisodeIdentity episodeIdentity)
+        {
+            return ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        private IEnumerable<string> GetAlreadyDownloadedLanguages(string fileName)
+        {
+            return fileSystem.GetDowloadedSubtitleLanguages(fileName, languageSettings.Languages);
+        }
+
+        private bool DownloadSubtitle(string fileName, EpisodeIdentity episodeIdentity, string[] languagesToDownload)
+        {
+            return subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDownload);
         }
     }
 }
