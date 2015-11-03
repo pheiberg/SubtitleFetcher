@@ -58,15 +58,15 @@ namespace SubtitleFetcher
             return languageSettings.Languages.Except(dowloadedLanguages).ToArray();
         }
 
-        private EpisodeIdentity ParseReleaseIdentity(string fileName)
+        private TvReleaseIdentity ParseReleaseIdentity(string fileName)
         {
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             return episodeParser.ParseEpisodeInfo(fileNameWithoutExtension);
         }
 
-        private static bool CheckIfShowIsIgnored(IEnumerable<string> ignoredShows, EpisodeIdentity episodeIdentity)
+        private static bool CheckIfShowIsIgnored(IEnumerable<string> ignoredShows, TvReleaseIdentity tvReleaseIdentity)
         {
-            return ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), episodeIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase));
+            return ignoredShows.Any(s => string.Equals(s.RemoveNonAlphaNumericChars(), tvReleaseIdentity.SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase));
         }
 
         private IEnumerable<string> GetAlreadyDownloadedLanguages(string fileName)
@@ -74,9 +74,9 @@ namespace SubtitleFetcher
             return fileSystem.GetDowloadedSubtitleLanguages(fileName, languageSettings.Languages);
         }
 
-        private bool DownloadSubtitle(string fileName, EpisodeIdentity episodeIdentity, string[] languagesToDownload)
+        private bool DownloadSubtitle(string fileName, TvReleaseIdentity tvReleaseIdentity, string[] languagesToDownload)
         {
-            return subtitleService.DownloadSubtitle(fileName , episodeIdentity, languagesToDownload);
+            return subtitleService.DownloadSubtitle(fileName , tvReleaseIdentity, languagesToDownload);
         }
     }
 }

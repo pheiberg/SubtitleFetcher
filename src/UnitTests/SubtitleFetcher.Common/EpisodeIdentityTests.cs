@@ -14,8 +14,8 @@ namespace UnitTests.SubtitleFetcher.Common
         [TestCase("Mister Selfridge", "Mr Selfridge", false)]
         public void IsEquivalent(string name1, string name2, bool expected)
         {
-            var id1 = new EpisodeIdentity { SeriesName = name1 };
-            var id2 = new EpisodeIdentity { SeriesName = name2 };
+            var id1 = new TvReleaseIdentity { SeriesName = name1 };
+            var id2 = new TvReleaseIdentity { SeriesName = name2 };
             Assert.That(id1.IsEquivalent(id2), Is.EqualTo(expected));
         }
     }

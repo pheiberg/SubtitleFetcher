@@ -2,6 +2,6 @@ namespace SubtitleFetcher.Common
 {
     public interface IEpisodeParser
     {
-        EpisodeIdentity ParseEpisodeInfo(string fileName);
+        TvReleaseIdentity ParseEpisodeInfo(string fileName);
     }
 }

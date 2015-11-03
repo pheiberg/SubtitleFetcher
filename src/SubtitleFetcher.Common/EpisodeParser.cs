@@ -11,7 +11,7 @@ namespace SubtitleFetcher.Common
                                              @"^(?<SeriesName>[\w\s\._\-]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])$",
                                              @"^(?<SeriesName>[\w\s\._\-]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$"
                                          };
-        public EpisodeIdentity ParseEpisodeInfo(string fileName)
+        public TvReleaseIdentity ParseEpisodeInfo(string fileName)
         {
             foreach (var pattern in _patterns)
             {
@@ -25,7 +25,7 @@ namespace SubtitleFetcher.Common
                 var endEpisodeString = match.Groups["EndEpisode"].Value;
                 var endEpisode = !string.IsNullOrEmpty(endEpisodeString) ? int.Parse(endEpisodeString) : episode;
                 var releaseGroup = match.Groups["ReleaseGroup"].Value;
-                return new EpisodeIdentity
+                return new TvReleaseIdentity
                 {
                     SeriesName = seriesName,
                     Season = season,
@@ -34,7 +34,7 @@ namespace SubtitleFetcher.Common
                     ReleaseGroup = releaseGroup
                 };
             }
-            return new EpisodeIdentity();
+            return new TvReleaseIdentity();
         }
     }
 }

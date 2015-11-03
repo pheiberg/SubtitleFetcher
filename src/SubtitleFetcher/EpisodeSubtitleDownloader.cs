@@ -24,10 +24,10 @@ namespace SubtitleFetcher
 
         public string Name => downloader.GetName();
 
-        public IEnumerable<Subtitle> SearchSubtitle(EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
+        public IEnumerable<Subtitle> SearchSubtitle(TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
-            var query = new SearchQuery(episodeIdentity.SeriesName, episodeIdentity.Season, episodeIdentity.Episode, episodeIdentity.ReleaseGroup) { LanguageCodes = languageArray };
+            var query = new SearchQuery(tvReleaseIdentity.SeriesName, tvReleaseIdentity.Season, tvReleaseIdentity.Episode, tvReleaseIdentity.ReleaseGroup) { LanguageCodes = languageArray };
             IEnumerable<Subtitle> searchResult;
             try
             {
@@ -46,7 +46,7 @@ namespace SubtitleFetcher
             var matchingSubtitles = from subtitle in searchResult
                                     let subtitleInfo = nameParser.ParseEpisodeInfo(subtitle.FileName)
                                     let langPriority = Array.FindIndex(languageArray, l => l.Equals(subtitle.LanguageCode))
-                                    where subtitleInfo.IsEquivalent(episodeIdentity)
+                                    where subtitleInfo.IsEquivalent(tvReleaseIdentity)
                                     orderby langPriority, subtitleInfo.SeriesName
                                     select subtitle;
             return matchingSubtitles;

@@ -15,11 +15,11 @@ namespace UnitTests.SubtitleFetcher
         public void ProcessFile_CannotParseName_ReturnsTrue(
             string fileName,
             string[] ignored,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen] IEpisodeParser episodeParser,
             FileProcessor sut)
         {
-            var emptyEpisode = new EpisodeIdentity();
+            var emptyEpisode = new TvReleaseIdentity();
             A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(emptyEpisode);
 
             bool result = sut.ProcessFile(fileName, ignored);
@@ -31,29 +31,29 @@ namespace UnitTests.SubtitleFetcher
         public void ProcessFile_CannotParseName_IsNotDownloaded(
             string fileName,
             string[] ignored,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen] IEpisodeParser episodeParser,
             [Frozen] ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            var emptyEpisode = new EpisodeIdentity();
+            var emptyEpisode = new TvReleaseIdentity();
             A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(emptyEpisode);
 
             sut.ProcessFile(fileName, ignored);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
         }
 
         [Test, AutoFakeData]
         public void ProcessFile_ShowIsIgnored_ReturnsTrue(
             string fileName,
             [Frozen]string[] ignored,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen] IEpisodeParser episodeParser,
             FileProcessor sut)
         {
-            episode.SeriesName = ignored.First();
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(episode);
+            tvRelease.SeriesName = ignored.First();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(tvRelease);
 
             bool result = sut.ProcessFile(fileName, ignored);
 
@@ -64,31 +64,31 @@ namespace UnitTests.SubtitleFetcher
         public void ProcessFile_ShowIsIgnored_DoesNotDownload(
             string fileName,
             string[] ignored,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen] IEpisodeParser episodeParser,
             [Frozen] ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            episode.SeriesName = ignored.First();
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(episode);
+            tvRelease.SeriesName = ignored.First();
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(fileName)).Returns(tvRelease);
 
             sut.ProcessFile(fileName, ignored);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
         }
 
         [Test, AutoFakeData]
         public void ProcessFile_DownloadsSuccesfully_ReturnsTrue(
             string fileName,
             string[] ignored,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen] IEpisodeParser episodeParser,
             [Frozen] ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._))
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._))
                 .Returns(true);
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
 
             var result = sut.ProcessFile(fileName, ignored);
 
@@ -99,13 +99,13 @@ namespace UnitTests.SubtitleFetcher
         public void ProcessFile_NotDownloaded_ReturnsFalse(
             string fileName,
             string[] ignored,            
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen]IEpisodeParser episodeParser,
             [Frozen]ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._)).Returns(false);
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).Returns(false);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
             
             var result = sut.ProcessFile(fileName, ignored);
 
@@ -116,7 +116,7 @@ namespace UnitTests.SubtitleFetcher
         public void ProcessFile_SomeLanguagesAlreadyDownloaded_TriesToDownloadOnlyNotDownloaded(
             [Frozen]string[] languages,
             string fileName,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             [Frozen]IEpisodeParser episodeParser,
             [Frozen]ISubtitleDownloadService subtitleService,
             [Frozen]IFileSystem fileSystem,
@@ -126,18 +126,18 @@ namespace UnitTests.SubtitleFetcher
             var expected = languages.Take(1);
             A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages))
                 .Returns(alreadyDownloadedLanguages);
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
 
             sut.ProcessFile(fileName, new string[0]);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<string[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<string[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
 
         [Test, AutoFakeData]
         public void ProcessFile_AllLanguagesAlreadyDownloaded_ReturnsTrue(
             string[] languages,
             string fileName,
-            EpisodeIdentity episode,
+            TvReleaseIdentity tvRelease,
             ILogger logger,
             IEpisodeParser episodeParser,
             ISubtitleDownloadService subtitleService,
@@ -146,9 +146,9 @@ namespace UnitTests.SubtitleFetcher
         {
             var settings = new LanguageSettings(languages);
             A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages)).Returns(languages);
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<EpisodeIdentity>._, A<IEnumerable<string>>._))
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._))
                 .Returns(false);
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(episode);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
             var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings);
 
             bool result = processor.ProcessFile(fileName, new string[0]);

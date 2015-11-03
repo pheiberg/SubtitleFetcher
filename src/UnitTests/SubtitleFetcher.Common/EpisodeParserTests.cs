@@ -23,7 +23,7 @@ namespace UnitTests.SubtitleFetcher.Common
         [TestCase("Family.Guy.S14E02.Papa.Has.a.Rollin.Son.1080p.WEB-DL.DD5.1.H.264-CtrlHD", "Family Guy", 14, 2, 2, "CtrlHD")]
         public void Parse_ParsableName_PopulatedEpisodeInfo(string name, string seriesName, int season, int episode, int endEpisodeNumber, string releaseGroup)
         {
-            var expected = new EpisodeIdentity {
+            var expected = new TvReleaseIdentity {
                 SeriesName = seriesName,
                 Season = season,
                 Episode = episode,

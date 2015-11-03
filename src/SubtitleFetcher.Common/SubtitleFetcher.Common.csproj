@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DownloaderBase.cs" />
-    <Compile Include="EpisodeIdentity.cs" />
+    <Compile Include="TvReleaseIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="GenericDownloader.cs" />
     <Compile Include="IEpisodeParser.cs" />

@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace SubtitleFetcher.Common
 {
-    public class EpisodeIdentity
+    public class TvReleaseIdentity
     {
         public string SeriesName { get; set; }
         public int Season { get; set; }
@@ -10,13 +11,13 @@ namespace SubtitleFetcher.Common
         public int EndEpisode { get; set; }
         public string ReleaseGroup { get; set; }
         public bool IsMultiEpisode => EndEpisode > Episode;
-
-        public EpisodeIdentity()
+        
+        public TvReleaseIdentity()
         {
             
         }
 
-        public EpisodeIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup)
+        public TvReleaseIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup)
         {
             SeriesName = seriesName;
             Season = season;
@@ -25,7 +26,7 @@ namespace SubtitleFetcher.Common
             ReleaseGroup = releaseGroup;
         }
 
-        public bool Equals(EpisodeIdentity other)
+        public bool Equals(TvReleaseIdentity other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -39,8 +40,8 @@ namespace SubtitleFetcher.Common
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (EpisodeIdentity)) return false;
-            return Equals((EpisodeIdentity) obj);
+            if (obj.GetType() != typeof (TvReleaseIdentity)) return false;
+            return Equals((TvReleaseIdentity) obj);
         }
 
         public override int GetHashCode()
@@ -56,12 +57,12 @@ namespace SubtitleFetcher.Common
             }
         }
 
-        public static bool operator ==(EpisodeIdentity left, EpisodeIdentity right)
+        public static bool operator ==(TvReleaseIdentity left, TvReleaseIdentity right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(EpisodeIdentity left, EpisodeIdentity right)
+        public static bool operator !=(TvReleaseIdentity left, TvReleaseIdentity right)
         {
             return !Equals(left, right);
         }
@@ -76,7 +77,7 @@ namespace SubtitleFetcher.Common
             return $"{name}.S{seasonNumber}E{episodeNumber}{episodeSuffix}-{ReleaseGroup}";
         }
 
-        public bool IsEquivalent(EpisodeIdentity other)
+        public bool IsEquivalent(TvReleaseIdentity other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

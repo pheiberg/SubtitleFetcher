@@ -14,19 +14,19 @@ namespace SubtitleFetcher
             this.subtitleDownloaders = subtitleDownloaders;
         }
 
-        public bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
+        public bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
-            var matches = FindMatchingSubtitlesOrderedByLanguageCode(episodeIdentity, languages);
+            var matches = FindMatchingSubtitlesOrderedByLanguageCode(tvReleaseIdentity, languages);
            return DownloadFirstAvailableSubtitle(targetSubtitleFile, matches);
         }
 
-        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(EpisodeIdentity episodeIdentity, IEnumerable<string> languages)
+        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
             return subtitleDownloaders
                 .Where(s => s.CanHandleAtLeastOneOf(languageArray))
                 .AsParallel()
-                .SelectMany(downloader => downloader.SearchSubtitle(episodeIdentity, languageArray)
+                .SelectMany(downloader => downloader.SearchSubtitle(tvReleaseIdentity, languageArray)
                     .Select(match => new DownloaderMatch(downloader, match)))
                 .OrderBy(pair => Array.FindIndex(languageArray, arrayItem => arrayItem == pair.Subtitle.LanguageCode))
                 .ThenBy(pair => pair.Subtitle.FileName);

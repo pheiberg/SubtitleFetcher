@@ -5,6 +5,6 @@ namespace SubtitleFetcher
 {
     public interface ISubtitleDownloadService
     {
-        bool DownloadSubtitle(string targetSubtitleFile, EpisodeIdentity episodeIdentity, IEnumerable<string> languages);
+        bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages);
     }
 }

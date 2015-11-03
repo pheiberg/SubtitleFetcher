@@ -15,21 +15,21 @@ namespace UnitTests.SubtitleFetcher
     {
         [Test, AutoFakeData]
         public void SearchSubtitle_ThrowsException_ReturnEmptyResultSet(
-            EpisodeIdentity episodeIdentity,
+            TvReleaseIdentity tvReleaseIdentity,
             string[] languages,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader episodeDownloader)
         {
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Throws<Exception>();
             
-            var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
+            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, languages);
 
             Assert.That(results, Is.Empty);
         }
         
         [Test, AutoFakeData]
         public void SearchSubtitle_MultipleValidSubtitlesFound_OrderedByLanguagePriority(
-            EpisodeIdentity episodeIdentity,
+            TvReleaseIdentity tvReleaseIdentity,
             string id,
             string programName,
             string[] expectedLanguages,
@@ -39,19 +39,19 @@ namespace UnitTests.SubtitleFetcher
             EpisodeSubtitleDownloader episodeDownloader
             )
         {
-            var subtitles = expectedLanguages.Select(l => new Subtitle(id, programName, episodeIdentity.ToString(), l));
+            var subtitles = expectedLanguages.Select(l => new Subtitle(id, programName, tvReleaseIdentity.ToString(), l));
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
-            A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(episodeIdentity);
+            A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(tvReleaseIdentity);
             var languages = new [] { expectedLanguages[0], missingLanguage, expectedLanguages[1], expectedLanguages[2] };
 
-            var results = episodeDownloader.SearchSubtitle(episodeIdentity, languages);
+            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, languages);
 
             Assert.That(results.Select(s => s.LanguageCode), Is.EquivalentTo(expectedLanguages));
         }
         
         [Test, AutoFakeData]
         public void SearchSubtitle_NonEquivalentSubtitlesFound_OnlyIncludesEquivalent(
-            EpisodeIdentity episodeIdentity,
+            TvReleaseIdentity tvReleaseIdentity,
             string id,
             string programName,
             string[] supportedLanguages,
@@ -63,15 +63,15 @@ namespace UnitTests.SubtitleFetcher
             var anyOfTheSupportedLanguages = supportedLanguages.First();
             var subtitles = new List<Subtitle>
                                 {
-                new Subtitle(id, programName, episodeIdentity.ToString(), anyOfTheSupportedLanguages),
-                new Subtitle(id, programName, episodeIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, programName, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, programName, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
                 new Subtitle(id, programName, otherShow, anyOfTheSupportedLanguages)
             };
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             
-            var results = episodeDownloader.SearchSubtitle(episodeIdentity, supportedLanguages);
+            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, supportedLanguages);
 
-            Assert.That(results.Select(s => s.FileName), Has.All.StringStarting(episodeIdentity.ToString()));
+            Assert.That(results.Select(s => s.FileName), Has.All.StringStarting(tvReleaseIdentity.ToString()));
         }
         
         [Test, AutoFakeData]
