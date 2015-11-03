@@ -7,18 +7,21 @@ namespace SubtitleFetcher.Common
         public string SeriesName { get; set; }
         public int Season { get; set; }
         public int Episode { get; set; }
+        public int EndEpisode { get; set; }
         public string ReleaseGroup { get; set; }
+        public bool IsMultiEpisode => EndEpisode > Episode;
 
         public EpisodeIdentity()
         {
             
         }
 
-        public EpisodeIdentity(string seriesName, int season, int episode, string releaseGroup)
+        public EpisodeIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup)
         {
             SeriesName = seriesName;
             Season = season;
             Episode = episode;
+            EndEpisode = endEpisode;
             ReleaseGroup = releaseGroup;
         }
 
@@ -26,7 +29,10 @@ namespace SubtitleFetcher.Common
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(other.SeriesName, SeriesName, StringComparison.OrdinalIgnoreCase) && other.Season == Season && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) && other.Episode == Episode;
+            return string.Equals(other.SeriesName, SeriesName, StringComparison.OrdinalIgnoreCase) 
+                && other.Season == Season 
+                && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) 
+                && other.Episode == Episode && other.EndEpisode == EndEpisode;
         }
 
         public override bool Equals(object obj)
@@ -41,10 +47,11 @@ namespace SubtitleFetcher.Common
         {
             unchecked
             {
-                int result = (SeriesName != null ? SeriesName.GetHashCode() : 0);
+                int result = SeriesName?.GetHashCode() ?? 0;
                 result = (result*397) ^ Season;
-                result = (result*397) ^ (ReleaseGroup != null ? ReleaseGroup.GetHashCode() : 0);
+                result = (result*397) ^ (ReleaseGroup?.GetHashCode() ?? 0);
                 result = (result*397) ^ Episode;
+                result = (result*397) ^ EndEpisode;
                 return result;
             }
         }
@@ -61,7 +68,12 @@ namespace SubtitleFetcher.Common
 
         public override string ToString()
         {
-            return SeriesName.Replace(" ", ".") + ".S" + Season.ToString("00") + "E" + Episode.ToString("00") + "-" + ReleaseGroup;
+            var name = SeriesName.Replace(" ", ".");
+            var seasonNumber = Season.ToString("00");
+            var episodeNumber = Episode.ToString("00");
+            var endEpisodeNumber = EndEpisode.ToString("00");
+            var episodeSuffix = IsMultiEpisode ? $"-E{endEpisodeNumber}" : "";
+            return $"{name}.S{seasonNumber}E{episodeNumber}{episodeSuffix}-{ReleaseGroup}";
         }
 
         public bool IsEquivalent(EpisodeIdentity other)
@@ -71,7 +83,9 @@ namespace SubtitleFetcher.Common
             if (SeriesName == null || other.SeriesName == null) return Equals(other);
             
             return string.Equals(other.SeriesName.RemoveNonAlphaNumericChars(),  SeriesName.RemoveNonAlphaNumericChars(), StringComparison.OrdinalIgnoreCase) 
-                && other.Season == Season && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) && other.Episode == Episode;
+                && other.Season == Season 
+                && string.Equals(other.ReleaseGroup, ReleaseGroup, StringComparison.OrdinalIgnoreCase) 
+                && other.Episode == Episode && other.EndEpisode == EndEpisode;
         }
     }
 }

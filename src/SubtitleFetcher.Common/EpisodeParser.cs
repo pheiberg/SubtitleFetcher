@@ -5,16 +5,15 @@ namespace SubtitleFetcher.Common
 {
     public class EpisodeParser : IEpisodeParser
     {
-        readonly string[] patterns = new[]
-                                         {
-                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$",
-                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])?$",
+        readonly string[] _patterns = {
+                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(-(?<ReleaseGroup>\w+))?$",
+                                             @"^(?<SeriesName>[\w\s\._]+?)S(?<Season>\d\d?)E(?<Episode>\d\d?)(-E(?<EndEpisode>\d\d?))?.*?(\[(?<ReleaseGroup>\w+)\])?$",
                                              @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(\[(?<ReleaseGroup>\w+)\])$",
                                              @"^(?<SeriesName>[\w\s\._]+?)(?<Season>\d\d?)X(?<Episode>\d\d?).*?(-(?<ReleaseGroup>\w+))?$"
                                          };
         public EpisodeIdentity ParseEpisodeInfo(string fileName)
         {
-            foreach (var pattern in patterns)
+            foreach (var pattern in _patterns)
             {
                 var match = Regex.Match(fileName, pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
                 if (!match.Success) 
@@ -23,8 +22,17 @@ namespace SubtitleFetcher.Common
                 var seriesName = match.Groups["SeriesName"].Value.Replace('.', ' ').Replace('_', ' ').Trim();
                 var season = int.Parse(match.Groups["Season"].Value);
                 var episode = int.Parse(match.Groups["Episode"].Value);
+                var endEpisodeString = match.Groups["EndEpisode"].Value;
+                var endEpisode = !string.IsNullOrEmpty(endEpisodeString) ? int.Parse(endEpisodeString) : episode;
                 var releaseGroup = match.Groups["ReleaseGroup"].Value;
-                return new EpisodeIdentity { SeriesName = seriesName, Season = season, Episode = episode, ReleaseGroup = releaseGroup};
+                return new EpisodeIdentity
+                {
+                    SeriesName = seriesName,
+                    Season = season,
+                    Episode = episode,
+                    EndEpisode = endEpisode,
+                    ReleaseGroup = releaseGroup
+                };
             }
             return new EpisodeIdentity();
         }
