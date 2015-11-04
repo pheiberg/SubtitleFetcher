@@ -10,11 +10,12 @@ namespace SubtitleFetcher.Common
         public int Episode { get; set; }
         public int EndEpisode { get; set; }
         public string ReleaseGroup { get; set; }
+        public ICollection<string> Tags { get; private set; } 
         public bool IsMultiEpisode => EndEpisode > Episode;
         
         public TvReleaseIdentity()
         {
-            
+            Tags = new List<string>();
         }
 
         public TvReleaseIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup)
