@@ -9,8 +9,14 @@ namespace PortedSubtitleDownloaders.S4U
 {
     public class S4UDownloaderImpl
     {
-        private const string ApiKey = "Oiyb6TR41fga61j";
         private static readonly string SwedishLanguageCode = Languages.GetLanguageCode("Swedish");
+       
+        public S4UDownloaderImpl(string apiKey)
+        {
+            ApiKey = apiKey;
+        }
+
+        public string ApiKey { get; }
 
         public int SearchTimeout { get; set; }
 

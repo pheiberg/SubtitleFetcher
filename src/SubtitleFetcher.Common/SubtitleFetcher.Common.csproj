@@ -39,12 +39,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="DownloaderBase.cs" />
+    <Compile Include="IApplicationSettings.cs" />
     <Compile Include="TvReleaseIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="GenericDownloader.cs" />

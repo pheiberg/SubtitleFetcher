@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
@@ -11,8 +10,14 @@ namespace PortedSubtitleDownloaders.S4U
 {
     public class S4UDownloader : ISubtitleDownloader
     {
-        readonly S4UDownloaderImpl _downloader = new S4UDownloaderImpl();
-        
+        readonly S4UDownloaderImpl _downloader;
+
+        public S4UDownloader(IApplicationSettings settings)
+        {
+            var apiKey = settings.GetSetting("S4UApiKey");
+            _downloader = new S4UDownloaderImpl(apiKey);
+        }
+
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
             var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.LanguageCode);

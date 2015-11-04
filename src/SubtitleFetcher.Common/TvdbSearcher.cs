@@ -8,7 +8,6 @@ namespace SubtitleFetcher.Common
 {
     public class TvdbSearcher : ITvdbSearcher
     {
-        private const string ApiKey = "E1644B56FF8A498A";
         private const string ServiceLocation = "http://thetvdb.com/api/GetSeries.php?seriesname={0}";
         private readonly IDictionary<string, IEnumerable<TvdbSeries>> cache = new Dictionary<string, IEnumerable<TvdbSeries>>(); 
 

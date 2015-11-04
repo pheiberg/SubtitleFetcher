@@ -134,7 +134,7 @@ namespace UnitTests.SubtitleFetcher
         }
 
         [Test, AutoFakeData]
-        public void ProcessFile_AllLanguagesAlreadyDownloaded_ReturnsTrue(
+        public void ProcessFile_AllLanguagesAlreadyDownloaded_ReturnsTrue( 
             string[] languages,
             string fileName,
             TvReleaseIdentity tvRelease,
