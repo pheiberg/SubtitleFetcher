@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Download
 {
     public interface ISubtitleDownloader
     {
