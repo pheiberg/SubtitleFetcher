@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using SharpCompress.Reader;
+using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher.Common

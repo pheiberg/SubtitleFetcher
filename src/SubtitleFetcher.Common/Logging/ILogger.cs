@@ -1,4 +1,4 @@
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Logging
 {
     public interface ILogger
     {

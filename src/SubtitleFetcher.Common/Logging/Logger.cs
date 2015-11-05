@@ -1,6 +1,6 @@
 using System;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Logging
 {
     public class Logger : ILogger
     {

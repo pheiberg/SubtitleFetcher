@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Logging;
 
 namespace SubtitleFetcher
 {

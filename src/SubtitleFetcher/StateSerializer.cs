@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Logging;
 
 namespace SubtitleFetcher
 {
