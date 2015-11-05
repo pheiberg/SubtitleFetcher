@@ -1,4 +1,4 @@
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Parsing
 {
     public interface IEpisodeParser
     {

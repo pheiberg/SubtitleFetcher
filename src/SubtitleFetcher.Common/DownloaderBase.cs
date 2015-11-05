@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher.Common
 {

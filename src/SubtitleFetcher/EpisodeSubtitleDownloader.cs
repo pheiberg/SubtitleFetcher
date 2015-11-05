@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher
 {

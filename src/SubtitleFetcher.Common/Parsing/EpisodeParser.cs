@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Parsing
 {
     public class EpisodeParser : IEpisodeParser
     {

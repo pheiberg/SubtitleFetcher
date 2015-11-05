@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Parsing;
 
 namespace UnitTests.SubtitleFetcher.Common
 {

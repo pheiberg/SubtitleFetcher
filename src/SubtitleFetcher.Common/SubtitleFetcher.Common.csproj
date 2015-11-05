@@ -56,9 +56,9 @@
     <Compile Include="Hashing\IHashCalculator.cs" />
     <Compile Include="Hashing\Md5HashAlgorithmFactory.cs" />
     <Compile Include="TvReleaseIdentity.cs" />
-    <Compile Include="EpisodeParser.cs" />
+    <Compile Include="Parsing\EpisodeParser.cs" />
     <Compile Include="GenericDownloader.cs" />
-    <Compile Include="IEpisodeParser.cs" />
+    <Compile Include="Parsing\IEpisodeParser.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISubtitleDownloader.cs" />
     <Compile Include="ITvdbSearcher.cs" />

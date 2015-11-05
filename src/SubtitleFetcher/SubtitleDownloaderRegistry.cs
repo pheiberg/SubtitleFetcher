@@ -5,6 +5,7 @@ using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher
 {
