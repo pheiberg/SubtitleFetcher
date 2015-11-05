@@ -46,8 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationSettings.cs" />
+    <Compile Include="ByteExtensions.cs" />
     <Compile Include="DownloaderBase.cs" />
+    <Compile Include="Hashing\FileHasher.cs" />
+    <Compile Include="Hashing\HashAlgorithmFactory.cs" />
+    <Compile Include="Hashing\HashCalculator.cs" />
     <Compile Include="IApplicationSettings.cs" />
+    <Compile Include="Hashing\IHashAlgorithmFactory.cs" />
+    <Compile Include="Hashing\IHashCalculator.cs" />
+    <Compile Include="Hashing\Md5HashAlgorithmFactory.cs" />
     <Compile Include="TvReleaseIdentity.cs" />
     <Compile Include="EpisodeParser.cs" />
     <Compile Include="GenericDownloader.cs" />
