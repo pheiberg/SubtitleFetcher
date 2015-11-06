@@ -41,6 +41,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -48,6 +49,7 @@
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
+    <Compile Include="Downloaders\SubDb\SubDbDownloader.cs" />
     <Compile Include="Downloaders\SubDb\SubDbHasher.cs" />
     <Compile Include="Downloaders\Undertexter\UndertexterSeDownloader.cs" />
     <Compile Include="Hashing\FileHasher.cs" />
