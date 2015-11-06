@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher;
 using SubtitleFetcher.Common;
-using SubtitleFetcher.Common.Download;
+using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Parsing;
 
 namespace UnitTests.SubtitleFetcher

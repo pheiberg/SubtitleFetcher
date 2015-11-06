@@ -25,7 +25,8 @@ namespace SubtitleFetcher
                                             settings.HelpWriter = Console.Error;
                                             settings.MutuallyExclusive = true;
                                         });
-            var options = parser.ParseArguments<Options>(args, () => Environment.Exit(1));
+            var options = new Options();
+            parser.ParseArguments(args, options);
             return options;
         }
 
