@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Download;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
-namespace UndertexterSeDownloader
+namespace SubtitleFetcher.Common.Downloaders.Undertexter
 {
     public class UndertexterSeDownloader : DownloaderBase
     {

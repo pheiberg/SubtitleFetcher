@@ -4,7 +4,6 @@ using FakeItEasy;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.NUnit2;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Hashing;
 
 namespace UnitTests.SubtitleFetcher.Common
@@ -13,7 +12,7 @@ namespace UnitTests.SubtitleFetcher.Common
     public class FileHasherTests
     {
         [Test, AutoFakeData]
-        public void Create64kHash_128kStream_ReturnsHashFromHashAlgo(
+        public void CreateHash_128kStream_ReturnsHashFromHashAlgo(
             byte[] expectedHash,
             [Frozen]IHashCalculator hashProvider,
             FileHasher sut)
@@ -33,6 +32,6 @@ namespace UnitTests.SubtitleFetcher.Common
         private static byte[] CreateData()
         {
             return new Fixture().CreateMany<byte>(128 * 1024).ToArray();
-        }   
+        }
     }
 }
