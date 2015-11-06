@@ -99,6 +99,30 @@ namespace UnitTests.SubtitleFetcher
         }
 
         [Test, AutoFakeData]
+        public void ProcessFile_SomeLanguagesAlreadyDownloaded_TriesToDownloadOnlyNotDownloaded(
+            string fileName,
+            TvReleaseIdentity tvRelease,
+            [Frozen]LanguageSettings languageSettings,
+            [Frozen]IEpisodeParser episodeParser,
+            [Frozen]ISubtitleDownloadService subtitleService,
+            [Frozen]IFileSystem fileSystem,
+            FileProcessor sut)
+        {
+            var languages = languageSettings.Languages.ToArray();
+            var alreadyDownloadedLanguages = languages.Skip(1);
+            var expected = languages.Take(1);
+            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, 
+                A<IEnumerable<string>>.That.IsSameSequenceAs(languages)))
+               .Returns(alreadyDownloadedLanguages);
+            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
+
+            sut.ProcessFile(fileName, new string[0]);
+
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<string[]>
+                .That.IsSameSequenceAs(expected))).MustHaveHappened();
+        }
+
+        [Test, AutoFakeData]
         public void ProcessFile_NotDownloaded_ReturnsFalse(
             string fileName,
             string[] ignored,            
@@ -113,27 +137,6 @@ namespace UnitTests.SubtitleFetcher
             var result = sut.ProcessFile(fileName, ignored);
 
             Assert.That(result, Is.False);
-        }
-
-        [Test, AutoFakeData]
-        public void ProcessFile_SomeLanguagesAlreadyDownloaded_TriesToDownloadOnlyNotDownloaded(
-            [Frozen]string[] languages,
-            string fileName,
-            TvReleaseIdentity tvRelease,
-            [Frozen]IEpisodeParser episodeParser,
-            [Frozen]ISubtitleDownloadService subtitleService,
-            [Frozen]IFileSystem fileSystem,
-            FileProcessor sut)
-        {
-            var alreadyDownloadedLanguages = languages.Skip(1);
-            var expected = languages.Take(1);
-            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages))
-                .Returns(alreadyDownloadedLanguages);
-            A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
-
-            sut.ProcessFile(fileName, new string[0]);
-
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<string[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
 
         [Test, AutoFakeData]

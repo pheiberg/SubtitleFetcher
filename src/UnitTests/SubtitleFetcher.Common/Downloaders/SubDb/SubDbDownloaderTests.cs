@@ -17,7 +17,7 @@ namespace UnitTests.SubtitleFetcher.Common.Downloaders.SubDb
         [Test]
         public void Search()
         {
-            var expected = "en,fr,it,pt".Split(',');
+            var expected = "en,es,fr,it,pt".Split(',');
             var d = new SubDbApi();
             var result = d.Search("edc1981d6459c6111fe36205b4aff6c2");
             Assert.That(result, Is.EquivalentTo(expected));
