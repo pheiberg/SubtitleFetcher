@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
 using SubtitleFetcher.Common;
-using SubtitleFetcher.Common.Download;
+using SubtitleFetcher.Common.Downloaders;
 using Subtitle = PortedSubtitleDownloaders.Legacy.Subtitle;
 
 namespace PortedSubtitleDownloaders.Subscene

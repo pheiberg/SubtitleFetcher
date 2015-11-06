@@ -49,8 +49,12 @@
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
+    <Compile Include="Downloaders\SubDb\ISubDbHasher.cs" />
+    <Compile Include="Downloaders\SubDb\SubDbApi.cs" />
     <Compile Include="Downloaders\SubDb\SubDbDownloader.cs" />
+    <Compile Include="Downloaders\SubDb\SubDbFileNotFoundException.cs" />
     <Compile Include="Downloaders\SubDb\SubDbHasher.cs" />
+    <Compile Include="Downloaders\SubDb\SubDbHttpException.cs" />
     <Compile Include="Downloaders\Undertexter\UndertexterSeDownloader.cs" />
     <Compile Include="Hashing\FileHasher.cs" />
     <Compile Include="Hashing\HashAlgorithmFactory.cs" />

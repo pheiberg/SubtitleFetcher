@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using SubtitleFetcher.Common.Download;
+using System.Linq;
 
 namespace SubtitleFetcher.Common.Downloaders.SubDb
 {
     public class SubDbDownloader : ISubtitleDownloader
     {
-        const string UserAgent = "SubDB/1.0 (SubtitleFetcher/0.9; http://github.com/pheiberg/SubtitleFetcher)";
-        private const string BaseUri = "http://sandbox.thesubdb.com";
-        private readonly Dictionary<string, string> LanguageLookup = new Dictionary<string, string>
+        private static readonly IDictionary<string, string> LanguageLookup = new Dictionary<string, string>
         {
             {"eng", "en"},
             {"spa", "es"},
@@ -25,36 +21,20 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
             {"tur", "tr"}
         };
 
+        private readonly SubDbApi _api;
+
+        public SubDbDownloader(SubDbApi api)
+        {
+            _api = api;
+        }
+
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            throw new NotImplementedException();
+            var languages = new[] { LanguageLookup[subtitle.LanguageCode] };
+            var download = _api.DownloadSubtitle(subtitle.Id, languages);
+            return new []{ download };
         }
-
-        public FileInfo DownloadSubtitle(string hash, IEnumerable<string> languages)
-        {
-            string tempFileName = Path.GetTempFileName();
-            var language = string.Join(",", languages);
-            var action = $"?action=download&hash={hash}&lang={language}";
-
-            using (var client = CreateHttpClient())
-            using (var responseStream = client.GetStreamAsync(action).Result)
-            using (var fileStream = File.OpenWrite(tempFileName))
-            {
-                responseStream.CopyTo(fileStream);
-                fileStream.Flush();
-                return new FileInfo(tempFileName);
-            }
-        }
-
-        private static HttpClient CreateHttpClient()
-        {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
-            httpClient.BaseAddress = new Uri(BaseUri);
-            return httpClient;
-        }
-
-
+        
         public string GetName()
         {
             return "SubDb";
@@ -62,9 +42,25 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-            throw new NotImplementedException();
+            var hash = query.FileHash;
+            var languages = _api.Search(hash);
+            string constructedFileName = $"{query.SerieTitle}.S{query.Season.ToString("00")}.E{query.Episode.ToString("00")}.DUMMY-{query.ReleaseGroup}";
+
+            var availableLanguages = GetAvailableLanguagesMatchingSearchQuery(query, languages);
+            return availableLanguages.Select(language => new Subtitle(hash, query.SerieTitle, constructedFileName, language));
         }
 
-        public IEnumerable<string> LanguageLimitations => new[] { "swe", "eng" };
+        private static IEnumerable<string> GetAvailableLanguagesMatchingSearchQuery(SearchQuery query, IEnumerable<string> languages)
+        {
+            return languages.Where(l => !string.IsNullOrWhiteSpace(l) 
+                             && query.LanguageCodes.Contains(TranslateLanguageCode(l)));
+        }
+
+        private static string TranslateLanguageCode(string language)
+        {
+            return LanguageLookup.SingleOrDefault(l => string.Equals(l.Value, language, StringComparison.OrdinalIgnoreCase)).Key;
+        }
+
+        public IEnumerable<string> LanguageLimitations => LanguageLookup.Keys;
     }
 }

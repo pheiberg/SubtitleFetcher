@@ -70,7 +70,7 @@ namespace UnitTests.SubtitleFetcher
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Target name", new TvReleaseIdentity("", 1, 1, 1, ""), languages);
+            bool success = service.DownloadSubtitle("Target name", new TvReleaseIdentity("", 1, 1, 1, "", ""), languages);
 
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>.That.Matches(s => s.LanguageCode == "swe"), "Target name"))
                 .MustHaveHappened(Repeated.Exactly.Once);
@@ -93,7 +93,7 @@ namespace UnitTests.SubtitleFetcher
             var downloaders = new[] { fakeDownloader, incapableDownloader };
             var service = new SubtitleDownloadService(downloaders);
 
-            bool success = service.DownloadSubtitle("Target name", new TvReleaseIdentity("", 1, 1, 1, ""), languages);
+            bool success = service.DownloadSubtitle("Target name", new TvReleaseIdentity("", 1, 1, 1, "", ""), languages);
 
             A.CallTo(() => incapableDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).MustNotHaveHappened();
         }

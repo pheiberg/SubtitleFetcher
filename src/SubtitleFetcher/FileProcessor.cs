@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Downloaders.SubDb;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
@@ -15,14 +16,16 @@ namespace SubtitleFetcher
         private readonly ISubtitleDownloadService subtitleService;
         private readonly IFileSystem fileSystem;
         private readonly LanguageSettings languageSettings;
+        private readonly ISubDbHasher _hasher;
 
-        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService, IFileSystem fileSystem, LanguageSettings languageSettings)
+        public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService, IFileSystem fileSystem, LanguageSettings languageSettings, ISubDbHasher hasher)
         {
             this.episodeParser = episodeParser;
             this.logger = logger;
             this.subtitleService = subtitleService;
             this.fileSystem = fileSystem;
             this.languageSettings = languageSettings;
+            _hasher = hasher;
         }
 
         public bool ProcessFile(string fileName, IEnumerable<string> ignoredShows)
@@ -63,7 +66,9 @@ namespace SubtitleFetcher
         private TvReleaseIdentity ParseReleaseIdentity(string fileName)
         {
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-            return episodeParser.ParseEpisodeInfo(fileNameWithoutExtension);
+            var tvReleaseIdentity = episodeParser.ParseEpisodeInfo(fileNameWithoutExtension);
+            tvReleaseIdentity.FileHash = _hasher.ComputeHash(fileName);
+            return tvReleaseIdentity;
         }
 
         private static bool CheckIfShowIsIgnored(IEnumerable<string> ignoredShows, TvReleaseIdentity tvReleaseIdentity)

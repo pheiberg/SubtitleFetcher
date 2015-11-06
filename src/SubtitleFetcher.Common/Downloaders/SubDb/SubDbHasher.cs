@@ -1,9 +1,8 @@
-﻿using System.IO;
-using SubtitleFetcher.Common.Hashing;
+﻿using SubtitleFetcher.Common.Hashing;
 
 namespace SubtitleFetcher.Common.Downloaders.SubDb
 {
-    public class SubDbHasher
+    public class SubDbHasher : ISubDbHasher
     {
         private readonly FileHasher _hasher;
 

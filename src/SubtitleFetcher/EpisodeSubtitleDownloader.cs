@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SubtitleFetcher.Common;
-using SubtitleFetcher.Common.Download;
+using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
@@ -30,7 +30,7 @@ namespace SubtitleFetcher
         public IEnumerable<Subtitle> SearchSubtitle(TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
-            var query = new SearchQuery(tvReleaseIdentity.SeriesName, tvReleaseIdentity.Season, tvReleaseIdentity.Episode, tvReleaseIdentity.ReleaseGroup) { LanguageCodes = languageArray };
+            var query = new SearchQuery(tvReleaseIdentity.SeriesName, tvReleaseIdentity.Season, tvReleaseIdentity.Episode, tvReleaseIdentity.ReleaseGroup, tvReleaseIdentity.FileHash) { LanguageCodes = languageArray };
             IEnumerable<Subtitle> searchResult;
             try
             {
@@ -46,12 +46,12 @@ namespace SubtitleFetcher
                 return Enumerable.Empty<Subtitle>();
             }
 
-            var matchingSubtitles = from subtitle in searchResult
+            var matchingSubtitles = (from subtitle in searchResult
                                     let subtitleInfo = nameParser.ParseEpisodeInfo(subtitle.FileName)
                                     let langPriority = Array.FindIndex(languageArray, l => l.Equals(subtitle.LanguageCode))
                                     where subtitleInfo.IsEquivalent(tvReleaseIdentity)
                                     orderby langPriority, subtitleInfo.SeriesName
-                                    select subtitle;
+                                    select subtitle).ToArray();
             return matchingSubtitles;
         }
 

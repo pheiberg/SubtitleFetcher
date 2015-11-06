@@ -5,7 +5,7 @@ using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleFetcher.Common;
-using SubtitleFetcher.Common.Download;
+using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 

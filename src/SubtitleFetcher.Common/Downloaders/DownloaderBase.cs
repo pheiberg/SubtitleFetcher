@@ -5,7 +5,7 @@ using System.Net;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
-namespace SubtitleFetcher.Common.Download
+namespace SubtitleFetcher.Common.Downloaders
 {
     public abstract class DownloaderBase : ISubtitleDownloader
     {

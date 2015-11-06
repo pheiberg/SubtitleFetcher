@@ -8,7 +8,7 @@ using SharpCompress.Reader;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
-namespace SubtitleFetcher.Common.Download
+namespace SubtitleFetcher.Common.Downloaders
 {
     public class GenericDownloader
     {

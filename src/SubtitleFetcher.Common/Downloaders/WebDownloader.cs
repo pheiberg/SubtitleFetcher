@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace SubtitleFetcher.Common.Download
+namespace SubtitleFetcher.Common.Downloaders
 {
     public class WebDownloader : WebClient
     {
