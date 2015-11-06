@@ -14,6 +14,14 @@ namespace SubtitleFetcher.Common.Hashing
             _hashProvider = hashProvider;
         }
 
+        public byte[] CreateHash(string filePath)
+        {
+            using (var fileStream = File.OpenRead(filePath))
+            {
+                return CreateHash(fileStream);
+            }    
+        }
+        
         public byte[] CreateHash(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
