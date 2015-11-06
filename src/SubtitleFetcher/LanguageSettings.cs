@@ -1,17 +1,14 @@
+using System.Collections.Generic;
+
 namespace SubtitleFetcher
 {
     public class LanguageSettings
     {
-        private readonly string[] languages;
-
-        public LanguageSettings(string[] languages)
+        public LanguageSettings(IEnumerable<string> languages)
         {
-            this.languages = languages;
+            Languages = languages;
         }
 
-        public string[] Languages
-        {
-            get { return languages; }
-        }
+        public IEnumerable<string> Languages { get; }
     }
 }

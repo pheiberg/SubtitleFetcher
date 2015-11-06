@@ -50,17 +50,17 @@ namespace SubtitleFetcher
 
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention
         {
-            private readonly IEnumerable<string> downloaderNames;
+            private readonly IEnumerable<string> _downloaderNames;
 
             public RegisterAllSubtitleDownloadersConvention(IEnumerable<string> downloaderNames)
             {
-                this.downloaderNames = downloaderNames;
+                _downloaderNames = downloaderNames;
             }
 
             public void Process(Type type, Registry registry)
             {
                 if (typeof(ISubtitleDownloader).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface &&
-                    downloaderNames.Any(d => type.Name.StartsWith(d, StringComparison.OrdinalIgnoreCase)))
+                    _downloaderNames.Any(d => type.Name.StartsWith(d, StringComparison.OrdinalIgnoreCase)))
                 {
                     registry.For(typeof(ISubtitleDownloader)).Add(type);
                 }
