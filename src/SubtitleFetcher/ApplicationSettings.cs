@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
+using SubtitleFetcher.Common;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher
 {
     public class ApplicationSettings : IApplicationSettings
     {
