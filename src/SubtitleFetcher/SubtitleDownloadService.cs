@@ -27,7 +27,7 @@ namespace SubtitleFetcher
             var searchResults = SearchDownloaders(compatibleDownloaders, tvReleaseIdentity, languageArray);
             return OrderByLanguageCode(searchResults, languageArray);
         }
-
+        
         private IEnumerable<IEpisodeSubtitleDownloader> GetDownloadersForLanguages(string[] languageArray)
         {
             return _subtitleDownloaders.Where(s => s.CanHandleAtLeastOneOf(languageArray));
@@ -35,11 +35,16 @@ namespace SubtitleFetcher
 
         private static IEnumerable<DownloaderMatch> SearchDownloaders(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, TvReleaseIdentity tvReleaseIdentity, string[] languageArray)
         {
-            return compatibleDownloaders
+            var searchResults = compatibleDownloaders
                 .AsParallel()
                 .SelectMany(downloader => downloader.SearchSubtitle(tvReleaseIdentity, languageArray)
                     .Select(match => new DownloaderMatch(downloader, match)))
                 .AsSequential();
+            return FilterOutLanguagesNotInRequest(searchResults, languageArray); ;
+        }
+        private static IEnumerable<DownloaderMatch> FilterOutLanguagesNotInRequest(IEnumerable<DownloaderMatch> searchResults, string[] validLanguages)
+        {
+            return searchResults.Where(m => validLanguages.Contains(m.Subtitle.LanguageCode));
         }
 
         private static int FindPreferenceIndexOfLanguage(string[] languageArray, string languageCode)
