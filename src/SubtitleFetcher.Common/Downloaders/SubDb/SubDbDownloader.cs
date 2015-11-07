@@ -52,8 +52,9 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         private static IEnumerable<string> GetAvailableLanguagesMatchingSearchQuery(SearchQuery query, IEnumerable<string> languages)
         {
-            return languages.Where(l => !string.IsNullOrWhiteSpace(l) 
-                             && query.LanguageCodes.Contains(TranslateLanguageCode(l)));
+            var mappedLanguages = languages.Where(l => !string.IsNullOrWhiteSpace(l))
+                .Select(TranslateLanguageCode);
+            return mappedLanguages.Where(l => query.LanguageCodes.Contains(l));
         }
 
         private static string TranslateLanguageCode(string language)
