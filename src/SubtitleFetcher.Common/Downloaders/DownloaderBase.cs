@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
@@ -53,5 +54,7 @@ namespace SubtitleFetcher.Common.Downloaders
         }
 
         public virtual IEnumerable<string> LanguageLimitations => Enumerable.Empty<string>();
+
+        public virtual IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
     }
 }

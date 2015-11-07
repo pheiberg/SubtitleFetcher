@@ -1,4 +1,4 @@
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Enhancement.Tvdb
 {
     public class TvdbSeries
     {

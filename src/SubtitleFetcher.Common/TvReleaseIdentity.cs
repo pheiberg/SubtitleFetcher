@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SubtitleFetcher.Common.Enhancement;
 
 namespace SubtitleFetcher.Common
 {
@@ -12,11 +13,12 @@ namespace SubtitleFetcher.Common
         public string ReleaseGroup { get; set; }
         public ICollection<string> Tags { get; private set; } 
         public bool IsMultiEpisode => EndEpisode > Episode;
-        public string FileHash { get; set; }
+        public IList<IEnhancement> Enhancements { get; private set; } 
 
         public TvReleaseIdentity()
         {
             Tags = new List<string>();
+            Enhancements = new List<IEnhancement>();
         }
 
         public TvReleaseIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup, string fileHash)
@@ -26,7 +28,6 @@ namespace SubtitleFetcher.Common
             Episode = episode;
             EndEpisode = endEpisode;
             ReleaseGroup = releaseGroup;
-            FileHash = fileHash;
         }
 
         public bool Equals(TvReleaseIdentity other)

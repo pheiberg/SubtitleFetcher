@@ -6,6 +6,8 @@ using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Enhancement.Tvdb;
 using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Orchestration;
@@ -28,6 +30,7 @@ namespace SubtitleFetcher.Bootstrapping
                 {
                     scan.AddAllTypesOf<ISubtitleDownloader>();
                 }
+                scan.AddAllTypesOf<IEnhancer>();
             });
             Scan(scan =>
             {
@@ -41,13 +44,14 @@ namespace SubtitleFetcher.Bootstrapping
             For<LanguageSettings>().Use(new LanguageSettings(options.Languages));
             For<FileTypeSettings>().Use(new FileTypeSettings(options.AcceptedExtensions));
             For<ISubtitleDownloadService>().Use(CreateSubtitleDownloadService);
+            For<EnhancerRegistry>().Singleton().Use<EnhancerRegistry>();
         }
 
         private static SubtitleDownloadService CreateSubtitleDownloadService(IContext context)
         {
             Func<ISubtitleDownloader, EpisodeSubtitleDownloader> createSubtitleDownloader = sd => new EpisodeSubtitleDownloader(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
             IEnumerable<EpisodeSubtitleDownloader> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
-            return new SubtitleDownloadService(episodeSubtitleDownloaders);
+            return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<IEnhancementProvider>());
         }
 
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention

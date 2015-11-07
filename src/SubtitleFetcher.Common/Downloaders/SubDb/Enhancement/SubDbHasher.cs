@@ -1,6 +1,6 @@
 ﻿using SubtitleFetcher.Common.Hashing;
 
-namespace SubtitleFetcher.Common.Downloaders.SubDb
+namespace SubtitleFetcher.Common.Downloaders.SubDb.Enhancement
 {
     public class SubDbHasher : ISubDbHasher
     {

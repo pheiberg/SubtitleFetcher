@@ -1,30 +1,45 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SubtitleFetcher.Common.Enhancement;
 
 namespace SubtitleFetcher.Common.Orchestration
 {
     public class SubtitleDownloadService : ISubtitleDownloadService
     {
         private readonly IEnumerable<IEpisodeSubtitleDownloader> _subtitleDownloaders;
+        private readonly IEnhancementProvider _enhancementProvider;
 
-        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders)
+        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders, IEnhancementProvider enhancementProvider)
         {
             _subtitleDownloaders = subtitleDownloaders;
+            _enhancementProvider = enhancementProvider;
         }
 
         public bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
-            var matches = FindMatchingSubtitlesOrderedByLanguageCode(tvReleaseIdentity, languages).ToArray();
+            var matches = FindMatchingSubtitlesOrderedByLanguageCode(targetSubtitleFile, tvReleaseIdentity, languages).ToArray();
            return DownloadFirstAvailableSubtitle(targetSubtitleFile, matches);
         }
 
-        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
+        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
         {
             var languageArray = languages.ToArray();
             var compatibleDownloaders = GetDownloadersForLanguages(languageArray);
+            EnhanceIdentity(compatibleDownloaders, tvReleaseIdentity, targetSubtitleFile);
             var searchResults = SearchDownloaders(compatibleDownloaders, tvReleaseIdentity, languageArray);
             return OrderByLanguageCode(searchResults, languageArray);
+        }
+
+        private void EnhanceIdentity(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, TvReleaseIdentity tvReleaseIdentity, string filePath)
+        {
+            var enhancementRequests = compatibleDownloaders.SelectMany(d => d.EnhancementRequests);
+            var enhancements = enhancementRequests.Select(
+                    er => _enhancementProvider.GetEnhancement(er.EnhancementType, filePath, tvReleaseIdentity));
+            foreach (var enhancement in enhancements)
+            {
+                tvReleaseIdentity.Enhancements.Add(enhancement);
+            }
         }
         
         private IEnumerable<IEpisodeSubtitleDownloader> GetDownloadersForLanguages(string[] languageArray)

@@ -4,17 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Enhancement.Tvdb
 {
     public class TvdbSearcher : ITvdbSearcher
     {
         private const string ServiceLocation = "http://thetvdb.com/api/GetSeries.php?seriesname={0}";
-        private readonly IDictionary<string, IEnumerable<TvdbSeries>> cache = new Dictionary<string, IEnumerable<TvdbSeries>>(); 
+        private readonly IDictionary<string, IEnumerable<TvdbSeries>> _cache = new Dictionary<string, IEnumerable<TvdbSeries>>(); 
 
         public IEnumerable<TvdbSeries> FindSeries(string name)
         {
-            if (cache.ContainsKey(name))
-                return cache[name];
+            if (_cache.ContainsKey(name))
+                return _cache[name];
 
             var client = new WebClient();
             var resultXml = client.DownloadString(string.Format(ServiceLocation, Uri.EscapeDataString(name)));
@@ -30,7 +30,7 @@ namespace SubtitleFetcher.Common
                            SeriesId = (int?)s.Element("seriesid"),
                            SeriesName = (string)s.Element("SeriesName")
                        }).ToList();
-            cache[name] = results;
+            _cache[name] = results;
             return results;
         }
 

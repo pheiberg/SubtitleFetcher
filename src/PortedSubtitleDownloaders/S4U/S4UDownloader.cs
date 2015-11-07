@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Enhancement;
 using SearchQuery = SubtitleFetcher.Common.SearchQuery;
 using Subtitle = SubtitleFetcher.Common.Subtitle;
 
@@ -38,5 +40,7 @@ namespace PortedSubtitleDownloaders.S4U
         }
 
         public IEnumerable<string> LanguageLimitations => new[] { "swe" };
+
+        public IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
     }
 }

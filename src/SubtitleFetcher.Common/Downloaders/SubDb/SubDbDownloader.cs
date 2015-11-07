@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SubtitleFetcher.Common.Downloaders.SubDb.Enhancement;
+using SubtitleFetcher.Common.Enhancement;
 
 namespace SubtitleFetcher.Common.Downloaders.SubDb
 {
@@ -23,9 +25,9 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         private readonly SubDbApi _api;
 
-        public SubDbDownloader(SubDbApi api)
+        public SubDbDownloader()
         {
-            _api = api;
+            _api = new SubDbApi();
         }
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
@@ -42,12 +44,18 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-            var hash = query.FileHash;
-            var languages = _api.Search(hash);
+            var fileHash = GetFileHash(query);
+            var languages = _api.Search(fileHash);
             string constructedFileName = $"{query.SerieTitle}.S{query.Season.ToString("00")}.E{query.Episode.ToString("00")}.DUMMY-{query.ReleaseGroup}";
 
             var availableLanguages = GetAvailableLanguagesMatchingSearchQuery(query, languages);
-            return availableLanguages.Select(language => new Subtitle(hash, query.SerieTitle, constructedFileName, language));
+            return availableLanguages.Select(language => new Subtitle(fileHash, query.SerieTitle, constructedFileName, language));
+        }
+
+        private static string GetFileHash(SearchQuery query)
+        {
+            var hashEnhancement = query.Enhancements.OfType<FileHashEnhancement>().SingleOrDefault();
+            return hashEnhancement?.FileHash;
         }
 
         private static IEnumerable<string> GetAvailableLanguagesMatchingSearchQuery(SearchQuery query, IEnumerable<string> languages)
@@ -63,5 +71,13 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
         }
 
         public IEnumerable<string> LanguageLimitations => LanguageLookup.Keys;
+
+        public IEnumerable<IEnhancementRequest> EnhancementRequests
+        {
+            get
+            {
+                yield return new EnhancementRequest<FileHashEnhancement>();
+            }
+        }
     }
 }

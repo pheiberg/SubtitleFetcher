@@ -4,7 +4,6 @@ using FakeItEasy;
 using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher.Common;
-using SubtitleFetcher.Common.Downloaders.SubDb;
 using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Orchestration;
@@ -148,7 +147,6 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             ILogger logger,
             IEpisodeParser episodeParser,
             ISubtitleDownloadService subtitleService,
-            ISubDbHasher hasher,
             [Frozen]IFileSystem fileSystem,
             FileProcessor sut)
         {
@@ -157,7 +155,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._))
                 .Returns(false);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings, hasher);
+            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings);
 
             bool result = processor.ProcessFile(fileName, new string[0]);
 

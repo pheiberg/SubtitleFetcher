@@ -1,4 +1,4 @@
-﻿namespace SubtitleFetcher.Common.Downloaders.SubDb
+﻿namespace SubtitleFetcher.Common.Downloaders.SubDb.Enhancement
 {
     public interface ISubDbHasher
     {

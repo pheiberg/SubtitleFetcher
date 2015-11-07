@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Enhancement;
 using Subtitle = PortedSubtitleDownloaders.Legacy.Subtitle;
 
 namespace PortedSubtitleDownloaders.Subscene
@@ -31,5 +31,7 @@ namespace PortedSubtitleDownloaders.Subscene
         }
 
         public IEnumerable<string> LanguageLimitations => Enumerable.Empty<string>();
+
+        public IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
     }
 }
