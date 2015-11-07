@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SubtitleFetcher.Common;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Orchestration
 {
     public class SubtitleDownloadService : ISubtitleDownloadService
     {
@@ -39,7 +38,7 @@ namespace SubtitleFetcher
                 .AsParallel()
                 .SelectMany(downloader => downloader.SearchSubtitle(tvReleaseIdentity, languageArray)
                     .Select(match => new DownloaderMatch(downloader, match)))
-                .AsSequential();
+                .AsSequential().ToArray();
             return FilterOutLanguagesNotInRequest(searchResults, languageArray); ;
         }
         private static IEnumerable<DownloaderMatch> FilterOutLanguagesNotInRequest(IEnumerable<DownloaderMatch> searchResults, string[] validLanguages)

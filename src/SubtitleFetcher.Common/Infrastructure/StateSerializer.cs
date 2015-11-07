@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Logging;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Infrastructure
 {
     public class StateSerializer : IStateSerializer
     {

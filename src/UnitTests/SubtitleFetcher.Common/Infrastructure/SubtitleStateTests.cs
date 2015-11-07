@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using SubtitleFetcher;
+using SubtitleFetcher.Common.Infrastructure;
 
-namespace UnitTests.SubtitleFetcher
+namespace UnitTests.SubtitleFetcher.Common.Infrastructure
 {
     [TestFixture]
     public class SubtitleStateTests

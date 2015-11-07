@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using SubtitleFetcher.Common.Infrastructure;
+using SubtitleFetcher.Common.Orchestration;
 
 namespace SubtitleFetcher
 {

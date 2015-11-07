@@ -1,4 +1,4 @@
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Infrastructure
 {
     public interface IStateSerializer
     {

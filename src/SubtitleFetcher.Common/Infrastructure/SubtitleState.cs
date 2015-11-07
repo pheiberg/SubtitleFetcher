@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Infrastructure
 {
 	[Serializable]
 	public class SubtitleState

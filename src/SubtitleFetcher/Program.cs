@@ -1,6 +1,7 @@
 ﻿using System;
 using CommandLine;
 using StructureMap;
+using SubtitleFetcher.Bootstrapping;
 
 namespace SubtitleFetcher
 {

@@ -6,10 +6,12 @@ using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
+using SubtitleFetcher.Common.Orchestration;
 using SubtitleFetcher.Common.Parsing;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Bootstrapping
 {
     public class SubtitleDownloaderRegistry : Registry
     {

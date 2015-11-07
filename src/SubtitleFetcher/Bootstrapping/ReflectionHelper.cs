@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Bootstrapping
 {
     public class ReflectionHelper
     {

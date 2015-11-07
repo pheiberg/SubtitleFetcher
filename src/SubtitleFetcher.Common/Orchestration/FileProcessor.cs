@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders.SubDb;
+using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Orchestration
 {
     public class FileProcessor : IFileProcessor
     {

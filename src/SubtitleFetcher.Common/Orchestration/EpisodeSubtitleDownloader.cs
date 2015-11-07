@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Orchestration
 {
     public class EpisodeSubtitleDownloader : IEpisodeSubtitleDownloader
     {

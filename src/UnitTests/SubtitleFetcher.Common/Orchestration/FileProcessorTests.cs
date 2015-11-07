@@ -3,13 +3,14 @@ using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
-using SubtitleFetcher;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders.SubDb;
+using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Logging;
+using SubtitleFetcher.Common.Orchestration;
 using SubtitleFetcher.Common.Parsing;
 
-namespace UnitTests.SubtitleFetcher
+namespace UnitTests.SubtitleFetcher.Common.Orchestration
 {
     [TestFixture]
     public class FileProcessorTests

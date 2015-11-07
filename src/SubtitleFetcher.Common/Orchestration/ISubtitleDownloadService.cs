@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using SubtitleFetcher.Common;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Orchestration
 {
     public interface ISubtitleDownloadService
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Infrastructure
 {
     public interface IFileSystem
     {

@@ -4,6 +4,8 @@ using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
 using SubtitleFetcher;
+using SubtitleFetcher.Common.Infrastructure;
+using SubtitleFetcher.Common.Orchestration;
 
 namespace UnitTests.SubtitleFetcher
 {

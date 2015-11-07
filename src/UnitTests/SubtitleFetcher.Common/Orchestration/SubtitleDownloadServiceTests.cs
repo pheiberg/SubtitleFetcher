@@ -3,10 +3,10 @@ using Castle.Core.Internal;
 using FakeItEasy;
 using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
-using SubtitleFetcher;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Orchestration;
 
-namespace UnitTests.SubtitleFetcher
+namespace UnitTests.SubtitleFetcher.Common.Orchestration
 {
     [TestFixture]
     public class SubtitleDownloadServiceTests
@@ -29,11 +29,11 @@ namespace UnitTests.SubtitleFetcher
         public void DownloadSubtitle_MatchingSubtitlesDownloaderSucceeds_ShouldReturnTrue(
             string file,
             TvReleaseIdentity identity,
-            string[] languages,
             Subtitle[] matches,
             IEpisodeSubtitleDownloader fakeDownloader
             )
         {
+            var languages = matches.Select(m => m.LanguageCode);
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
             A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SubtitleFetcher
+namespace SubtitleFetcher.Common.Orchestration
 {
     public interface IFileProcessor
     {

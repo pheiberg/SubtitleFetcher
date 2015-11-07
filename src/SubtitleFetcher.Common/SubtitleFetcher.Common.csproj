@@ -63,6 +63,18 @@
     <Compile Include="Hashing\IHashAlgorithmFactory.cs" />
     <Compile Include="Hashing\IHashCalculator.cs" />
     <Compile Include="Hashing\Md5HashAlgorithmFactory.cs" />
+    <Compile Include="Infrastructure\FileSystem.cs" />
+    <Compile Include="Infrastructure\IFileSystem.cs" />
+    <Compile Include="Infrastructure\IStateSerializer.cs" />
+    <Compile Include="Infrastructure\StateSerializer.cs" />
+    <Compile Include="Infrastructure\SubtitleState.cs" />
+    <Compile Include="Orchestration\EpisodeSubtitleDownloader.cs" />
+    <Compile Include="Orchestration\FileProcessor.cs" />
+    <Compile Include="Orchestration\IEpisodeSubtitleDownloader.cs" />
+    <Compile Include="Orchestration\IFileProcessor.cs" />
+    <Compile Include="Orchestration\ISubtitleDownloadService.cs" />
+    <Compile Include="LanguageSettings.cs" />
+    <Compile Include="Orchestration\SubtitleDownloadService.cs" />
     <Compile Include="TvReleaseIdentity.cs" />
     <Compile Include="Parsing\EpisodeParser.cs" />
     <Compile Include="Downloaders\GenericDownloader.cs" />
@@ -84,6 +96,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
