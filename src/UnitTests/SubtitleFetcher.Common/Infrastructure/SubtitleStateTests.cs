@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Castle.Core.Internal;
 using NUnit.Framework;
 using SubtitleFetcher.Common.Infrastructure;
 
@@ -8,74 +9,68 @@ namespace UnitTests.SubtitleFetcher.Common.Infrastructure
     [TestFixture]
     public class SubtitleStateTests
     {
-        [Test]
-        public void Cleanup_EntriesAreOld_RemoveAllEntriesOlderThanGiveupdays()
+        [Test, AutoFakeData]
+        public void Cleanup_EntriesAreOld_RemoveAllEntriesOlderThanGiveupdays(
+            int giveupdays,
+            Action<SubtitleStateEntry> removalAction,
+            SubtitleStateEntry[] entries,
+            SubtitleState state)
         {
-            var state = new SubtitleState();
-            state.Entries.AddRange(
-                new[]{
-                        new SubtitleStateEntry("keep1", DateTime.Now.AddDays(-1)), 
-                        new SubtitleStateEntry("remove1", DateTime.Now.AddDays(-8)),
-                        new SubtitleStateEntry("remove2", DateTime.Now.AddDays(-10)),
-                        new SubtitleStateEntry("keep2", DateTime.Now.AddDays(-6)),
-                    }
-                );
-            
-            state.Cleanup(7, x => {});
+            var toBeRemoved = entries.Take(2);
+            toBeRemoved.ForEach(e => e.Timestamp = DateTime.Now.AddDays(-giveupdays - 1));
+            var toKeep = entries.Skip(2);
+            toKeep.ForEach(e => e.Timestamp = DateTime.Now);
+            state.Entries.Clear();
+            state.Entries.AddRange(entries);
 
-            Assert.That(state.Entries.Select(s => s.File), Has.All.StringStarting("keep"));
+            state.Cleanup(giveupdays, removalAction);
+
+            Assert.That(state.Entries.Select(s => s.File), Is.EquivalentTo(toKeep.Select(s => s.File)));
         }
 
-        [Test]
-        public void Update_ExistingEntriesMatching_LeaveExistingItemsUnchanged()
+        [Test, AutoFakeData]
+        public void Update_ExistingEntriesMatching_LeaveExistingItemsUnchanged(
+            SubtitleStateEntry[] entries,
+            SubtitleState state
+            )
         {
-            var state = new SubtitleState();
-            state.Entries.AddRange(
-                new[]{
-                        new SubtitleStateEntry("keep1", new DateTime(2012, 1, 1)), 
-                        new SubtitleStateEntry("remove", new DateTime(2012, 1, 1)),
-                        new SubtitleStateEntry("keep2", new DateTime(2012, 1, 1)),
-                    }
-                );
+            var failedFiles = entries.Select(e => e.File);
+            state.Entries.Clear();
+            state.Entries.AddRange(entries);
 
-            state.Update(new[]{ "keep1", "keep2" });
+            state.Update(failedFiles);
 
-            Assert.That(state.Entries.All(s => s.File.StartsWith("keep") && s.Timestamp == new DateTime(2012, 1, 1)), Is.True);
-            Assert.That(state.Entries.Count(), Is.EqualTo(2));
+            Assert.That(entries.Select(e => new { e.File, e.Timestamp }), 
+                Is.EquivalentTo(state.Entries.Select(e => new { e.File, e.Timestamp })));
         }
 
-        [Test]
-        public void Update_NewEntries_AddNewEntries()
+        [Test, AutoFakeData]
+        public void Update_NewEntries_AddNewEntries(
+            SubtitleStateEntry[] newEntries,
+            SubtitleStateEntry[] existingEntries,
+            SubtitleState state)
         {
-            var state = new SubtitleState();
-            state.Entries.AddRange(
-                new[]{
-                        new SubtitleStateEntry("keep1", new DateTime(2012, 1, 1)), 
-                        new SubtitleStateEntry("remove", new DateTime(2012, 1, 1)),
-                        new SubtitleStateEntry("keep2", new DateTime(2012, 1, 1)),
-                    }
-                );
+            var failedFiles = existingEntries.Concat(newEntries).Select(e => e.File);
+            state.Entries.Clear();
+            state.Entries.AddRange(existingEntries);
 
-            state.Update(new[] { "keep1", "keep2", "new" });
+            state.Update(failedFiles);
 
-            Assert.That(state.Entries.Count(s => s.File.StartsWith("new")), Is.EqualTo(1));
+            Assert.That(state.Entries.Select(e => e.File), Is.EquivalentTo(failedFiles));
         }
 
-        [Test]
-        public void Update_RemovedEntries_RemoveMissingItems()
+        [Test, AutoFakeData]
+        public void Update_RemovedEntries_RemoveMissingItems(
+            SubtitleStateEntry[] entries,
+            SubtitleState state)
         {
-            var state = new SubtitleState();
-            state.Entries.AddRange(
-                new[]{
-                        new SubtitleStateEntry("keep1", new DateTime(2012, 1, 1)), 
-                        new SubtitleStateEntry("remove", new DateTime(2012, 1, 1)),
-                        new SubtitleStateEntry("keep2", new DateTime(2012, 1, 1)),
-                    }
-                );
+            var failedFiles = entries.Skip(1).Select(e => e.File);
+            state.Entries.Clear();
+            state.Entries.AddRange(entries);
 
-            state.Update(new[] { "keep1", "keep2" });
+            state.Update(failedFiles);
 
-            Assert.That(state.Entries.Any(s => s.File.StartsWith("remove")), Is.False);
+            Assert.That(state.Entries.Select(e => e.File), Is.EquivalentTo(failedFiles));
         }
     }
 }
