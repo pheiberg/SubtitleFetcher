@@ -1,14 +1,14 @@
 ﻿using SubtitleFetcher.Common.Hashing;
 
-namespace SubtitleFetcher.Common.Downloaders.SubDb.Enhancement
+namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
 {
-    public class SubDbHasher : IHexadecimalFileHasher
+    public class OpenSubtitlesHasher : IHexadecimalFileHasher
     {
         private readonly FileHasher _hasher;
 
-        public SubDbHasher()
+        public OpenSubtitlesHasher()
         {
-            _hasher = new FileHasher(new HashCalculator(new Md5HashAlgorithmFactory()));
+            _hasher = new FileHasher(new OpenSubtitlesHashCalculator());
         }
 
         public string ComputeHash(string filePath)

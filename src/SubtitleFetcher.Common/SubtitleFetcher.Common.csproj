@@ -47,15 +47,17 @@
   <ItemGroup>
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
-    <Compile Include="Downloaders\SubDb\Enhancement\FileHashEnhancement.cs" />
-    <Compile Include="Downloaders\SubDb\Enhancement\FileHashEnhancer.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHasher.cs" />
+    <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancement.cs" />
+    <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Enhancement\EnhancementProvider.cs" />
     <Compile Include="Enhancement\EnhancementRequest.cs" />
     <Compile Include="Enhancement\EnhancerRegistry.cs" />
     <Compile Include="Enhancement\IEnhancementProvider.cs" />
     <Compile Include="Enhancement\IEnhancementRequest.cs" />
     <Compile Include="Enhancement\IEnhancer.cs" />
-    <Compile Include="Downloaders\SubDb\Enhancement\ISubDbHasher.cs" />
+    <Compile Include="Hashing\IHexadecimalFileHasher.cs" />
     <Compile Include="Downloaders\SubDb\SubDbApi.cs" />
     <Compile Include="Downloaders\SubDb\SubDbDownloader.cs" />
     <Compile Include="Downloaders\SubDb\SubDbFileNotFoundException.cs" />

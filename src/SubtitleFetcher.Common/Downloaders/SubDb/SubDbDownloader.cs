@@ -42,7 +42,7 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         private static string GetFileHash(SearchQuery query)
         {
-            var hashEnhancement = query.Enhancements.OfType<FileHashEnhancement>().SingleOrDefault();
+            var hashEnhancement = query.Enhancements.OfType<SubDbFileHashEnhancement>().SingleOrDefault();
             return hashEnhancement?.FileHash;
         }
 
@@ -70,7 +70,7 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
         {
             get
             {
-                yield return new EnhancementRequest<FileHashEnhancement>();
+                yield return new EnhancementRequest<SubDbFileHashEnhancement>();
             }
         }
     }

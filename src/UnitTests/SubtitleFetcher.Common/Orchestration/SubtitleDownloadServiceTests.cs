@@ -129,7 +129,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
         [Test, AutoFakeData]
         public void DownloadSubtitle_DownloaderHasEnhancementRequests_ProvidesEnhancements(
-            FileHashEnhancement enhancement,
+            SubDbFileHashEnhancement enhancement,
             string file,
             TvReleaseIdentity identity,
             Subtitle[] matches,
@@ -142,8 +142,8 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             var downloaderWithRequest = downloaders.First();
             A.CallTo(() => downloaderWithRequest.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             A.CallTo(() => downloaderWithRequest.EnhancementRequests)
-                .Returns(new[] {new EnhancementRequest<FileHashEnhancement>()});
-            A.CallTo(() => enhancementProvider.GetEnhancement(typeof(FileHashEnhancement), file, identity))
+                .Returns(new[] {new EnhancementRequest<SubDbFileHashEnhancement>()});
+            A.CallTo(() => enhancementProvider.GetEnhancement(typeof(SubDbFileHashEnhancement), file, identity))
                 .Returns(enhancement);
             
             sut.DownloadSubtitle(file, identity, languages);
