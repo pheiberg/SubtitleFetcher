@@ -4,11 +4,11 @@ namespace SubtitleFetcher.Common
 {
     public class LanguageSettings
     {
-        public LanguageSettings(IEnumerable<string> languages)
+        public LanguageSettings(IEnumerable<Language> languages)
         {
             Languages = languages;
         }
 
-        public IEnumerable<string> Languages { get; }
+        public IEnumerable<Language> Languages { get; }
     }
 }

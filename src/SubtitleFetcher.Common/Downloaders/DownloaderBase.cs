@@ -33,9 +33,9 @@ namespace SubtitleFetcher.Common.Downloaders
         
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-            if (LanguageLimitations.Any() && !query.LanguageCodes.Intersect(LanguageLimitations).Any())
+            if (SupportedLanguages.Any() && !query.Languages.Intersect(SupportedLanguages).Any())
             {
-                _logger.Debug(_name, "The downloader only provides texts for the languages: {0}. Aborting search.", string.Join(", ", LanguageLimitations.ToArray()));
+                _logger.Debug(_name, "The downloader only provides texts for the languages: {0}. Aborting search.", string.Join(", ", SupportedLanguages.Select(l => l.TwoLetterIsoName).ToArray()));
                 return Enumerable.Empty<Subtitle>();
             }
             return _downloader.SearchSubtitles(query, GetShowId, SearchTimeout);
@@ -52,8 +52,8 @@ namespace SubtitleFetcher.Common.Downloaders
         {
             return _downloader.CreateWebClient(SearchTimeout);
         }
-
-        public virtual IEnumerable<string> LanguageLimitations => Enumerable.Empty<string>();
+        
+        public abstract IEnumerable<Language> SupportedLanguages { get; } 
 
         public virtual IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
     }

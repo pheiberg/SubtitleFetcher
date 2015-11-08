@@ -40,8 +40,11 @@ namespace SubtitleFetcher.Common.Downloaders.Undertexter
                    let name = match.Groups["name"].Value.Trim(' ', '\n').Replace("&", "and").Replace(":", "") 
                    select new Series(id, name);
         }
-
-        public override IEnumerable<string> LanguageLimitations => new[] { "swe" };
+        
+        public override IEnumerable<Language> SupportedLanguages
+        {
+            get { yield return KnownLanguages.GetLanguageByName("Swedish"); }
+        }
 
         private class Series
         {

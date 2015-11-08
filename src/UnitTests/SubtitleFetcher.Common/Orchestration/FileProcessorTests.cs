@@ -44,7 +44,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             sut.ProcessFile(fileName, ignored);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._)).MustNotHaveHappened();
         }
 
         [Test, AutoFakeData]
@@ -77,7 +77,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             sut.ProcessFile(fileName, ignored);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).MustNotHaveHappened();
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._)).MustNotHaveHappened();
         }
 
         [Test, AutoFakeData]
@@ -89,7 +89,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             [Frozen] ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._))
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._))
                 .Returns(true);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
 
@@ -112,13 +112,13 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             var alreadyDownloadedLanguages = languages.Skip(1);
             var expected = languages.Take(1);
             A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, 
-                A<IEnumerable<string>>.That.IsSameSequenceAs(languages)))
+                A<IEnumerable<Language>>.That.IsSameSequenceAs(languages)))
                .Returns(alreadyDownloadedLanguages);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
 
             sut.ProcessFile(fileName, new string[0]);
 
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<string[]>
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<Language[]>
                 .That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
 
@@ -131,7 +131,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             [Frozen]ISubtitleDownloadService subtitleService,
             FileProcessor sut)
         {
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._)).Returns(false);
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._)).Returns(false);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
             
             var result = sut.ProcessFile(fileName, ignored);
@@ -141,7 +141,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
         [Test, AutoFakeData]
         public void ProcessFile_AllLanguagesAlreadyDownloaded_ReturnsTrue( 
-            string[] languages,
+            Language[] languages,
             string fileName,
             TvReleaseIdentity tvRelease,
             ILogger logger,
@@ -152,7 +152,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         {
             var settings = new LanguageSettings(languages);
             A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages)).Returns(languages);
-            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<string>>._))
+            A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._))
                 .Returns(false);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
             var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings);

@@ -17,7 +17,7 @@ namespace SubtitleFetcher.Common
         public string SerieTitle { get; set; }
         public int Season { get; set; }
         public int Episode { get; set; }
-        public string[] LanguageCodes { get; set; }
+        public Language[] Languages { get; set; }
         public string ReleaseGroup { get; set; }
         public IList<IEnhancement> Enhancements { get; } 
     }

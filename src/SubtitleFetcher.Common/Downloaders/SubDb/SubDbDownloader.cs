@@ -9,20 +9,6 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 {
     public class SubDbDownloader : ISubtitleDownloader
     {
-        private static readonly IDictionary<string, string> LanguageLookup = new Dictionary<string, string>
-        {
-            {"eng", "en"},
-            {"spa", "es"},
-            {"fre", "fr"},
-            {"ita", "it"},
-            {"dut", "nl"},
-            {"pol", "pl"},
-            {"por", "pt"},
-            {"rom", "ro"},
-            {"swe", "sv"},
-            {"tur", "tr"}
-        };
-
         private readonly SubDbApi _api;
 
         public SubDbDownloader()
@@ -32,8 +18,8 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var languages = new[] { LanguageLookup[subtitle.LanguageCode] };
-            var download = _api.DownloadSubtitle(subtitle.Id, languages);
+            var languages = new[] { subtitle.Language };
+            var download = _api.DownloadSubtitle(subtitle.Id, languages.Select(l => l.TwoLetterIsoName));
             return new []{ download };
         }
         
@@ -45,9 +31,10 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             var fileHash = GetFileHash(query);
-            var languages = _api.Search(fileHash);
+            var languageCodes = _api.Search(fileHash);
             string constructedFileName = $"{query.SerieTitle}.S{query.Season.ToString("00")}.E{query.Episode.ToString("00")}.DUMMY-{query.ReleaseGroup}";
 
+            var languages = languageCodes.Select(KnownLanguages.GetLanguageByTwoLetterIso);
             var availableLanguages = GetAvailableLanguagesMatchingSearchQuery(query, languages);
             return availableLanguages.Select(language => new Subtitle(fileHash, query.SerieTitle, constructedFileName, language));
         }
@@ -58,19 +45,25 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
             return hashEnhancement?.FileHash;
         }
 
-        private static IEnumerable<string> GetAvailableLanguagesMatchingSearchQuery(SearchQuery query, IEnumerable<string> languages)
+        private static IEnumerable<Language> GetAvailableLanguagesMatchingSearchQuery(SearchQuery query, IEnumerable<Language> languages)
         {
-            var mappedLanguages = languages.Where(l => !string.IsNullOrWhiteSpace(l))
-                .Select(TranslateLanguageCode);
-            return mappedLanguages.Where(l => query.LanguageCodes.Contains(l));
+            return languages.Intersect(query.Languages);
         }
-
-        private static string TranslateLanguageCode(string language)
-        {
-            return LanguageLookup.SingleOrDefault(l => string.Equals(l.Value, language, StringComparison.OrdinalIgnoreCase)).Key;
+        
+        public IEnumerable<Language> SupportedLanguages {
+            get
+            {
+                yield return KnownLanguages.GetLanguageByName("English");
+                yield return KnownLanguages.GetLanguageByName("Spanish");
+                yield return KnownLanguages.GetLanguageByName("French");
+                yield return KnownLanguages.GetLanguageByName("Italian");
+                yield return KnownLanguages.GetLanguageByName("Dutch");
+                yield return KnownLanguages.GetLanguageByName("Polish");
+                yield return KnownLanguages.GetLanguageByName("Romanian");
+                yield return KnownLanguages.GetLanguageByName("Swedish");
+                yield return KnownLanguages.GetLanguageByName("Turkish");
+            }
         }
-
-        public IEnumerable<string> LanguageLimitations => LanguageLookup.Keys;
 
         public IEnumerable<IEnhancementRequest> EnhancementRequests
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
@@ -23,7 +22,7 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.LanguageCode);
+            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
             return _downloader.SaveSubtitle(legacySubtitle);
         }
 
@@ -34,12 +33,18 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = query.LanguageCodes };
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = new [] { "swe" } };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new Subtitle(r.Id, r.Title, r.FileName, r.LanguageCode));
+            return results.Select(r => new Subtitle(r.Id, r.Title, r.FileName, KnownLanguages.GetLanguageByName("Swedish")));
         }
-
-        public IEnumerable<string> LanguageLimitations => new[] { "swe" };
+        
+        public IEnumerable<Language> SupportedLanguages
+        {
+            get
+            {
+                yield return KnownLanguages.GetLanguageByName("Swedish");
+            }
+        }
 
         public IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
     }

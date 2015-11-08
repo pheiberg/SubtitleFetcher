@@ -48,7 +48,7 @@ namespace SubtitleFetcher.Common.Infrastructure
                 yield return CreateSubtitleFileName(filePath, "." + lang + ".srt");
         }
 
-        public IEnumerable<string> GetDowloadedSubtitleLanguages(string filePath, IEnumerable<string> languages)
+        public IEnumerable<Language> GetDowloadedSubtitleLanguages(string filePath, IEnumerable<Language> languages)
         {
             var filesToCheck = languages.ToDictionary(language => language, language => CreateSubtitleFileName(filePath, string.Format(".{0}.srt", language)));
             return filesToCheck.Where(item => File.Exists(item.Value)).Select(item => item.Key);

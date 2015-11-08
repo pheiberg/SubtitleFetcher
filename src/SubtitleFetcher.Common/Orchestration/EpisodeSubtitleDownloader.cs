@@ -28,7 +28,7 @@ namespace SubtitleFetcher.Common.Orchestration
 
         public string Name => _downloader.GetName();
 
-        public IEnumerable<Subtitle> SearchSubtitle(TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages)
+        public IEnumerable<Subtitle> SearchSubtitle(TvReleaseIdentity tvReleaseIdentity, IEnumerable<Language> languages)
         {
             var languageArray = languages.ToArray();
             var query = CreateSearchQuery(tvReleaseIdentity, languageArray);
@@ -49,17 +49,17 @@ namespace SubtitleFetcher.Common.Orchestration
 
             var matchingSubtitles = (from subtitle in searchResult
                                     let subtitleInfo = _nameParser.ParseEpisodeInfo(subtitle.FileName)
-                                    let langPriority = Array.FindIndex(languageArray, l => l.Equals(subtitle.LanguageCode))
+                                    let langPriority = Array.FindIndex(languageArray, l => l.Equals(subtitle.Language))
                                     where subtitleInfo.IsEquivalent(tvReleaseIdentity)
                                     orderby langPriority, subtitleInfo.SeriesName
                                     select subtitle).ToArray();
             return matchingSubtitles;
         }
 
-        private static SearchQuery CreateSearchQuery(TvReleaseIdentity tvReleaseIdentity, string[] languageArray)
+        private static SearchQuery CreateSearchQuery(TvReleaseIdentity tvReleaseIdentity, Language[] languageArray)
         {
             var query = new SearchQuery(tvReleaseIdentity.SeriesName, tvReleaseIdentity.Season, tvReleaseIdentity.Episode,
-                tvReleaseIdentity.ReleaseGroup) {LanguageCodes = languageArray};
+                tvReleaseIdentity.ReleaseGroup) { Languages = languageArray };
             foreach (var enhancement in tvReleaseIdentity.Enhancements)
             {
                 query.Enhancements.Add(enhancement);
@@ -69,11 +69,11 @@ namespace SubtitleFetcher.Common.Orchestration
 
         public bool TryDownloadSubtitle(Subtitle subtitle, string targetSubtitleFile)
         {
-            _logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.LanguageCode);
+            _logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.Language);
             try
             {
                 var subtitleFile = DownloadSubtitleFile(_downloader, subtitle);
-                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.LanguageCode + ".srt");
+                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language + ".srt");
                 _logger.Debug("EpisodeSubtitleDownloader", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
                 _fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
@@ -84,7 +84,7 @@ namespace SubtitleFetcher.Common.Orchestration
             }
             return false;
         }
-
+        
         private static string DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)
         {
             IEnumerable<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
@@ -92,11 +92,11 @@ namespace SubtitleFetcher.Common.Orchestration
             return subtitleFile.FullName;
         }
 
-        public bool CanHandleAtLeastOneOf(IEnumerable<string> languages)
+        public bool CanHandleAtLeastOneOf(IEnumerable<Language> languages)
         {
-            if (!languages.Any() || !_downloader.LanguageLimitations.Any())
+            if (!languages.Any())
                 return true;
-           return _downloader.LanguageLimitations.Intersect(languages).Any();
+           return _downloader.SupportedLanguages.Intersect(languages).Any();
         }
 
         public IEnumerable<IEnhancementRequest> EnhancementRequests => _downloader.EnhancementRequests;

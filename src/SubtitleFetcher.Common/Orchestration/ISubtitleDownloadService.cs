@@ -4,6 +4,6 @@ namespace SubtitleFetcher.Common.Orchestration
 {
     public interface ISubtitleDownloadService
     {
-        bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<string> languages);
+        bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<Language> languages);
     }
 }

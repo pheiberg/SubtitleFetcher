@@ -48,14 +48,14 @@ namespace SubtitleFetcher.Common.Orchestration
                 return true;
             }
             
-            var languageList = string.Join(", ", languagesToDownload);
+            var languageList = string.Join(", ", languagesToDownload.Select(l => l.Name));
             _logger.Important("FileProcessor", $"Processing file {fileName}...");
             _logger.Debug("FileProcessor", $"Looking for subtitles in: {languageList}");
 
             return DownloadSubtitle(fileName, episodeIdentity, languagesToDownload);
         }
 
-        private string[] DetermineLanguagesToDownload(string fileName)
+        private Language[] DetermineLanguagesToDownload(string fileName)
         {
             var dowloadedLanguages = GetAlreadyDownloadedLanguages(fileName);
             return _languageSettings.Languages.Except(dowloadedLanguages).ToArray();
@@ -75,13 +75,13 @@ namespace SubtitleFetcher.Common.Orchestration
                 StringComparison.OrdinalIgnoreCase));
         }
 
-        private IEnumerable<string> GetAlreadyDownloadedLanguages(string fileName)
+        private IEnumerable<Language> GetAlreadyDownloadedLanguages(string fileName)
         {
             return _fileSystem.GetDowloadedSubtitleLanguages(fileName, _languageSettings.Languages);
         }
 
         private bool DownloadSubtitle(string fileName, TvReleaseIdentity tvReleaseIdentity, 
-            IEnumerable<string> languagesToDownload)
+            IEnumerable<Language> languagesToDownload)
         {
             return _subtitleService.DownloadSubtitle(fileName , tvReleaseIdentity, languagesToDownload);
         }

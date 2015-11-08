@@ -41,7 +41,8 @@ namespace SubtitleFetcher.Bootstrapping
 
             For<ILogger>().Use<Logger>().Ctor<LogLevel>().Is(options.Logging);
             For<IStateSerializer>().Use<StateSerializer>().Ctor<string>("stateFileName").Is(options.StateFileName);
-            For<LanguageSettings>().Use(new LanguageSettings(options.Languages));
+            var languages = options.Languages.Select(KnownLanguages.GetLanguageByTwoLetterIso);
+            For<LanguageSettings>().Use(new LanguageSettings(languages));
             For<FileTypeSettings>().Use(new FileTypeSettings(options.AcceptedExtensions));
             For<ISubtitleDownloadService>().Use(CreateSubtitleDownloadService);
             For<EnhancerRegistry>().Singleton().Use<EnhancerRegistry>();

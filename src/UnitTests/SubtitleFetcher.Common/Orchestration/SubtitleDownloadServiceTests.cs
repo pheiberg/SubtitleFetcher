@@ -16,15 +16,18 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
     {
         [Test, AutoFakeData]
         public void DownloadSubtitle_NoMatchingSubtitles_ShouldReturnFalse(
+            Language[] languages,
+            string file,
+            TvReleaseIdentity identity,
             IEnhancementProvider enhancementProvider,
             [Frozen]IEpisodeSubtitleDownloader fakeDownloader)
         {
-            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(Enumerable.Empty<Subtitle>());
-            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(Enumerable.Empty<Subtitle>());
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders, enhancementProvider);
 
-            bool success = service.DownloadSubtitle("Anything", new TvReleaseIdentity(), new string[0]);
+            bool success = service.DownloadSubtitle(file, identity, languages);
 
             Assert.That(success, Is.False);
         }
@@ -38,10 +41,10 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             IEnhancementProvider enhancementProvider
             )
         {
-            var languages = matches.Select(m => m.LanguageCode);
-            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(matches);
+            var languages = matches.Select(m => m.Language);
+            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
-            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders, enhancementProvider);
 
@@ -52,17 +55,21 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         
         [Test, AutoFakeData]
         public void DownloadSubtitle_MatchingSubtitlesDownloaderFails_ShouldReturnFalse(
-            IEnhancementProvider enhancementProvider)
+            string file,
+            Language[] languages,
+            TvReleaseIdentity identity,
+            Subtitle[] matches,
+            Language language,
+            IEnhancementProvider enhancementProvider,
+            [Frozen]IEpisodeSubtitleDownloader fakeDownloader)
         {
-            var matches = new[] { new Subtitle("Anything", "Anything", "Anything", "eng") };
-            var fakeDownloader = A.Fake<IEpisodeSubtitleDownloader>();
-            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(matches);
+            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(false);
-            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders, enhancementProvider);
 
-            bool success = service.DownloadSubtitle("Anything", new TvReleaseIdentity(), new string[0]);
+            bool success = service.DownloadSubtitle(file, identity, languages);
 
             Assert.That(success, Is.False);
         }
@@ -76,17 +83,17 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             IEnhancementProvider enhancementProvider
             )
         {
-            var languages = matches.Skip(1).Select(m => m.LanguageCode);
+            var languages = matches.Skip(1).Select(m => m.Language);
             var expectedLanguage = languages.First();
-            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(matches);
+            A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(matches);
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
-            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
             var service = new SubtitleDownloadService(downloaders, enhancementProvider);
 
             service.DownloadSubtitle(file, identity, languages);
 
-            A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>.That.Matches(s => s.LanguageCode == expectedLanguage), A<string>._))
+            A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>.That.Matches(s => s.Language == expectedLanguage), A<string>._))
                 .MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -100,21 +107,21 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             )
         {
             var expectedDownloader = downloaders.First();
-            A.CallTo(() => expectedDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._)).Returns(matches);
+            A.CallTo(() => expectedDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(matches);
             A.CallTo(() => expectedDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
-            A.CallTo(() => expectedDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => expectedDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
 
             var incapableDownloaders = downloaders.Skip(1).ToArray();
             incapableDownloaders.ForEach(incapableDownloader =>
-                A.CallTo(() => incapableDownloader.CanHandleAtLeastOneOf(A<string[]>._)).Returns(false)
+                A.CallTo(() => incapableDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(false)
             );
             
-            var languages = matches.Select(m => m.LanguageCode);
+            var languages = matches.Select(m => m.Language);
             
             sut.DownloadSubtitle(file, identity, languages);
 
             incapableDownloaders.ForEach(incapableDownloader =>
-                A.CallTo(() => incapableDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<string[]>._))
+                A.CallTo(() => incapableDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._))
                     .MustNotHaveHappened()
             );
         }
@@ -130,9 +137,9 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             SubtitleDownloadService sut
             )
         {
-            var languages = matches.Select(m => m.LanguageCode);
+            var languages = matches.Select(m => m.Language);
             var downloaderWithRequest = downloaders.First();
-            A.CallTo(() => downloaderWithRequest.CanHandleAtLeastOneOf(A<string[]>._)).Returns(true);
+            A.CallTo(() => downloaderWithRequest.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             A.CallTo(() => downloaderWithRequest.EnhancementRequests)
                 .Returns(new[] {new EnhancementRequest<FileHashEnhancement>()});
             A.CallTo(() => enhancementProvider.GetEnhancement(typeof(FileHashEnhancement), file, identity))
@@ -142,7 +149,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             A.CallTo(() => downloaderWithRequest.SearchSubtitle(
                 A<TvReleaseIdentity>.That.Matches(r => r.Enhancements.Contains(enhancement)), 
-                A<IEnumerable<string>>._)).MustHaveHappened();
+                A<IEnumerable<Language>>._)).MustHaveHappened();
         }
     }
 }

@@ -75,6 +75,7 @@
     <Compile Include="Infrastructure\IStateSerializer.cs" />
     <Compile Include="Infrastructure\StateSerializer.cs" />
     <Compile Include="Infrastructure\SubtitleState.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="Orchestration\EpisodeSubtitleDownloader.cs" />
     <Compile Include="Orchestration\FileProcessor.cs" />
     <Compile Include="Orchestration\IEpisodeSubtitleDownloader.cs" />

@@ -19,7 +19,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         [Test, AutoFakeData]
         public void SearchSubtitle_ThrowsException_ReturnEmptyResultSet(
             TvReleaseIdentity tvReleaseIdentity,
-            string[] languages,
+            Language[] languages,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader episodeDownloader)
         {
@@ -35,8 +35,8 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             TvReleaseIdentity tvReleaseIdentity,
             string id,
             string programName,
-            string[] expectedLanguages,
-            string missingLanguage,
+            Language[] expectedLanguages,
+            Language missingLanguage,
             [Frozen]IEpisodeParser nameParser,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader episodeDownloader
@@ -49,7 +49,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, languages);
 
-            Assert.That(results.Select(s => s.LanguageCode), Is.EquivalentTo(expectedLanguages));
+            Assert.That(results.Select(s => s.Language), Is.EquivalentTo(expectedLanguages));
         }
         
         [Test, AutoFakeData]
@@ -57,7 +57,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             TvReleaseIdentity tvReleaseIdentity,
             string id,
             string programName,
-            string[] supportedLanguages,
+            Language[] supportedLanguages,
             string otherShow,
             [Frozen]IEpisodeParser nameParser,
             [Frozen]ISubtitleDownloader downloader,
@@ -105,7 +105,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             sut.TryDownloadSubtitle(subtitle, fileName);
 
-            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.LanguageCode + ".srt")).MustHaveHappened();
+            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.Language + ".srt")).MustHaveHappened();
         }
         
         [Test, AutoFakeData]
@@ -124,22 +124,22 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         }
 
         [Test, AutoFakeData]
-        public void CanHandleAtLeastOneOf_NoLanguages_ReturnsTrue(
+        public void CanHandleAtLeastOneOf_NoLanguages_ReturnsFalse(
             EpisodeSubtitleDownloader sut)
         {
-            bool result = sut.CanHandleAtLeastOneOf(new string[0]);
+            bool result = sut.CanHandleAtLeastOneOf(new Language[0]);
 
             Assert.That(result, Is.True);
         }
         
         [Test, AutoFakeData]
         public void CanHandleAtLeastOneOf_HasOneOfTheLanguages_ReturnsTrue(
-            string handledLanguage,
-            string unhandledLanguage,
+            Language handledLanguage,
+            Language unhandledLanguage,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader sut)
         {
-            A.CallTo(() => downloader.LanguageLimitations).Returns(new[] {handledLanguage});
+            A.CallTo(() => downloader.SupportedLanguages).Returns(new[] {handledLanguage});
 
             bool result = sut.CanHandleAtLeastOneOf(new[]{ unhandledLanguage, handledLanguage });
 
@@ -148,12 +148,12 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         
         [Test, AutoFakeData]
         public void CanHandleAtLeastOneOf_DoesNotHaveLanguage_ReturnsFalse(
-            string[] downloaderLanguages,
-            string[] otherLanguages,
+            Language[] downloaderLanguages,
+            Language[] otherLanguages,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader sut)
         {
-            A.CallTo(() => downloader.LanguageLimitations).Returns(downloaderLanguages); 
+            A.CallTo(() => downloader.SupportedLanguages).Returns(downloaderLanguages); 
             
             bool result = sut.CanHandleAtLeastOneOf(otherLanguages);
 
@@ -161,16 +161,16 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         }
 
         [Test, AutoFakeData]
-        public void CanHandleAtLeastOneOf_DoesNotHaveLanguageLimitations_ReturnsTrue(
-            string[] anyLanguages,
+        public void CanHandleAtLeastOneOf_DoesNotHaveSupportedLanguages_ReturnsFalse(
+            Language[] anyLanguages,
             [Frozen]ISubtitleDownloader downloader,
             EpisodeSubtitleDownloader sut)
         {
-            A.CallTo(() => downloader.LanguageLimitations).Returns(new string[0]);
+            A.CallTo(() => downloader.SupportedLanguages).Returns(new Language[0]);
 
             bool result = sut.CanHandleAtLeastOneOf(anyLanguages);
 
-            Assert.That(result, Is.True);
+            Assert.That(result, Is.False);
         }
     }
 }

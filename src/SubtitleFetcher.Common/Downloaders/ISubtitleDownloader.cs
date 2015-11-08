@@ -9,7 +9,7 @@ namespace SubtitleFetcher.Common.Downloaders
         IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle);
         string GetName();
         IEnumerable<Subtitle> SearchSubtitles(SearchQuery query);
-        IEnumerable<string> LanguageLimitations { get; }
+        IEnumerable<Language> SupportedLanguages { get; }
         IEnumerable<IEnhancementRequest> EnhancementRequests { get; }   
     }
 }
