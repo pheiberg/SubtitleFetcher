@@ -63,6 +63,8 @@
     <Compile Include="Downloaders\SubDb\SubDbHttpException.cs" />
     <Compile Include="Downloaders\Undertexter\UndertexterSeDownloader.cs" />
     <Compile Include="Enhancement\IEnhancement.cs" />
+    <Compile Include="Enhancement\Tvdb\TvDbEnhancement.cs" />
+    <Compile Include="Enhancement\Tvdb\TvDbEnhancer.cs" />
     <Compile Include="Hashing\FileHasher.cs" />
     <Compile Include="Hashing\HashAlgorithmFactory.cs" />
     <Compile Include="Hashing\HashCalculator.cs" />

@@ -33,13 +33,8 @@ namespace SubtitleFetcher.Common.Orchestration
 
         private void EnhanceIdentity(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, TvReleaseIdentity tvReleaseIdentity, string filePath)
         {
-            var enhancementRequests = compatibleDownloaders.SelectMany(d => d.EnhancementRequests);
-            var enhancements = enhancementRequests.Select(
-                    er => _enhancementProvider.GetEnhancement(er.EnhancementType, filePath, tvReleaseIdentity));
-            foreach (var enhancement in enhancements)
-            {
-                tvReleaseIdentity.Enhancements.Add(enhancement);
-            }
+            var applicator = new EnhancementApplicator(compatibleDownloaders, _enhancementProvider);
+            applicator.ApplyEnhancements(filePath, tvReleaseIdentity);
         }
         
         private IEnumerable<IEpisodeSubtitleDownloader> GetDownloadersForLanguages(Language[] languageArray)
@@ -87,6 +82,29 @@ namespace SubtitleFetcher.Common.Orchestration
             {
                 Downloader = downloader;
                 Subtitle = subtitle;
+            }
+        }
+    }
+
+    public class EnhancementApplicator
+    {
+        private readonly IEnumerable<IEpisodeSubtitleDownloader> _downloaders;
+        private readonly IEnhancementProvider _enhancementProvider;
+
+        public EnhancementApplicator(IEnumerable<IEpisodeSubtitleDownloader>  downloaders, IEnhancementProvider enhancementProvider)
+        {
+            _downloaders = downloaders;
+            _enhancementProvider = enhancementProvider;
+        }
+
+        public void ApplyEnhancements(string filePath, TvReleaseIdentity identity)
+        {
+            var enhancementRequests = _downloaders.SelectMany(d => d.EnhancementRequests);
+            var enhancements = enhancementRequests.Select(
+                    er => _enhancementProvider.GetEnhancement(er.EnhancementType, filePath, identity));
+            foreach (var enhancement in enhancements.Where(enhancement => enhancement != null))
+            {
+                identity.Enhancements.Add(enhancement);
             }
         }
     }

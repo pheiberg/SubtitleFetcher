@@ -5,6 +5,7 @@ using PortedSubtitleDownloaders.Legacy;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Enhancement.Tvdb;
 using SearchQuery = SubtitleFetcher.Common.SearchQuery;
 using Subtitle = SubtitleFetcher.Common.Subtitle;
 
@@ -33,11 +34,18 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = new [] { "swe" } };
+            var tvDbId = GetTvDbId(query);
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { "swe" } };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
             return results.Select(r => new Subtitle(r.Id, r.Title, r.FileName, KnownLanguages.GetLanguageByName("Swedish")));
         }
-        
+
+        private static int? GetTvDbId(SearchQuery query)
+        {
+            var tvDbEnhancement = query.Enhancements.OfType<TvDbEnhancement>().First();
+            return tvDbEnhancement?.TvDbId;
+        }
+
         public IEnumerable<Language> SupportedLanguages
         {
             get
@@ -46,6 +54,9 @@ namespace PortedSubtitleDownloaders.S4U
             }
         }
 
-        public IEnumerable<IEnhancementRequest> EnhancementRequests => Enumerable.Empty<IEnhancementRequest>();
+        public IEnumerable<IEnhancementRequest> EnhancementRequests
+        {
+            get { yield return new EnhancementRequest<TvDbEnhancement>(); }
+        }
     }
 }
