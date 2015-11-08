@@ -5,7 +5,7 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb.Enhancement
 {
     public class SubDbFileHashEnhancer : IEnhancer
     {
-        static readonly SubDbHasher Hasher = new SubDbHasher();
+        static readonly SubDbFileHasher Hasher = new SubDbFileHasher();
         
         public IEnhancement Enhance(string filePath, TvReleaseIdentity identity)
         {

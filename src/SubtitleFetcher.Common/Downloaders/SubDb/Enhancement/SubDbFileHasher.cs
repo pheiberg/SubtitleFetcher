@@ -1,14 +1,15 @@
-﻿using SubtitleFetcher.Common.Hashing;
+﻿using System.Security.Cryptography;
+using SubtitleFetcher.Common.Hashing;
 
 namespace SubtitleFetcher.Common.Downloaders.SubDb.Enhancement
 {
-    public class SubDbHasher : IHexadecimalFileHasher
+    public class SubDbFileHasher : IHexadecimalFileHasher
     {
         private readonly FileHasher _hasher;
 
-        public SubDbHasher()
+        public SubDbFileHasher()
         {
-            _hasher = new FileHasher(new HashCalculator(new Md5HashAlgorithmFactory()));
+            _hasher = new FileHasher(new HashCalculator<MD5CryptoServiceProvider>());
         }
 
         public string ComputeHash(string filePath)

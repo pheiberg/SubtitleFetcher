@@ -2,11 +2,11 @@
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
 {
-    public class OpenSubtitlesHasher : IHexadecimalFileHasher
+    public class OpenSubtitlesFileHasher : IHexadecimalFileHasher
     {
         private readonly FileHasher _hasher;
 
-        public OpenSubtitlesHasher()
+        public OpenSubtitlesFileHasher()
         {
             _hasher = new FileHasher(new OpenSubtitlesHashCalculator());
         }

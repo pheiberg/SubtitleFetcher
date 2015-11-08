@@ -1,20 +1,13 @@
 ﻿using System;
+using System.Security.Cryptography;
 
 namespace SubtitleFetcher.Common.Hashing
 {
-    public class HashCalculator : IHashCalculator
+    public class HashCalculator<T> : IHashCalculator where T : HashAlgorithm, new()
     {
-        private readonly IHashAlgorithmFactory _hashAlgorithmFactory;
-
-        public HashCalculator(IHashAlgorithmFactory hashAlgorithmFactory)
-        {
-            if (hashAlgorithmFactory == null) throw new ArgumentNullException(nameof(hashAlgorithmFactory));
-            _hashAlgorithmFactory = hashAlgorithmFactory;
-        }
-
         public virtual byte[] ComputeHash(byte[] buffer)
         {
-            using (var hashAlgorithm = _hashAlgorithmFactory.CreateAlgorithm())
+            using (var hashAlgorithm = new T())
             {
                 return hashAlgorithm.ComputeHash(buffer);
             }

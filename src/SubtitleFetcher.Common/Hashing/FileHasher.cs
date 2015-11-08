@@ -5,7 +5,7 @@ namespace SubtitleFetcher.Common.Hashing
 {
     public class FileHasher
     {
-        const int BlockSize = 64 * 1024;
+        private const int BlockSize = 64 * 1024;
         private readonly IHashCalculator _hashProvider;
 
         public FileHasher(IHashCalculator hashProvider)
