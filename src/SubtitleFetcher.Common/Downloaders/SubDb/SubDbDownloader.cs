@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using SubtitleFetcher.Common.Downloaders.SubDb.Enhancement;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common.Downloaders.SubDb
 {

@@ -1,3 +1,5 @@
+using SubtitleFetcher.Common.Languages;
+
 namespace SubtitleFetcher.Common
 {
     public class Subtitle

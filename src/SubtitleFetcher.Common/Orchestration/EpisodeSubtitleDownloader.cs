@@ -6,6 +6,7 @@ using System.Linq;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Infrastructure;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 

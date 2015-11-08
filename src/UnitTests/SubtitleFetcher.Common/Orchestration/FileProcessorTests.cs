@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Infrastructure;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Orchestration;
 using SubtitleFetcher.Common.Parsing;

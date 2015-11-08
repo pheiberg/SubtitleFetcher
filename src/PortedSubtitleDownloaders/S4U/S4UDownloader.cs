@@ -6,6 +6,7 @@ using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Enhancement.Tvdb;
+using SubtitleFetcher.Common.Languages;
 using SearchQuery = SubtitleFetcher.Common.SearchQuery;
 using Subtitle = SubtitleFetcher.Common.Subtitle;
 

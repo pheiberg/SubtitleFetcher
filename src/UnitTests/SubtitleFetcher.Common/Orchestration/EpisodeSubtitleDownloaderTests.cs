@@ -8,6 +8,7 @@ using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Infrastructure;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Orchestration;
 using SubtitleFetcher.Common.Parsing;
 

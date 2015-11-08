@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Parsing;
 

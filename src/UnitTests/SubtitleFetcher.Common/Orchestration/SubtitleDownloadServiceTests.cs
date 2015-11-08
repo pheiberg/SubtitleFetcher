@@ -7,6 +7,7 @@ using Ploeh.AutoFixture.NUnit2;
 using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders.SubDb.Enhancement;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Orchestration;
 
 namespace UnitTests.SubtitleFetcher.Common.Orchestration

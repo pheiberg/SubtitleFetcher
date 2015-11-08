@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common.Orchestration
 {

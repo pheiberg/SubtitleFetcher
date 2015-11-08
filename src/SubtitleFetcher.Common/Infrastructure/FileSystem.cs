@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 
 namespace SubtitleFetcher.Common.Infrastructure

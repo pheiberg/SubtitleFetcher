@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common
 {

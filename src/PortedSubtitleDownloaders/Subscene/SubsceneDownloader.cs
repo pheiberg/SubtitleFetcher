@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using PortedSubtitleDownloaders.Legacy;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
+using SubtitleFetcher.Common.Languages;
 using Subtitle = PortedSubtitleDownloaders.Legacy.Subtitle;
 
 namespace PortedSubtitleDownloaders.Subscene

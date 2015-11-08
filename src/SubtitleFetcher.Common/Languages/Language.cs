@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Languages
 {
     public class Language
     {

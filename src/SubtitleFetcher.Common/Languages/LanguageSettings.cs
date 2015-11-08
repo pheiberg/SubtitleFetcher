@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SubtitleFetcher.Common
+namespace SubtitleFetcher.Common.Languages
 {
     public class LanguageSettings
     {
