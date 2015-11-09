@@ -4,7 +4,7 @@ using SubtitleFetcher.Common;
 namespace UnitTests.SubtitleFetcher.Common
 {
     [TestFixture]
-    public class EpisodeIdentityTests
+    public class TvReleaseIdentityTests
     {
         [Test]
         [TestCase("Mr Selfridge", "MR Selfridge", true)]
