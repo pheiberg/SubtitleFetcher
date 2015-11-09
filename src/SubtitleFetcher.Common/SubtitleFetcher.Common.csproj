@@ -47,8 +47,11 @@
   <ItemGroup>
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancement.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHasher.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancer.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesDownloader.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancement.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Enhancement\EnhancementProvider.cs" />
