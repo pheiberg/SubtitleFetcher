@@ -21,7 +21,15 @@ namespace SubtitleFetcher.Common.Hashing
                 return CreateHash(fileStream);
             }    
         }
-        
+
+        public byte[] CreateHash(FileInfo file)
+        {
+            using (var fileStream = file.OpenRead())
+            {
+                return CreateHash(fileStream);
+            }
+        }
+
         public byte[] CreateHash(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));

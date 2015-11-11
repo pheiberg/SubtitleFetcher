@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using SubtitleFetcher.Common.Enhancement;
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
@@ -9,8 +10,13 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
         
         public IEnhancement Enhance(string filePath, TvReleaseIdentity identity)
         {
+            var byteSize = new FileInfo(filePath).Length;
             var fileHash = Hasher.ComputeHash(filePath);
-            return new OpenSubtitlesFileHashEnhancement {FileHash = fileHash};
+            return new OpenSubtitlesFileHashEnhancement
+            {
+                FileByteSize = byteSize,
+                FileHash = fileHash
+            };
         }
 
         public Type ProvidedEnhancement => typeof(OpenSubtitlesFileHashEnhancement);

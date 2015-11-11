@@ -1,4 +1,5 @@
-﻿using SubtitleFetcher.Common.Hashing;
+﻿using System.IO;
+using SubtitleFetcher.Common.Hashing;
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
 {
@@ -14,6 +15,11 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
         public string ComputeHash(string filePath)
         {
             return _hasher.CreateHash(filePath).ToLowerHexString();
+        }
+
+        public string ComputeHash(FileInfo file)
+        {
+            return _hasher.CreateHash(file).ToLowerHexString();
         }
     }
 }

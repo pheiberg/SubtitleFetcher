@@ -34,6 +34,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CookComputing.XmlRpcV2, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
+      <HintPath>..\packages\xmlrpcnet.3.0.0.266\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
       <HintPath>..\packages\sharpcompress.0.11.1\lib\net40\SharpCompress.dll</HintPath>
       <Private>True</Private>
@@ -51,7 +55,14 @@
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHasher.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancer.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\IOpenSubtitlesProxy.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\OpenSubtitle.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesApi.cs" />
     <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesDownloader.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesHttpException.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesSettings.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\StatusCodes.cs" />
+    <Compile Include="Downloaders\OpenSubtitles\XmlRpcStructs.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancement.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Enhancement\EnhancementProvider.cs" />
@@ -60,6 +71,7 @@
     <Compile Include="Enhancement\IEnhancementProvider.cs" />
     <Compile Include="Enhancement\IEnhancementRequest.cs" />
     <Compile Include="Enhancement\IEnhancer.cs" />
+    <Compile Include="Hashing\HashCalculator.cs" />
     <Compile Include="Hashing\IHexadecimalFileHasher.cs" />
     <Compile Include="Downloaders\SubDb\SubDbApi.cs" />
     <Compile Include="Downloaders\SubDb\SubDbDownloader.cs" />
@@ -71,7 +83,6 @@
     <Compile Include="Enhancement\Tvdb\TvDbEnhancement.cs" />
     <Compile Include="Enhancement\Tvdb\TvDbEnhancer.cs" />
     <Compile Include="Hashing\FileHasher.cs" />
-    <Compile Include="Hashing\HashCalculator.cs" />
     <Compile Include="IApplicationSettings.cs" />
     <Compile Include="Hashing\IHashCalculator.cs" />
     <Compile Include="Infrastructure\FileSystem.cs" />

@@ -77,7 +77,6 @@
     <Compile Include="SubtitleFetcher.Common\EpisodeParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AutoFakeDataAttribute.cs" />
-    <Compile Include="SubtitleFetcher.Common\FileHasherTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Hashing\FileHasherTests.cs" />
     <Compile Include="SubtitleFetcher\DownloaderApplicationTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Orchestration\EpisodeSubtitleDownloaderTests.cs" />
