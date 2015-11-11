@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using CookComputing.XmlRpc;
 using SubtitleFetcher.Common.Languages;
 
@@ -45,7 +43,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         {
             var request = new SearchSubtitlesRequest
             {
-                sublanguageid = languages.ToArray(),
+                sublanguageid = string.Join(",", languages),
                 moviehash = hash,
                 moviebytesize = byteSize.ToString()
             };
@@ -60,7 +58,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
 
             var request = new SearchSubtitlesRequest
             {
-                sublanguageid = languages.ToArray(),
+                sublanguageid = string.Join(",", languages),
                 imdbid = imdbId
             };
             return SearchSubtitlesInternal(token, request);
@@ -73,7 +71,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
 
             var request = new SearchSubtitlesRequest
             {
-                sublanguageid = languages.ToArray(),
+                sublanguageid = string.Join(",", languages),
                 query = query,
                 season = season,
                 episode = episode
@@ -83,44 +81,87 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
 
         private IEnumerable<OpenSubtitle> SearchSubtitlesInternal(string token, SearchSubtitlesRequest request)
         {
-            var tracer = new Tracer();
-            tracer.SubscribeTo(_proxy);
-
             var response = _proxy.SearchSubtitles(token, new[] { request });
             AssertResponse(response);
             
-            var subtitleData = response.data as object[];
+            var subtitleData = response.data;
             if (subtitleData == null)
-                yield break;
+                return Enumerable.Empty<OpenSubtitle>();
 
-            foreach (XmlRpcStruct data in subtitleData)
-                yield return BuildSubtitle(data);
+            return subtitleData.Select(BuildSubtitle);
         }
 
-        private static OpenSubtitle BuildSubtitle(XmlRpcStruct data)
+        private static OpenSubtitle BuildSubtitle(SearchSubtitlesInfo data)
         {
-            var sub = new OpenSubtitle();
-            var properties = sub.GetType().GetProperties();
-            var matchingProperties = properties.Where(property => data.ContainsKey(property.Name));
-            foreach (var property in matchingProperties)
+            OpenSubtitlesKind kind;
+            if(!Enum.TryParse(data.MovieKind, true, out kind))
             {
-                var dataValue = GetDataValue(data, property);
-                property.SetMethod.Invoke(sub, new[] { dataValue });
+                kind = OpenSubtitlesKind.None;
             }
+
+            int seriesEpisode;
+            if (!int.TryParse(data.SeriesEpisode, out seriesEpisode))
+            {
+                seriesEpisode = 0;
+            }
+
+            int seriesSeason;
+            if (!int.TryParse(data.SeriesSeason, out seriesSeason))
+            {
+                seriesSeason = 0;
+            }
+
+            var sub = new OpenSubtitle
+            {
+                IDMovie = data.IDMovie,
+                IDMovieImdb = data.IDMovieImdb,
+                IDSubMovieFile = data.IDSubMovieFile,
+                IDSubtitleFile = data.IDSubtitleFile,
+                IDSubtitle = data.IDSubtitle,
+                ISO639 = data.ISO639,
+                LanguageName = data.LanguageName,
+                MatchedBy = data.MatchedBy,
+                MovieByteSize = data.MovieByteSize,
+                MovieFPS = data.MovieFPS,
+                MovieName = data.MovieName,
+                MovieReleaseName = data.MovieReleaseName,
+                MovieHash = data.MovieHash,
+                MovieImdbRating = data.MovieImdbRating,
+                MovieKind = kind,
+                MovieNameEng = data.MovieNameEng,
+                MovieTimeMS = data.MovieTimeMS,
+                MovieYear = data.MovieYear,
+                QueryNumber = data.QueryNumber,
+                SeriesEpisode = seriesEpisode,
+                SeriesIMDBParent = data.SeriesIMDBParent,
+                SeriesSeason = seriesSeason,
+                SubFileName = data.SubFileName,
+                SubActualCD = data.SubActualCD,
+                SubAddDate = data.SubAddDate,
+                SubAuthorComment = data.SubAuthorComment,
+                SubBad = data.SubBad,
+                SubComments = data.SubComments,
+                SubDownloadLink = data.SubDownloadLink,
+                SubDownloadsCnt = data.SubDownloadsCnt,
+                SubEncoding = data.SubEncoding,
+                SubFeatured = data.SubFeatured,
+                SubFormat = data.SubFormat,
+                SubHD = data.SubHD == "1",
+                SubHash = data.SubHash,
+                SubHearingImpaired = data.SubHearingImpaired == "1",
+                SubLanguageID = data.SubLanguageID,
+                SubLastTS = data.SubLastTS,
+                SubRating = data.SubRating,
+                SubSize = data.SubSize,
+                SubSumCD = data.SubSumCD,
+                SubtitlesLink = data.SubtitlesLink,
+                UserID = data.UserID,
+                UserNickName = data.UserNickName,
+                UserRank = data.UserRank,
+                ZipDownloadLink = data.ZipDownloadLink
+            };
+            
             return sub;
-        }
-
-        private static object GetDataValue(XmlRpcStruct data, PropertyInfo property)
-        {
-            object dataValue = data[property.Name];
-            return property.PropertyType.IsInstanceOfType(dataValue) ? dataValue : ConvertValueToType(dataValue, property.PropertyType);
-        }
-
-        private static object ConvertValueToType(object dataValue, Type targetType)
-        {
-            Type dataFieldType = dataValue.GetType();
-            var typeConverter = TypeDescriptor.GetConverter(targetType);
-            return typeConverter.CanConvertTo(dataFieldType) ? typeConverter.ConvertTo(dataValue, dataFieldType) : null;
         }
 
         private void AssertResponse(ResponseBase response)
@@ -163,33 +204,6 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         private void UnzipSubtitleFileToFile(string tempZipName, string destinationfile)
         {
 
-        }
-    }
-}
-
-public class Tracer : XmlRpcLogger
-{
-    protected override void OnRequest(object sender,
-      XmlRpcRequestEventArgs e)
-    {
-        DumpStream(e.RequestStream);
-    }
-
-    protected override void OnResponse(object sender,
-      XmlRpcResponseEventArgs e)
-    {
-        DumpStream(e.ResponseStream);
-    }
-
-    private void DumpStream(Stream stm)
-    {
-        stm.Position = 0;
-        TextReader trdr = new StreamReader(stm);
-        string s = trdr.ReadLine();
-        while (s != null)
-        {
-            Trace.WriteLine(s);
-            s = trdr.ReadLine();
         }
     }
 }

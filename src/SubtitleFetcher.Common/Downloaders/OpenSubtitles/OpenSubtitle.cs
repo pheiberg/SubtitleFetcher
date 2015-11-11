@@ -38,12 +38,12 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         public string ISO639 { get; set; }
         public string LanguageName { get; set; }
         public string SubComments { get; set; }
-        public string SubHearingImpaired { get; set; }
+        public bool SubHearingImpaired { get; set; }
         public string UserRank { get; set; }
         public int SeriesSeason { get; set; }
         public int SeriesEpisode { get; set; }
-        public string MovieKind { get; set; }
-        public string SubHD { get; set; }
+        public OpenSubtitlesKind MovieKind { get; set; }
+        public bool SubHD { get; set; }
         public string SeriesIMDBParent { get; set; }
         public string SubEncoding { get; set; }
         public string SubDownloadLink { get; set; }

@@ -30,7 +30,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
     [XmlRpcMissingMapping(MappingAction.Ignore)]
     public class SearchSubtitlesResponse : ResponseBase
     {
-        public object data;
+        public SearchSubtitlesInfo[] data;
     }
 
     [XmlRpcMissingMapping(MappingAction.Ignore)]
@@ -73,6 +73,15 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         public string SubDownloadLink;
         public string ZipDownloadLink;
         public string SubtitlesLink;
+        public string MovieFPS;
+        public string MovieKind;
+        public int QueryNumber;
+        public string SeriesEpisode;
+        public string SeriesIMDBParent;
+        public string SeriesSeason;
+        public string SubEncoding;
+        public string SubHD;
+        public string SubLastTS;
     }
 
     public enum OpenSubtitlesKind
