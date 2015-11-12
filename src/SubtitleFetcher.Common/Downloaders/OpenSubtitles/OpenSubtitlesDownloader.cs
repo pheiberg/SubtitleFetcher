@@ -51,7 +51,14 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
             var token = _api.Login();
             var languages = query.Languages.Select(l => l.TwoLetterIsoName).ToArray();
             var result = _api.SearchSubtitlesFromQuery(token, languages, query.SerieTitle, query.Season, query.Episode).ToArray();
-            return result.Where(s => languages.Contains(s.ISO639)).Select(r => new Subtitle(r.SubDownloadLink, r.MovieName, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
+            var validResults = FilterOutUnwantedHits(result, languages);
+            return validResults.Select(r => new Subtitle(r.SubDownloadLink, r.MovieName, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
+        }
+
+        private static IEnumerable<OpenSubtitle> FilterOutUnwantedHits(OpenSubtitle[] results, IEnumerable<string> languages)
+        {
+            return results.Where(subtitle => languages.Contains(subtitle.ISO639) 
+                           && subtitle.MovieKind == OpenSubtitlesKind.Episode);
         }
 
         public IEnumerable<Language> SupportedLanguages => KnownLanguages.AllLanguages;
