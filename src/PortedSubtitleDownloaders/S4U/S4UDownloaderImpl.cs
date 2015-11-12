@@ -28,7 +28,7 @@ namespace PortedSubtitleDownloaders.S4U
         public IEnumerable<Subtitle> SearchSubtitles(EpisodeSearchQuery query)
         {
             var list = new List<Subtitle>();
-            if (!query.HasLanguageCode("swe"))
+            if (!query.HasLanguageCode(SwedishLanguageCode))
                 return list;
             string url = query.TvdbId.HasValue ? 
                 GetSerieQueryTvdbIdSearchUrl(query.TvdbId.Value, query.Season, query.Episode) : 

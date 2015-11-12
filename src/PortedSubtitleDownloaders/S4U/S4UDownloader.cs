@@ -14,7 +14,8 @@ namespace PortedSubtitleDownloaders.S4U
 {
     public class S4UDownloader : ISubtitleDownloader
     {
-        readonly S4UDownloaderImpl _downloader;
+        private readonly S4UDownloaderImpl _downloader;
+        private static readonly Language SwedishLanguage = KnownLanguages.GetLanguageByName("Swedish");
 
         public S4UDownloader(IApplicationSettings settings)
         {
@@ -24,7 +25,7 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
+            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.TwoLetterIsoName);
             return _downloader.SaveSubtitle(legacySubtitle);
         }
 
@@ -36,9 +37,9 @@ namespace PortedSubtitleDownloaders.S4U
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             var tvDbId = GetTvDbId(query);
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { "swe" } };
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { SwedishLanguage.ThreeLetterIsoName } };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new Subtitle(r.Id, r.FileName, KnownLanguages.GetLanguageByName("Swedish")));
+            return results.Select(r => new Subtitle(r.Id, r.FileName, SwedishLanguage));
         }
 
         private static int? GetTvDbId(SearchQuery query)
@@ -51,7 +52,7 @@ namespace PortedSubtitleDownloaders.S4U
         {
             get
             {
-                yield return KnownLanguages.GetLanguageByName("Swedish");
+                yield return SwedishLanguage;
             }
         }
 
