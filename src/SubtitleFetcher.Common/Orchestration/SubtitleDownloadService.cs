@@ -38,7 +38,7 @@ namespace SubtitleFetcher.Common.Orchestration
             applicator.ApplyEnhancements(filePath, tvReleaseIdentity);
         }
         
-        private IEnumerable<IEpisodeSubtitleDownloader> GetDownloadersForLanguages(Language[] languageArray)
+        private IEpisodeSubtitleDownloader[] GetDownloadersForLanguages(Language[] languageArray)
         {
             return _subtitleDownloaders.Where(s => s.CanHandleAtLeastOneOf(languageArray)).ToArray();
         }
@@ -50,7 +50,7 @@ namespace SubtitleFetcher.Common.Orchestration
                 .SelectMany(downloader => downloader.SearchSubtitle(tvReleaseIdentity, languageArray)
                     .Select(match => new DownloaderMatch(downloader, match)))
                 .AsSequential().ToArray();
-            return FilterOutLanguagesNotInRequest(searchResults, languageArray); ;
+            return FilterOutLanguagesNotInRequest(searchResults, languageArray);
         }
         private static IEnumerable<DownloaderMatch> FilterOutLanguagesNotInRequest(IEnumerable<DownloaderMatch> searchResults, Language[] validLanguages)
         {
@@ -83,29 +83,6 @@ namespace SubtitleFetcher.Common.Orchestration
             {
                 Downloader = downloader;
                 Subtitle = subtitle;
-            }
-        }
-    }
-
-    public class EnhancementApplicator
-    {
-        private readonly IEnumerable<IEpisodeSubtitleDownloader> _downloaders;
-        private readonly IEnhancementProvider _enhancementProvider;
-
-        public EnhancementApplicator(IEnumerable<IEpisodeSubtitleDownloader>  downloaders, IEnhancementProvider enhancementProvider)
-        {
-            _downloaders = downloaders;
-            _enhancementProvider = enhancementProvider;
-        }
-
-        public void ApplyEnhancements(string filePath, TvReleaseIdentity identity)
-        {
-            var enhancementRequests = _downloaders.SelectMany(d => d.EnhancementRequests);
-            var enhancements = enhancementRequests.Select(
-                    er => _enhancementProvider.GetEnhancement(er.EnhancementType, filePath, identity));
-            foreach (var enhancement in enhancements.Where(enhancement => enhancement != null))
-            {
-                identity.Enhancements.Add(enhancement);
             }
         }
     }
