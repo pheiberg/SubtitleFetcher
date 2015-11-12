@@ -50,7 +50,28 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         {
             var token = _api.Login();
             var languages = query.Languages.Select(l => l.TwoLetterIsoName).ToArray();
+            var fileHashEnhancement = query.Enhancements.OfType<OpenSubtitlesFileHashEnhancement>().SingleOrDefault();
+            var hashResults = SearchByHash(fileHashEnhancement, token, languages);
+            return hashResults.Any() ? hashResults : SearchByQuery(query, token, languages);
+        }
+
+        private IEnumerable<Subtitle> SearchByHash(OpenSubtitlesFileHashEnhancement fileHashEnhancement, string token, string[] languages)
+        {
+            if (fileHashEnhancement == null)
+                return Enumerable.Empty<Subtitle>();
+
+            var result = _api.SearchSubtitlesFromFile(token, languages, fileHashEnhancement.FileHash, fileHashEnhancement.FileByteSize).ToArray();
+            return FilterAndConvertResults(languages, result);
+        }
+
+        private IEnumerable<Subtitle> SearchByQuery(SearchQuery query, string token, string[] languages)
+        {
             var result = _api.SearchSubtitlesFromQuery(token, languages, query.SerieTitle, query.Season, query.Episode).ToArray();
+            return FilterAndConvertResults(languages, result);
+        }
+
+        private static IEnumerable<Subtitle> FilterAndConvertResults(string[] languages, OpenSubtitle[] result)
+        {
             var validResults = FilterOutUnwantedHits(result, languages);
             return validResults.Select(r => new Subtitle(r.SubDownloadLink, r.MovieName, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
         }
