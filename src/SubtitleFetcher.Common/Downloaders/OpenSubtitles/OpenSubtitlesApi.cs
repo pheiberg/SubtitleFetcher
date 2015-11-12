@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using SharpCompress.Reader;
 using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
@@ -188,8 +189,11 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
             try
             {
                 var webClient = new WebDownloader();
-                webClient.DownloadFile(downloadLink, tempZipName);
-                UnzipSubtitleFileToFile(tempZipName, subtitleFile);
+                var data = webClient.DownloadData(downloadLink);
+                using(var fileStream = new MemoryStream(data))
+                {
+                    UnzipSubtitleToFile(fileStream, subtitleFile);
+                }
             }
             finally
             {
@@ -199,23 +203,12 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
             return new FileInfo(subtitleFile);
         }
 
-        private static void UnzipSubtitleFileToFile(string zipFileName, string subFileName)
+        private static void UnzipSubtitleToFile(Stream zipFile, string subFileName)
         {
-            using (FileStream subFile = File.OpenWrite(subFileName))
-            using (FileStream tempFile = File.OpenRead(zipFileName))
-            using(var gzip = new GZipStream(tempFile, CompressionMode.Decompress))
+            using (var reader = ReaderFactory.Open(zipFile))
             {
-                var buffer = new byte[4096];
-                int bytesRead;
-
-                do
-                {
-                    bytesRead = gzip.Read(buffer, 0, buffer.Length);
-                    if (bytesRead > 0)
-                    {
-                        subFile.Write(buffer, 0, bytesRead);
-                    }
-                } while (bytesRead > 0);
+                reader.MoveToNextEntry();
+                reader.WriteEntryTo(subFileName);
             }
         }
     }
