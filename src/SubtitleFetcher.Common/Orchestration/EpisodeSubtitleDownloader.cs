@@ -38,7 +38,7 @@ namespace SubtitleFetcher.Common.Orchestration
             {
                 _logger.Debug("EpisodeSubtitleDownloader", "Searching with downloader {0}", Name);
                 var watch = Stopwatch.StartNew();
-                searchResult = _downloader.SearchSubtitles(query);
+                searchResult = _downloader.SearchSubtitles(query).ToArray();
                 watch.Stop();
                 _logger.Debug("EpisodeSubtitleDownloader", "Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
             }
@@ -48,13 +48,7 @@ namespace SubtitleFetcher.Common.Orchestration
                 return Enumerable.Empty<Subtitle>();
             }
 
-            var matchingSubtitles = (from subtitle in searchResult
-                                    let subtitleInfo = _nameParser.ParseEpisodeInfo(subtitle.FileName)
-                                    let langPriority = Array.FindIndex(languageArray, l => l.Equals(subtitle.Language))
-                                    where subtitleInfo.IsEquivalent(tvReleaseIdentity)
-                                    orderby langPriority, subtitleInfo.SeriesName
-                                    select subtitle).ToArray();
-            return matchingSubtitles;
+            return FilterOutSubtitlesNotMatching(tvReleaseIdentity, searchResult);
         }
 
         private static SearchQuery CreateSearchQuery(TvReleaseIdentity tvReleaseIdentity, Language[] languageArray)
@@ -85,12 +79,18 @@ namespace SubtitleFetcher.Common.Orchestration
             }
             return false;
         }
-        
+
         private static string DownloadSubtitleFile(ISubtitleDownloader downloader, Subtitle subtitle)
         {
             IEnumerable<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
             FileInfo subtitleFile = subtitleFiles.First();
             return subtitleFile.FullName;
+        }
+
+        private IEnumerable<Subtitle> FilterOutSubtitlesNotMatching(TvReleaseIdentity tvReleaseIdentity, IEnumerable<Subtitle> searchResult)
+        {
+            var subtitleMatcher = new SubtitleMatcher(_nameParser);
+            return subtitleMatcher.FilterOutSubtitlesNotMatching(searchResult, tvReleaseIdentity);
         }
 
         public bool CanHandleAtLeastOneOf(IEnumerable<Language> languages)
@@ -101,5 +101,23 @@ namespace SubtitleFetcher.Common.Orchestration
         }
 
         public IEnumerable<IEnhancementRequest> EnhancementRequests => _downloader.EnhancementRequests;
+    }
+
+    public class SubtitleMatcher
+    {
+        private readonly IEpisodeParser _episodeParser;
+
+        public SubtitleMatcher(IEpisodeParser episodeParser)
+        {
+            _episodeParser = episodeParser;
+        }
+
+        public IEnumerable<Subtitle> FilterOutSubtitlesNotMatching(IEnumerable<Subtitle> subtitles, TvReleaseIdentity identity)
+        {
+            return from subtitle in subtitles
+                let subtitleInfo = _episodeParser.ParseEpisodeInfo(subtitle.FileName)
+                where subtitleInfo.IsEquivalent(identity)
+                select subtitle;
+        }
     }
 }
