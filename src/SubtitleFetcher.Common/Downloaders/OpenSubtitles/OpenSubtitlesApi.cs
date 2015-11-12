@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using CookComputing.XmlRpc;
 using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
@@ -178,32 +177,46 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
                 throw new OpenSubtitlesHttpException($"HTTP {responseCode} - {response.status}");
         }
 
-        public FileInfo DownloadSubtitle(OpenSubtitle subtitle)
+        public FileInfo DownloadSubtitle(string downloadLink, string fileName)
         {
-            if (null == subtitle)
-                throw new ArgumentNullException(nameof(subtitle));
+            if (null == downloadLink)
+                throw new ArgumentNullException(nameof(downloadLink));
 
-            string subtitleFile = Path.Combine(Path.GetTempPath(), subtitle.SubFileName);
-            //string tempZipName = Path.GetTempFileName();
+            string subtitleFile = Path.Combine(Path.GetTempPath(), fileName);
+            string tempZipName = Path.GetTempFileName();
 
-            //try
-            //{
-            //    var webClient = new WebClient();
-            //    webClient.DownloadFile(subtitle.DownloadLink, tempZipName);
-            //    UnzipSubtitleFileToFile(tempZipName, subtitleFile);
-
-            //}
-            //finally
-            //{
-            //    File.Delete(tempZipName);
-            //}
+            try
+            {
+                var webClient = new WebDownloader();
+                webClient.DownloadFile(downloadLink, tempZipName);
+                UnzipSubtitleFileToFile(tempZipName, subtitleFile);
+            }
+            finally
+            {
+                File.Delete(tempZipName);
+            }
 
             return new FileInfo(subtitleFile);
         }
 
-        private void UnzipSubtitleFileToFile(string tempZipName, string destinationfile)
+        private static void UnzipSubtitleFileToFile(string zipFileName, string subFileName)
         {
+            using (FileStream subFile = File.OpenWrite(subFileName))
+            using (FileStream tempFile = File.OpenRead(zipFileName))
+            using(var gzip = new GZipStream(tempFile, CompressionMode.Decompress))
+            {
+                var buffer = new byte[4096];
+                int bytesRead;
 
+                do
+                {
+                    bytesRead = gzip.Read(buffer, 0, buffer.Length);
+                    if (bytesRead > 0)
+                    {
+                        subFile.Write(buffer, 0, bytesRead);
+                    }
+                } while (bytesRead > 0);
+            }
         }
     }
 }
