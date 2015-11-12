@@ -55,10 +55,7 @@ namespace SubtitleFetcher.Common.Orchestration
         {
             var query = new SearchQuery(tvReleaseIdentity.SeriesName, tvReleaseIdentity.Season, tvReleaseIdentity.Episode,
                 tvReleaseIdentity.ReleaseGroup) { Languages = languageArray };
-            foreach (var enhancement in tvReleaseIdentity.Enhancements)
-            {
-                query.Enhancements.Add(enhancement);
-            }
+            query.Enhancements.AddRange(tvReleaseIdentity.Enhancements);
             return query;
         }
 
