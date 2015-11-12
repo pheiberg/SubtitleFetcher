@@ -106,7 +106,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             sut.TryDownloadSubtitle(subtitle, fileName);
 
-            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.Language + ".srt")).MustHaveHappened();
+            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.Language.TwoLetterIsoName + ".srt")).MustHaveHappened();
         }
         
         [Test, AutoFakeData]

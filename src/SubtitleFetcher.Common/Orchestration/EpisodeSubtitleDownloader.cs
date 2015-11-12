@@ -70,11 +70,11 @@ namespace SubtitleFetcher.Common.Orchestration
 
         public bool TryDownloadSubtitle(Subtitle subtitle, string targetSubtitleFile)
         {
-            _logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.Language);
+            _logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.Language.Name);
             try
             {
                 var subtitleFile = DownloadSubtitleFile(_downloader, subtitle);
-                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language + ".srt");
+                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language.TwoLetterIsoName + ".srt");
                 _logger.Debug("EpisodeSubtitleDownloader", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
                 _fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
