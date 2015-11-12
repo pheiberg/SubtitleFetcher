@@ -106,7 +106,7 @@ namespace PortedSubtitleDownloaders.Subscene
                 string subtitleName;
                 if (ParseLanguageAndSubtitleName(subtitleLink, out languageCode, out subtitleName) && query.HasLanguageCode(languageCode))
                 {
-                    Subtitle subtitle = new Subtitle(attributeValue, subtitleName, subtitleName, languageCode);
+                    Subtitle subtitle = new Subtitle(attributeValue, subtitleName, languageCode);
                     list.Add(subtitle);
                 }
             }

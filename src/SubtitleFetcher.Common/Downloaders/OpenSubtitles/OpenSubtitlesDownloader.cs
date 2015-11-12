@@ -73,7 +73,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
         private static IEnumerable<Subtitle> FilterAndConvertResults(string[] languages, OpenSubtitle[] result)
         {
             var validResults = FilterOutUnwantedHits(result, languages);
-            return validResults.Select(r => new Subtitle(r.SubDownloadLink, r.MovieName, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
+            return validResults.Select(r => new Subtitle(r.SubDownloadLink, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
         }
 
         private static IEnumerable<OpenSubtitle> FilterOutUnwantedHits(OpenSubtitle[] results, IEnumerable<string> languages)

@@ -43,7 +43,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             EpisodeSubtitleDownloader episodeDownloader
             )
         {
-            var subtitles = expectedLanguages.Select(l => new Subtitle(id, programName, tvReleaseIdentity.ToString(), l));
+            var subtitles = expectedLanguages.Select(l => new Subtitle(id, tvReleaseIdentity.ToString(), l));
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(tvReleaseIdentity);
             var languages = new [] { expectedLanguages[0], missingLanguage, expectedLanguages[1], expectedLanguages[2] };
@@ -67,9 +67,9 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             var anyOfTheSupportedLanguages = supportedLanguages.First();
             var subtitles = new List<Subtitle>
                                 {
-                new Subtitle(id, programName, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
-                new Subtitle(id, programName, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
-                new Subtitle(id, programName, otherShow, anyOfTheSupportedLanguages)
+                new Subtitle(id, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, tvReleaseIdentity.ToString(), anyOfTheSupportedLanguages),
+                new Subtitle(id, otherShow, anyOfTheSupportedLanguages)
             };
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             

@@ -37,7 +37,7 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
 
             var languages = languageCodes.Select(KnownLanguages.GetLanguageByTwoLetterIso);
             var availableLanguages = GetAvailableLanguagesMatchingSearchQuery(query, languages);
-            return availableLanguages.Select(language => new Subtitle(fileHash, query.SerieTitle, constructedFileName, language));
+            return availableLanguages.Select(language => new Subtitle(fileHash, constructedFileName, language));
         }
 
         private static string GetFileHash(SearchQuery query)

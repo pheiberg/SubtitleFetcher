@@ -69,7 +69,7 @@ namespace SubtitleFetcher.Common.Downloaders
             }
             var matches = subtitleRegex.Matches(seriesList);
             var subtitles = (from Match match in matches
-                             select new Subtitle(match.Groups["id"].Value, name, match.Groups["release"].Value, KnownLanguages.GetLanguageByName("Swedish"))).ToList();
+                             select new Subtitle(match.Groups["id"].Value, match.Groups["release"].Value, KnownLanguages.GetLanguageByName("Swedish"))).ToList();
             cachedSubtitleLists[id] = subtitles;
             return subtitles;
         }

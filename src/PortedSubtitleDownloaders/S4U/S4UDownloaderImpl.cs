@@ -81,7 +81,7 @@ namespace PortedSubtitleDownloaders.S4U
                     fileName = node.InnerText;
                 }
             }
-            var subtitle = new Subtitle(id, title, fileName, SwedishLanguageCode);
+            var subtitle = new Subtitle(id, fileName, SwedishLanguageCode);
             return subtitle;
         }
 

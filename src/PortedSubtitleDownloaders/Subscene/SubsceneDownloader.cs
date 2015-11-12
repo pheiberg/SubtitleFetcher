@@ -23,12 +23,12 @@ namespace PortedSubtitleDownloaders.Subscene
             var languageCodes = query.Languages.Select(l => l.ThreeLetterIsoName).ToArray();
             var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = languageCodes };
             var results = _downloaderImpl.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.Title, r.FileName, KnownLanguages.GetLanguageByThreeLetterIso(r.LanguageCode)));
+            return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.FileName, KnownLanguages.GetLanguageByThreeLetterIso(r.LanguageCode)));
         }
 
         public IEnumerable<FileInfo> SaveSubtitle(SubtitleFetcher.Common.Subtitle subtitle)
         {
-            var localSubtitle = new Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
+            var localSubtitle = new Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
             return _downloaderImpl.SaveSubtitle(localSubtitle);
         }
         

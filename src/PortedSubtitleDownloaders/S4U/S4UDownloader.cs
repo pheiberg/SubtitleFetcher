@@ -24,7 +24,7 @@ namespace PortedSubtitleDownloaders.S4U
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.Title, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
+            var legacySubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
             return _downloader.SaveSubtitle(legacySubtitle);
         }
 
@@ -38,7 +38,7 @@ namespace PortedSubtitleDownloaders.S4U
             var tvDbId = GetTvDbId(query);
             var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { "swe" } };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new Subtitle(r.Id, r.Title, r.FileName, KnownLanguages.GetLanguageByName("Swedish")));
+            return results.Select(r => new Subtitle(r.Id, r.FileName, KnownLanguages.GetLanguageByName("Swedish")));
         }
 
         private static int? GetTvDbId(SearchQuery query)
