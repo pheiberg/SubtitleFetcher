@@ -51,8 +51,8 @@ namespace SubtitleFetcher.Bootstrapping
 
         private static SubtitleDownloadService CreateSubtitleDownloadService(IContext context)
         {
-            Func<ISubtitleDownloader, EpisodeSubtitleDownloader> createSubtitleDownloader = sd => new EpisodeSubtitleDownloader(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
-            IEnumerable<EpisodeSubtitleDownloader> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
+            Func<ISubtitleDownloader, SubtitleDownloaderWrapper> createSubtitleDownloader = sd => new SubtitleDownloaderWrapper(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
+            IEnumerable<SubtitleDownloaderWrapper> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
             return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<IEnhancementProvider>());
         }
 

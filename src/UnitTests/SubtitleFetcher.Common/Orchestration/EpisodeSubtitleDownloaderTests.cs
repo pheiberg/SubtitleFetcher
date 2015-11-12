@@ -22,11 +22,11 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             TvReleaseIdentity tvReleaseIdentity,
             Language[] languages,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader episodeDownloader)
+            SubtitleDownloaderWrapper downloaderWrapper)
         {
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Throws<Exception>();
             
-            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, languages);
+            var results = downloaderWrapper.SearchSubtitle(tvReleaseIdentity, languages);
 
             Assert.That(results, Is.Empty);
         }
@@ -40,7 +40,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             Language missingLanguage,
             [Frozen]IEpisodeParser nameParser,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader episodeDownloader
+            SubtitleDownloaderWrapper downloaderWrapper
             )
         {
             var subtitles = expectedLanguages.Select(l => new Subtitle(id, tvReleaseIdentity.ToString(), l));
@@ -48,7 +48,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(tvReleaseIdentity);
             var languages = new [] { expectedLanguages[0], missingLanguage, expectedLanguages[1], expectedLanguages[2] };
 
-            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, languages);
+            var results = downloaderWrapper.SearchSubtitle(tvReleaseIdentity, languages);
 
             Assert.That(results.Select(s => s.Language), Is.EquivalentTo(expectedLanguages));
         }
@@ -62,7 +62,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string otherShow,
             [Frozen]IEpisodeParser nameParser,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader episodeDownloader)
+            SubtitleDownloaderWrapper downloaderWrapper)
         {
             var anyOfTheSupportedLanguages = supportedLanguages.First();
             var subtitles = new List<Subtitle>
@@ -73,7 +73,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             };
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
             
-            var results = episodeDownloader.SearchSubtitle(tvReleaseIdentity, supportedLanguages);
+            var results = downloaderWrapper.SearchSubtitle(tvReleaseIdentity, supportedLanguages);
 
             Assert.That(results.Select(s => s.FileName), Has.All.StringStarting(tvReleaseIdentity.ToString()));
         }
@@ -83,7 +83,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             Subtitle subtitle,
             string fileName,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Throws<Exception>();
          
@@ -99,7 +99,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string fileName,
             [Frozen]ISubtitleDownloader downloader,
             [Frozen]IFileSystem fileSystem,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             var fileInfo = new FileInfo(resultFile);
             A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Returns(new List<FileInfo> { fileInfo });
@@ -115,7 +115,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string resultFile,
             string fileName,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             A.CallTo(() => downloader.SaveSubtitle(A<Subtitle>._)).Returns(new [] { new FileInfo(resultFile) });
             
@@ -126,7 +126,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
         [Test, AutoFakeData]
         public void CanHandleAtLeastOneOf_NoLanguages_ReturnsFalse(
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             bool result = sut.CanHandleAtLeastOneOf(new Language[0]);
 
@@ -138,7 +138,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             Language handledLanguage,
             Language unhandledLanguage,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             A.CallTo(() => downloader.SupportedLanguages).Returns(new[] {handledLanguage});
 
@@ -152,7 +152,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             Language[] downloaderLanguages,
             Language[] otherLanguages,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             A.CallTo(() => downloader.SupportedLanguages).Returns(downloaderLanguages); 
             
@@ -165,7 +165,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         public void CanHandleAtLeastOneOf_DoesNotHaveSupportedLanguages_ReturnsFalse(
             Language[] anyLanguages,
             [Frozen]ISubtitleDownloader downloader,
-            EpisodeSubtitleDownloader sut)
+            SubtitleDownloaderWrapper sut)
         {
             A.CallTo(() => downloader.SupportedLanguages).Returns(new Language[0]);
 

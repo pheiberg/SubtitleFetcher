@@ -93,7 +93,7 @@
     <Compile Include="Languages\Language.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="Orchestration\EnhancementApplicator.cs" />
-    <Compile Include="Orchestration\EpisodeSubtitleDownloader.cs" />
+    <Compile Include="Orchestration\SubtitleDownloaderWrapper.cs" />
     <Compile Include="Orchestration\FileProcessor.cs" />
     <Compile Include="Orchestration\IEpisodeSubtitleDownloader.cs" />
     <Compile Include="Orchestration\IFileProcessor.cs" />

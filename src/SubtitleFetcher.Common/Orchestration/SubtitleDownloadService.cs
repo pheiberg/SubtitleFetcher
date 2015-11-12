@@ -71,7 +71,14 @@ namespace SubtitleFetcher.Common.Orchestration
 
         private static bool DownloadFirstAvailableSubtitle(string targetSubtitleFile, IEnumerable<DownloaderMatch> orderedMatches)
         {
-            return orderedMatches.Any(match => match.Downloader.TryDownloadSubtitle(match.Subtitle, targetSubtitleFile));
+            foreach (var match in orderedMatches)
+            {
+                if (match.Downloader.TryDownloadSubtitle(match.Subtitle, targetSubtitleFile))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private class DownloaderMatch

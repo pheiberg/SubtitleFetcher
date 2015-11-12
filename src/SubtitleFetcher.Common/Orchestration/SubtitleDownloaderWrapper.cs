@@ -12,14 +12,14 @@ using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher.Common.Orchestration
 {
-    public class EpisodeSubtitleDownloader : IEpisodeSubtitleDownloader
+    public class SubtitleDownloaderWrapper : IEpisodeSubtitleDownloader
     {
         private readonly ISubtitleDownloader _downloader;
         private readonly IEpisodeParser _nameParser;
         private readonly ILogger _logger;
         private readonly IFileSystem _fileSystem;
 
-        public EpisodeSubtitleDownloader(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileSystem fileSystem)
+        public SubtitleDownloaderWrapper(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileSystem fileSystem)
         {
             _downloader = downloader;
             _nameParser = nameParser;
@@ -36,15 +36,15 @@ namespace SubtitleFetcher.Common.Orchestration
             IEnumerable<Subtitle> searchResult;
             try
             {
-                _logger.Debug("EpisodeSubtitleDownloader", "Searching with downloader {0}", Name);
+                _logger.Debug("SubtitleDownloaderWrapper", "Searching with downloader {0}", Name);
                 var watch = Stopwatch.StartNew();
                 searchResult = _downloader.SearchSubtitles(query).ToArray();
                 watch.Stop();
-                _logger.Debug("EpisodeSubtitleDownloader", "Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
+                _logger.Debug("SubtitleDownloaderWrapper", "Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
-                _logger.Verbose("EpisodeSubtitleDownloader", "Downloader search for downloader {0} failed with message: {1}", Name, ex.Message);
+                _logger.Verbose("SubtitleDownloaderWrapper", "Downloader search for downloader {0} failed with message: {1}", Name, ex.Message);
                 return Enumerable.Empty<Subtitle>();
             }
 
@@ -61,18 +61,18 @@ namespace SubtitleFetcher.Common.Orchestration
 
         public bool TryDownloadSubtitle(Subtitle subtitle, string targetSubtitleFile)
         {
-            _logger.Verbose("EpisodeSubtitleDownloader", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.Language.Name);
+            _logger.Verbose("SubtitleDownloaderWrapper", "Downloading [{1}] subtitles from {0}...", _downloader.GetName(), subtitle.Language.Name);
             try
             {
                 var subtitleFile = DownloadSubtitleFile(_downloader, subtitle);
-                string targetSubtitleFileName = FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language.TwoLetterIsoName + ".srt");
-                _logger.Debug("EpisodeSubtitleDownloader", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
+                string targetSubtitleFileName = CreateSubtitleFileName(targetSubtitleFile, subtitle);
+                _logger.Debug("SubtitleDownloaderWrapper", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
                 _fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
             }
             catch (Exception e)
             {
-                _logger.Verbose("EpisodeSubtitleDownloader", "Downloading from downloader {0} failed: {1}", _downloader.GetName(), e.Message);
+                _logger.Verbose("SubtitleDownloaderWrapper", "Downloading from downloader {0} failed: {1}", _downloader.GetName(), e.Message);
             }
             return false;
         }
@@ -82,6 +82,11 @@ namespace SubtitleFetcher.Common.Orchestration
             IEnumerable<FileInfo> subtitleFiles = downloader.SaveSubtitle(subtitle);
             FileInfo subtitleFile = subtitleFiles.First();
             return subtitleFile.FullName;
+        }
+
+        private static string CreateSubtitleFileName(string targetSubtitleFile, Subtitle subtitle)
+        {
+            return FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language.TwoLetterIsoName + ".srt");
         }
 
         private IEnumerable<Subtitle> FilterOutSubtitlesNotMatching(TvReleaseIdentity tvReleaseIdentity, IEnumerable<Subtitle> searchResult)
