@@ -33,7 +33,7 @@ namespace SubtitleFetcher.Common.Downloaders
 
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query, Func<string, string> getShowId, int timeout)
         {
-            var id = getShowId(query.SerieTitle);
+            var id = getShowId(query.SeriesTitle);
             if (string.IsNullOrEmpty(id))
             {
                 logger.Debug(name, "Could not find show id");
@@ -42,7 +42,7 @@ namespace SubtitleFetcher.Common.Downloaders
 
             var subtitles = ListSeriesSubtitles(id, timeout);
             var matches = from title in subtitles
-                          let identity = parser.ParseEpisodeInfo(title.FileName)
+                          let identity = parser.ExtractReleaseIdentity(title)
                           where identity.Season == query.Season && identity.Episode == query.Episode
                           select title;
             return matches;
@@ -69,9 +69,25 @@ namespace SubtitleFetcher.Common.Downloaders
             }
             var matches = subtitleRegex.Matches(seriesList);
             var subtitles = (from Match match in matches
-                             select new Subtitle(match.Groups["id"].Value, match.Groups["release"].Value, KnownLanguages.GetLanguageByName("Swedish"))).ToList();
+                             select CreateSubtitle(match)).ToList();
             cachedSubtitleLists[id] = subtitles;
             return subtitles;
+        }
+
+        private Subtitle CreateSubtitle(Match match)
+        {
+            var releaseText = match.Groups["release"].Value;
+            var release = parser.ParseEpisodeInfo(releaseText);
+            return new Subtitle(match.Groups["id"].Value,
+                releaseText,
+                KnownLanguages.GetLanguageByName("Swedish"))
+            {
+                SeriesName = release.SeriesName,
+                Season = release.Season,
+                Episode = release.Episode,
+                EndEpisode = release.EndEpisode,
+                ReleaseGroup = release.ReleaseGroup
+            };
         }
 
         public List<FileInfo> SaveSubtitle(Subtitle subtitle, int timeout)

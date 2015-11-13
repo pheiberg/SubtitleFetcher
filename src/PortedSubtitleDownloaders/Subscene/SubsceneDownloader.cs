@@ -5,7 +5,7 @@ using PortedSubtitleDownloaders.Legacy;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Languages;
-using Subtitle = PortedSubtitleDownloaders.Legacy.Subtitle;
+using Subtitle = SubtitleFetcher.Common.Subtitle;
 
 namespace PortedSubtitleDownloaders.Subscene
 {
@@ -18,17 +18,24 @@ namespace PortedSubtitleDownloaders.Subscene
             return _downloaderImpl.GetName();
         }
 
-        public IEnumerable<SubtitleFetcher.Common.Subtitle> SearchSubtitles(SubtitleFetcher.Common.SearchQuery query)
+        public IEnumerable<Subtitle> SearchSubtitles(SubtitleFetcher.Common.SearchQuery query)
         {
             var languageCodes = query.Languages.Select(l => l.ThreeLetterIsoName).ToArray();
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode) { LanguageCodes = languageCodes };
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SeriesTitle, query.Season, query.Episode) { LanguageCodes = languageCodes };
             var results = _downloaderImpl.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new SubtitleFetcher.Common.Subtitle(r.Id, r.FileName, KnownLanguages.GetLanguageByThreeLetterIso(r.LanguageCode)));
+            return results.Select(r => new Subtitle(r.Id, r.FileName, KnownLanguages.GetLanguageByThreeLetterIso(r.LanguageCode))
+            {
+                SeriesName = query.SeriesTitle,
+                Season = query.Season,
+                Episode = query.Episode,
+                EndEpisode = query.Episode,
+                ReleaseGroup = query.ReleaseGroup
+            });
         }
 
-        public IEnumerable<FileInfo> SaveSubtitle(SubtitleFetcher.Common.Subtitle subtitle)
+        public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            var localSubtitle = new Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
+            var localSubtitle = new Legacy.Subtitle(subtitle.Id, subtitle.FileName, subtitle.Language.ThreeLetterIsoName);
             return _downloaderImpl.SaveSubtitle(localSubtitle);
         }
         

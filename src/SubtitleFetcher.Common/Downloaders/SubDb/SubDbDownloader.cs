@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SubtitleFetcher.Common.Downloaders.SubDb.Enhancement;
@@ -33,11 +32,22 @@ namespace SubtitleFetcher.Common.Downloaders.SubDb
         {
             var fileHash = GetFileHash(query);
             var languageCodes = _api.Search(fileHash);
-            string constructedFileName = $"{query.SerieTitle}.S{query.Season.ToString("00")}.E{query.Episode.ToString("00")}.DUMMY-{query.ReleaseGroup}";
-
+            
             var languages = languageCodes.Select(KnownLanguages.GetLanguageByTwoLetterIso);
             var availableLanguages = GetAvailableLanguagesMatchingSearchQuery(query, languages);
-            return availableLanguages.Select(language => new Subtitle(fileHash, constructedFileName, language));
+            return availableLanguages.Select(language => CreateSubtitle(fileHash, language, query));
+        }
+
+        private static Subtitle CreateSubtitle(string fileHash, Language language, SearchQuery query)
+        {
+            return new Subtitle(fileHash, "", language)
+            {
+                SeriesName = query.SeriesTitle,
+                Season = query.Season,
+                Episode = query.Episode,
+                EndEpisode = query.Episode,
+                ReleaseGroup = query.ReleaseGroup
+            };
         }
 
         private static string GetFileHash(SearchQuery query)

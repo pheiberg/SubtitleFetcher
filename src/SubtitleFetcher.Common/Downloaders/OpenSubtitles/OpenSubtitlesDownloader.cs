@@ -69,7 +69,7 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
 
         private IEnumerable<Subtitle> SearchByQuery(SearchQuery query, string token, string[] languages)
         {
-            var result = _api.SearchSubtitlesFromQuery(token, languages, query.SerieTitle, query.Season, query.Episode).ToArray();
+            var result = _api.SearchSubtitlesFromQuery(token, languages, query.SeriesTitle, query.Season, query.Episode).ToArray();
             return FilterAndConvertResults(languages, result);
         }
 

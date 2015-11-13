@@ -37,9 +37,16 @@ namespace PortedSubtitleDownloaders.S4U
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             var tvDbId = GetTvDbId(query);
-            var episodeSearchQuery = new EpisodeSearchQuery(query.SerieTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { SwedishLanguage.ThreeLetterIsoName } };
+            var episodeSearchQuery = new EpisodeSearchQuery(query.SeriesTitle, query.Season, query.Episode, tvDbId) { LanguageCodes = new [] { SwedishLanguage.ThreeLetterIsoName } };
             var results = _downloader.SearchSubtitles(episodeSearchQuery);
-            return results.Select(r => new Subtitle(r.Id, r.FileName, SwedishLanguage));
+            return results.Select(r => new Subtitle(r.Id, r.FileName, SwedishLanguage)
+            {
+                SeriesName = query.SeriesTitle,
+                Season = query.Season,
+                Episode = query.Episode,
+                EndEpisode = query.Episode,
+                ReleaseGroup = query.ReleaseGroup
+            });
         }
 
         private static int? GetTvDbId(SearchQuery query)

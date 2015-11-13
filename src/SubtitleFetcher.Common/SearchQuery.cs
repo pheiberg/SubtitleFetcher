@@ -8,14 +8,14 @@ namespace SubtitleFetcher.Common
     {
         public SearchQuery(string seriesName, int season, int episode, string releaseGroup)
         {
-            SerieTitle = seriesName;
+            SeriesTitle = seriesName;
             Season = season;
             Episode = episode;
             Enhancements = new List<IEnhancement>();
             ReleaseGroup = releaseGroup;
         }
 
-        public string SerieTitle { get; set; }
+        public string SeriesTitle { get; set; }
         public int Season { get; set; }
         public int Episode { get; set; }
         public Language[] Languages { get; set; }
