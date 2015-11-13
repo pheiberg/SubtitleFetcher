@@ -73,6 +73,8 @@
   <ItemGroup>
     <Compile Include="LocalAddin.cs" />
     <Compile Include="SubtitleFetcher.Common\ByteExtensionTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Downloaders\Subscene\LanguageMappingsTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Downloaders\Subscene\SubsceneDownloaderTests.cs" />
     <Compile Include="SubtitleFetcher.Common\EpisodeIdentityTests.cs" />
     <Compile Include="SubtitleFetcher.Common\EpisodeParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
