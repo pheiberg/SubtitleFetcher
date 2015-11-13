@@ -11,9 +11,13 @@ namespace SubtitleFetcher.Common
             Language = language;
         }
         
-        public string Release { get; set; }
         public string FileName { get; set; }
         public Language Language { get; set; }
         public string Id { get; set; }
+        public string SeriesName { get; set; }
+        public int? Season { get; set; }
+        public int? Episode { get; set; }
+        public int? EndEpisode { get; set; }
+        public string ReleaseGroup { get; set; }
     }
 }

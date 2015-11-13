@@ -56,6 +56,15 @@ namespace SubtitleFetcher.Common.Parsing
             return new TvReleaseIdentity();
         }
 
+        public TvReleaseIdentity ExtractReleaseIdentity(Subtitle subtitle)
+        {
+            return new TvReleaseIdentity(subtitle.SeriesName,
+                subtitle.Season ?? 0, 
+                subtitle.Episode?? 0, 
+                subtitle.EndEpisode?? 0, 
+                subtitle.ReleaseGroup);
+        }
+
         private static int ExtractEndEpisode(Capture endEpisodeGroup, int episode)
         {
             return !string.IsNullOrEmpty(endEpisodeGroup.Value) ? int.Parse(endEpisodeGroup.Value) : episode;

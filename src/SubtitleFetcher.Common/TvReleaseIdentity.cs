@@ -21,7 +21,7 @@ namespace SubtitleFetcher.Common
             Enhancements = new List<IEnhancement>();
         }
 
-        public TvReleaseIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup, string fileHash)
+        public TvReleaseIdentity(string seriesName, int season, int episode, int endEpisode, string releaseGroup)
         {
             SeriesName = seriesName;
             Season = season;

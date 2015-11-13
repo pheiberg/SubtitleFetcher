@@ -5,15 +5,18 @@ using CookComputing.XmlRpc;
 using SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Languages;
+using SubtitleFetcher.Common.Parsing;
 
 namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
 {
     public class OpenSubtitlesDownloader : ISubtitleDownloader
     {
+        private readonly IEpisodeParser _episodeParser;
         private readonly OpenSubtitlesApi _api;
 
-        public OpenSubtitlesDownloader(IApplicationSettings applicationSettings)
+        public OpenSubtitlesDownloader(IApplicationSettings applicationSettings, IEpisodeParser episodeParser)
         {
+            _episodeParser = episodeParser;
             var settings = new OpenSubtitlesSettings
             {
                 Language = "en",
@@ -70,12 +73,25 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles
             return FilterAndConvertResults(languages, result);
         }
 
-        private static IEnumerable<Subtitle> FilterAndConvertResults(string[] languages, OpenSubtitle[] result)
+        private IEnumerable<Subtitle> FilterAndConvertResults(string[] languages, OpenSubtitle[] result)
         {
             var validResults = FilterOutUnwantedHits(result, languages);
-            return validResults.Select(r => new Subtitle(r.SubDownloadLink, r.MovieReleaseName + "." + r.SubFormat, KnownLanguages.GetLanguageByTwoLetterIso(r.ISO639)));
+            return validResults.Select(CreateSubtitle);
         }
 
+        private Subtitle CreateSubtitle(OpenSubtitle openSubtitle)
+        {
+            var release = _episodeParser.ParseEpisodeInfo(openSubtitle.MovieReleaseName);
+            return new Subtitle(openSubtitle.SubDownloadLink, openSubtitle.SubFileName, KnownLanguages.GetLanguageByTwoLetterIso(openSubtitle.ISO639))
+            {
+                SeriesName = release.SeriesName,
+                Episode = openSubtitle.SeriesEpisode,
+                Season = openSubtitle.SeriesSeason,
+                EndEpisode = openSubtitle.SeriesEpisode,
+                ReleaseGroup = release.ReleaseGroup
+            };
+        }
+        
         private static IEnumerable<OpenSubtitle> FilterOutUnwantedHits(OpenSubtitle[] results, IEnumerable<string> languages)
         {
             return results.Where(subtitle => languages.Contains(subtitle.ISO639) 

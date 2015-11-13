@@ -46,5 +46,47 @@ namespace UnitTests.SubtitleFetcher.Common
 
             Assert.That(info.Tags, Is.EquivalentTo(expectedTags));
         }
+
+        [Test, AutoFakeData]
+        public void ExtractReleaseIdentity_SubtitleWithAllProperties_ReleaseIdentityMatches(
+            Subtitle subtitle,
+            EpisodeParser sut)
+        {
+            var expected = new TvReleaseIdentity
+            {
+                SeriesName = subtitle.SeriesName,
+                Season = subtitle.Season.Value,
+                Episode = subtitle.Episode.Value,
+                EndEpisode = subtitle.EndEpisode.Value,
+                ReleaseGroup = subtitle.ReleaseGroup
+            };
+            var result = sut.ExtractReleaseIdentity(subtitle);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test, AutoFakeData]
+        public void ExtractReleaseIdentity_SubtitleWithAllNullValues_ReleaseIdentityMatches(
+            Subtitle subtitle,
+            EpisodeParser sut)
+        {
+            subtitle.SeriesName = null;
+            subtitle.ReleaseGroup = null;
+            subtitle.Season = null;
+            subtitle.Episode = null;
+            subtitle.EndEpisode = null;
+
+            var expected = new TvReleaseIdentity
+            {
+                SeriesName = null,
+                Season = 0,
+                Episode = 0,
+                EndEpisode = 0,
+                ReleaseGroup = null
+            };
+            var result = sut.ExtractReleaseIdentity(subtitle);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
     }
 }

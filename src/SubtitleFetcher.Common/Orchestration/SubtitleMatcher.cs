@@ -16,7 +16,7 @@ namespace SubtitleFetcher.Common.Orchestration
         public IEnumerable<Subtitle> FilterOutSubtitlesNotMatching(IEnumerable<Subtitle> subtitles, TvReleaseIdentity identity)
         {
             return from subtitle in subtitles
-                let subtitleInfo = _episodeParser.ParseEpisodeInfo(subtitle.FileName)
+                let subtitleInfo = _episodeParser.ExtractReleaseIdentity(subtitle)
                 where subtitleInfo.IsEquivalent(identity)
                 select subtitle;
         }

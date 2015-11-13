@@ -35,7 +35,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
         public void SearchSubtitle_MultipleValidSubtitlesFound_OrderedByLanguagePriority(
             TvReleaseIdentity tvReleaseIdentity,
             string id,
-            string programName,
+            string fileName,
             Language[] expectedLanguages,
             Language missingLanguage,
             [Frozen]IEpisodeParser nameParser,
@@ -43,9 +43,9 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             SubtitleDownloaderWrapper downloaderWrapper
             )
         {
-            var subtitles = expectedLanguages.Select(l => new Subtitle(id, tvReleaseIdentity.ToString(), l));
+            var subtitles = expectedLanguages.Select(l => new Subtitle(id, fileName, l));
             A.CallTo(() => downloader.SearchSubtitles(A<SearchQuery>._)).Returns(subtitles);
-            A.CallTo(() => nameParser.ParseEpisodeInfo(A<string>._)).Returns(tvReleaseIdentity);
+            A.CallTo(() => nameParser.ExtractReleaseIdentity(A<Subtitle>._)).Returns(tvReleaseIdentity);
             var languages = new [] { expectedLanguages[0], missingLanguage, expectedLanguages[1], expectedLanguages[2] };
 
             var results = downloaderWrapper.SearchSubtitle(tvReleaseIdentity, languages);

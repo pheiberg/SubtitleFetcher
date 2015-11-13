@@ -20,8 +20,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             SubtitleMatcher sut)
         {
             var matching = subtitles.Take(2);
-            var matchingFileNames = matching.Select(m => m.FileName);
-            A.CallTo(() => parser.ParseEpisodeInfo(A<string>.That.Matches(s => matchingFileNames.Contains(s))))
+            A.CallTo(() => parser.ExtractReleaseIdentity(A<Subtitle>.That.Matches(s => matching.Contains(s))))
                 .Returns(identity);
 
             var results = sut.FilterOutSubtitlesNotMatching(subtitles, identity);
