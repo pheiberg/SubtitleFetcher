@@ -21,12 +21,13 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string file,
             TvReleaseIdentity identity,
             IEnhancementProvider enhancementProvider,
+            ISubtitleRanker subtitleRanker,
             [Frozen]IEpisodeSubtitleDownloader fakeDownloader)
         {
             A.CallTo(() => fakeDownloader.SearchSubtitle(A<TvReleaseIdentity>._, A<Language[]>._)).Returns(Enumerable.Empty<Subtitle>());
             A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, enhancementProvider);
+            var service = new SubtitleDownloadService(downloaders, enhancementProvider, subtitleRanker);
 
             bool success = service.DownloadSubtitle(file, identity, languages);
 
@@ -38,6 +39,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string file,
             TvReleaseIdentity identity,
             Subtitle[] matches,
+            ISubtitleRanker subtitleRanker,
             IEpisodeSubtitleDownloader fakeDownloader,
             IEnhancementProvider enhancementProvider
             )
@@ -47,7 +49,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
             A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, enhancementProvider);
+            var service = new SubtitleDownloadService(downloaders, enhancementProvider, subtitleRanker);
 
             bool success = service.DownloadSubtitle(file, identity, languages);
 
@@ -61,6 +63,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             TvReleaseIdentity identity,
             Subtitle[] matches,
             Language language,
+            ISubtitleRanker subtitleRanker,
             IEnhancementProvider enhancementProvider,
             [Frozen]IEpisodeSubtitleDownloader fakeDownloader)
         {
@@ -68,7 +71,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(false);
             A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, enhancementProvider);
+            var service = new SubtitleDownloadService(downloaders, enhancementProvider, subtitleRanker);
 
             bool success = service.DownloadSubtitle(file, identity, languages);
 
@@ -80,6 +83,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string file,
             Subtitle[] matches,
             TvReleaseIdentity identity,
+            ISubtitleRanker subtitleRanker,
             IEpisodeSubtitleDownloader fakeDownloader,
             IEnhancementProvider enhancementProvider
             )
@@ -90,7 +94,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             A.CallTo(() => fakeDownloader.TryDownloadSubtitle(A<Subtitle>._, A<string>._)).Returns(true);
             A.CallTo(() => fakeDownloader.CanHandleAtLeastOneOf(A<Language[]>._)).Returns(true);
             var downloaders = new[] { fakeDownloader };
-            var service = new SubtitleDownloadService(downloaders, enhancementProvider);
+            var service = new SubtitleDownloadService(downloaders, enhancementProvider, subtitleRanker);
 
             service.DownloadSubtitle(file, identity, languages);
 

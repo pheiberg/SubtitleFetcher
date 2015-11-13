@@ -53,7 +53,7 @@ namespace SubtitleFetcher.Bootstrapping
         {
             Func<ISubtitleDownloader, SubtitleDownloaderWrapper> createSubtitleDownloader = sd => new SubtitleDownloaderWrapper(sd, context.GetInstance<IEpisodeParser>(), context.GetInstance<ILogger>(), context.GetInstance<IFileSystem>());
             IEnumerable<SubtitleDownloaderWrapper> episodeSubtitleDownloaders = context.GetAllInstances<ISubtitleDownloader>().Select(createSubtitleDownloader);
-            return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<IEnhancementProvider>());
+            return new SubtitleDownloadService(episodeSubtitleDownloaders, context.GetInstance<IEnhancementProvider>(), context.GetInstance<SubtitleRanker>());
         }
 
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention

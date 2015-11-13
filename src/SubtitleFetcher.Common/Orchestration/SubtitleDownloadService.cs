@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using SubtitleFetcher.Common.Enhancement;
@@ -10,26 +9,28 @@ namespace SubtitleFetcher.Common.Orchestration
     {
         private readonly IEnumerable<IEpisodeSubtitleDownloader> _subtitleDownloaders;
         private readonly IEnhancementProvider _enhancementProvider;
+        private readonly ISubtitleRanker _subtitleRanker;
 
-        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders, IEnhancementProvider enhancementProvider)
+        public SubtitleDownloadService(IEnumerable<IEpisodeSubtitleDownloader> subtitleDownloaders, IEnhancementProvider enhancementProvider, ISubtitleRanker subtitleRanker)
         {
             _subtitleDownloaders = subtitleDownloaders;
             _enhancementProvider = enhancementProvider;
+            _subtitleRanker = subtitleRanker;
         }
 
         public bool DownloadSubtitle(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<Language> languages)
         {
-            var matches = FindMatchingSubtitlesOrderedByLanguageCode(targetSubtitleFile, tvReleaseIdentity, languages).ToArray();
+           var matches = FindMatchingSubtitlesOrderedByRanking(targetSubtitleFile, tvReleaseIdentity, languages).ToArray();
            return DownloadFirstAvailableSubtitle(targetSubtitleFile, matches);
         }
 
-        private IEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByLanguageCode(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<Language> languages)
+        private IOrderedEnumerable<DownloaderMatch> FindMatchingSubtitlesOrderedByRanking(string targetSubtitleFile, TvReleaseIdentity tvReleaseIdentity, IEnumerable<Language> languages)
         {
             var languageArray = languages.ToArray();
             var compatibleDownloaders = GetDownloadersForLanguages(languageArray);
             EnhanceIdentity(compatibleDownloaders, tvReleaseIdentity, targetSubtitleFile);
-            var searchResults = SearchDownloaders(compatibleDownloaders, tvReleaseIdentity, languageArray);
-            return OrderByLanguageCode(searchResults, languageArray);
+            var searchResults = SearchDownloaders(compatibleDownloaders, languageArray, tvReleaseIdentity);
+            return OrderByRanking(searchResults, languageArray, tvReleaseIdentity);
         }
 
         private void EnhanceIdentity(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, TvReleaseIdentity tvReleaseIdentity, string filePath)
@@ -43,7 +44,7 @@ namespace SubtitleFetcher.Common.Orchestration
             return _subtitleDownloaders.Where(s => s.CanHandleAtLeastOneOf(languageArray)).ToArray();
         }
 
-        private static IEnumerable<DownloaderMatch> SearchDownloaders(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, TvReleaseIdentity tvReleaseIdentity, Language[] languageArray)
+        private static IEnumerable<DownloaderMatch> SearchDownloaders(IEnumerable<IEpisodeSubtitleDownloader> compatibleDownloaders, Language[] languageArray, TvReleaseIdentity tvReleaseIdentity)
         {
             var searchResults = compatibleDownloaders
                 .AsParallel()
@@ -57,18 +58,11 @@ namespace SubtitleFetcher.Common.Orchestration
             return searchResults.Where(m => validLanguages.Any(l => l == m.Subtitle.Language));
         }
 
-        private static int FindPreferenceIndexOfLanguage(Language[] languageArray, Language language)
+        private IOrderedEnumerable<DownloaderMatch> OrderByRanking(IEnumerable<DownloaderMatch> searchResults, Language[] languageArray, TvReleaseIdentity identity)
         {
-            return Array.FindIndex(languageArray, arrayItem => arrayItem == language);
+            return searchResults.OrderByDescending(s => _subtitleRanker.GetRankingScore(s.Subtitle, languageArray, identity));
         }
-
-        private static IOrderedEnumerable<DownloaderMatch> OrderByLanguageCode(IEnumerable<DownloaderMatch> searchResults, Language[] languageArray)
-        {
-            return searchResults
-                .OrderBy(match => FindPreferenceIndexOfLanguage(languageArray, match.Subtitle.Language))
-                .ThenBy(match => match.Subtitle.FileName);
-        }
-
+        
         private static bool DownloadFirstAvailableSubtitle(string targetSubtitleFile, IEnumerable<DownloaderMatch> orderedMatches)
         {
             foreach (var match in orderedMatches)

@@ -93,6 +93,7 @@
     <Compile Include="Languages\Language.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="Orchestration\EnhancementApplicator.cs" />
+    <Compile Include="Orchestration\ISubtitleRanker.cs" />
     <Compile Include="Orchestration\SubtitleDownloaderWrapper.cs" />
     <Compile Include="Orchestration\FileProcessor.cs" />
     <Compile Include="Orchestration\IEpisodeSubtitleDownloader.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Languages\LanguageSettings.cs" />
     <Compile Include="Orchestration\SubtitleDownloadService.cs" />
     <Compile Include="Orchestration\SubtitleMatcher.cs" />
+    <Compile Include="Orchestration\SubtitleRanker.cs" />
     <Compile Include="TvReleaseIdentity.cs" />
     <Compile Include="Parsing\EpisodeParser.cs" />
     <Compile Include="Downloaders\GenericDownloader.cs" />
