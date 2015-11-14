@@ -72,6 +72,7 @@
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Downloaders\Subscene\LanguageMappings.cs" />
     <Compile Include="Downloaders\Subscene\SubsceneDownloader.cs" />
+    <Compile Include="Downloaders\Subscene\SubsceneSubtitle.cs" />
     <Compile Include="Enhancement\EnhancementProvider.cs" />
     <Compile Include="Enhancement\EnhancementRequest.cs" />
     <Compile Include="Enhancement\EnhancerRegistry.cs" />
