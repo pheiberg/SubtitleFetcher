@@ -53,7 +53,7 @@ namespace SubtitleFetcher.Bootstrapping
                                      && !type.IsAbstract
                                      && !type.IsInterface;
                 bool isNameMatchingDownloaderOptions = !_downloaderNames.Any() 
-                                                    || !_downloaderNames.Any(d => type.Name.StartsWith(d, StringComparison.OrdinalIgnoreCase));
+                                                    || _downloaderNames.Any(d => type.Name.StartsWith(d, StringComparison.OrdinalIgnoreCase));
                  
                 if (!isCompatibleType || !isNameMatchingDownloaderOptions)
                     return;

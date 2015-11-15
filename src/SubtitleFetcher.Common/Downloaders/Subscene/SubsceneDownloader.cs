@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using HtmlAgilityPack;
 using SharpCompress.Reader;
@@ -15,7 +16,7 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
     {
         private readonly IEpisodeParser _releaseParser;
         const string SiteUrl = "http://subscene.com";
-        const string SearchUrl = SiteUrl + "/subtitles/release?q=";
+        const string SearchUrl = "http://v2.subscene.com/s.aspx?q=";
 
         public SubsceneDownloader(IEpisodeParser releaseParser)
         {
@@ -33,15 +34,16 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
             var queryString = BuildQueryString(query);
             var document = GetSearchPage(languages, queryString);
             var subtitles = GetSubtitlesFromPage(document);
-
-            return subtitles.Select(CreateSubtitle);
+            subtitles = FilterOutInvalidEpisodes(subtitles, query);
+            var result = ConvertToGlobalSubtitles(subtitles);
+            
+            return FilterOutLanguageNotInQuery(query, result);
         }
 
         private static string BuildLanguageString(SearchQuery query)
         {
             var languageIds = query.Languages.Select(l => LanguageMappings.Map[l]).ToArray();
-            var languages = string.Join(",", languageIds);
-            return languages;
+            return string.Join("-", languageIds);
         }
 
         private static string BuildQueryString(SearchQuery query)
@@ -52,45 +54,76 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
 
         private static HtmlDocument GetSearchPage(string languages, string queryString)
         {
-            var document = new HtmlWeb
+            var htmlWeb = CreateHtmlWeb(languages);
+            var document = htmlWeb.Load(SearchUrl + queryString);
+            return document;
+        }
+
+        private static HtmlWeb CreateHtmlWeb(string languages = null)
+        {
+            return new HtmlWeb
             {
                 UseCookies = true,
                 PreRequest = request =>
                 {
+                    request.AllowAutoRedirect = true;
+                    request.MaximumAutomaticRedirections = 5;
                     request.Timeout = 60000;
-                    request.CookieContainer.Add(new Cookie("LanguageFilter", languages, "/", ".subscene.com"));
+                    if(languages != null)
+                    {
+                        request.CookieContainer.Add(new Cookie("subscene_sLanguageIds", languages, "/", ".subscene.com"));
+                    }
                     return true;
                 }
-            }.Load(SearchUrl + queryString);
-            return document;
+            };
         }
 
         private IEnumerable<SubsceneSubtitle> GetSubtitlesFromPage(HtmlDocument document)
         {
-            var anchors = document.DocumentNode.SelectNodes("//table/tbody/tr/td/a");
+            var anchors = document.DocumentNode.SelectNodes("//*/table/tr/td/a");
 
             var subtitles = from anchor in anchors
-                let link = anchor.Attributes["href"].Value
-                let spans = anchor.Elements("span").ToArray()
-                let firstSpan = spans.First()
-                let ratingClass = firstSpan.Attributes["class"].Value
-                let ratingType = ratingClass.Contains("bad-icon") ? -1 : ratingClass.Contains("positive-icon") ? 1 : 0  
-                let language = firstSpan.InnerText.Trim()
-                let releaseName = spans.Last().InnerText.Trim()
-                let relaseIdentity = _releaseParser.ParseEpisodeInfo(releaseName)
-                select new SubsceneSubtitle
-                {
-                    SubtitleLink = link,
-                    LanguageName = language,
-                    ReleaseName = releaseName,
-                    SeriesName = relaseIdentity.SeriesName,
-                    Season = relaseIdentity.Season,
-                    Episode = relaseIdentity.Episode,
-                    EndEpisode = relaseIdentity.EndEpisode,
-                    ReleaseGroup = relaseIdentity.ReleaseGroup,
-                    RatingType = ratingType
-                };
+                            let link = anchor.Attributes["href"].Value
+                            where link.Contains("subtitle-") && link.EndsWith(".aspx")
+                            select CreateSubtitleFromLink(anchor, link);
             return subtitles.ToArray();
+        }
+
+        private SubsceneSubtitle CreateSubtitleFromLink(HtmlNode anchor, string link)
+        {
+            const string goodRatingClassName = "r100";
+            const string neutralRatingClassName = "r0";
+            var spans = anchor.Elements("span").ToArray();
+            var firstSpan = spans.First();
+            var ratingClass = firstSpan.Attributes["class"].Value;
+            var ratingType = ratingClass.Contains(goodRatingClassName) ? 1 : ratingClass.Contains(neutralRatingClassName) ? 0 : -1;
+            var language = firstSpan.InnerText.Trim();
+            var lastSpan = spans.Last();
+            var releaseName = RemoveComments(lastSpan?.InnerText.Trim());
+            var relaseIdentity = _releaseParser.ParseEpisodeInfo(releaseName);
+            var subtitle = new SubsceneSubtitle
+            {
+                SubtitleLink = link,
+                LanguageName = language,
+                ReleaseName = releaseName,
+                SeriesName = relaseIdentity.SeriesName,
+                Season = relaseIdentity.Season,
+                Episode = relaseIdentity.Episode,
+                EndEpisode = relaseIdentity.EndEpisode,
+                ReleaseGroup = relaseIdentity.ReleaseGroup,
+                RatingType = ratingType
+            };
+            return subtitle;
+        }
+
+        private static IEnumerable<SubsceneSubtitle> FilterOutInvalidEpisodes(IEnumerable<SubsceneSubtitle> subtitles, SearchQuery query)
+        {
+            return subtitles.Where(s => s.Season == query.Season && s.Episode == query.Episode);
+        }
+
+        private static string RemoveComments(string releaseText)
+        {
+            return Regex.Replace(releaseText, @"\(.*?\)", "").Trim();
         }
 
         private static Subtitle CreateSubtitle(SubsceneSubtitle subtitle)
@@ -120,16 +153,16 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
 
         private static HtmlDocument GetDetailsDocument(string link)
         {
-            return new HtmlWeb().Load(SiteUrl + link);
+            return CreateHtmlWeb().Load(SiteUrl + link);
         }
 
         private static string GetDownloadLink(HtmlDocument detailsDocument)
         {
-            var downloadLink = detailsDocument.DocumentNode.SelectSingleNode("//a[@id=downloadButton]");
+            var downloadLink = detailsDocument.DocumentNode.SelectSingleNode("//a[@id='downloadButton']");
             return downloadLink.Attributes["href"].Value;
         }
 
-        private IEnumerable<FileInfo> DownloadSubtitle(string downloadLink, string fileName)
+        private static IEnumerable<FileInfo> DownloadSubtitle(string downloadLink, string fileName)
         {
             string address = SiteUrl + downloadLink;
             string subtitleFilePath = Path.Combine(Path.GetTempPath(), fileName);
@@ -149,6 +182,16 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
                 reader.MoveToNextEntry();
                 reader.WriteEntryTo(subFileName);
             }
+        }
+
+        private static IEnumerable<Subtitle> ConvertToGlobalSubtitles(IEnumerable<SubsceneSubtitle> subtitles)
+        {
+            return subtitles.Select(CreateSubtitle);
+        }
+
+        private static IEnumerable<Subtitle> FilterOutLanguageNotInQuery(SearchQuery query, IEnumerable<Subtitle> result)
+        {
+            return result.Where(s => query.Languages.Contains(s.Language));
         }
 
         public IEnumerable<Language> SupportedLanguages => LanguageMappings.Map.Keys;
