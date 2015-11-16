@@ -42,6 +42,10 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
       <HintPath>..\packages\sharpcompress.0.11.1\lib\net40\SharpCompress.dll</HintPath>
       <Private>True</Private>
@@ -68,6 +72,11 @@
     <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesSettings.cs" />
     <Compile Include="Downloaders\OpenSubtitles\StatusCodes.cs" />
     <Compile Include="Downloaders\OpenSubtitles\XmlRpcStructs.cs" />
+    <Compile Include="Downloaders\S4U\LimitsBuilder.cs" />
+    <Compile Include="Downloaders\S4U\S4UApi.cs" />
+    <Compile Include="Downloaders\S4U\S4UDownloader.cs" />
+    <Compile Include="Downloaders\S4U\S4ULimits.cs" />
+    <Compile Include="Downloaders\S4U\S4USettings.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancement.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Downloaders\Subscene\LanguageMappings.cs" />
