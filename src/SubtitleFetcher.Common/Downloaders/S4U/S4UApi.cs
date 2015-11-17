@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.AccessControl;
-using System.Text;
-using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace SubtitleFetcher.Common.Downloaders.S4U
 {
@@ -37,36 +36,65 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
         {
             if (title == null) throw new ArgumentNullException(nameof(title));
 
-            string limitsString = _limitsBuilder.BuildString(limits);
-            var uri = new Uri(_baseUrl + "title/" + title + limitsString);
-            using (var jsonStream = new WebDownloader().OpenRead(uri))
-            {
-                return  DeserializeFromStream(jsonStream);
-            }
+            throw new NotImplementedException();
         }
 
-        public S4UResponse SearchByRelease(string release, S4ULimits limits = null)
+        public Response SearchByRelease(string release, S4ULimits limits = null)
         {
             if (release == null) throw new ArgumentNullException(nameof(release));
 
             string limitsString = _limitsBuilder.BuildString(limits);
             var uri = new Uri(_baseUrl + "release/" + release + limitsString);
-            using (var xmlStream = new WebDownloader().OpenRead(uri))
-            {
-                var result = DeserializeFromStream(jsonStream);
-            }
-            return null;
+            var xmlData = new WebDownloader().DownloadString(uri);
+            
+            var result = DeserializeXml(xmlData);
+            return result;
         }
         
-        public static Response DeserializeFromStream(Stream stream)
+        public static Response DeserializeXml(string xmlData)
         {
-            var serializer = new JsonSerializer();
-            using (var sr = new StreamReader(stream))
-            using (var jsonTextReader = new JsonTextReader(sr))
+            var document = XDocument.Parse(xmlData);
+
+            return new Response
             {
-                var t = serializer.Deserialize(jsonTextReader);
-                return serializer.Deserialize<Response>(jsonTextReader);
+                Info = CreateInfo(document)
+            };
+        }
+
+        private static Info CreateInfo(XDocument document)
+        {
+            var infoXml = document.XPathSelectElement("/*/info");
+            var info = MapXmlElements<Info>(infoXml);
+            return info;
+        }
+
+        private static T MapXmlElements<T>(XElement root) where T : new()
+        {
+            var result = new T();
+            var properties = typeof (T).GetProperties();
+            foreach (var property in properties)
+            {
+                var element = root.Element(property.Name);
+                if(element == null)
+                    continue;
+
+                object value; 
+                if (property.PropertyType != typeof (string))
+                {
+                    var converter = TypeDescriptor.GetConverter(property.PropertyType);
+                    if(!converter.CanConvertFrom(typeof(string)))
+                        continue;
+
+                    value = converter.ConvertFromString(element.Value);
+                }
+                else
+                {
+                    value = element.Value;
+                }
+
+                property.SetValue(result, value);
             }
+            return result;
         }
     }
 

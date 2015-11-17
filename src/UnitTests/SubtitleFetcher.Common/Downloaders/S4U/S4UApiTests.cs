@@ -11,7 +11,7 @@ namespace UnitTests.SubtitleFetcher.Common.Downloaders.S4U
         {
             var api = new S4UApi(new S4USettings {ApiKey = "ApiTestKey" });
 
-            var result = api.SearchByTitle("Heroes", new S4ULimits { Season = 1, Episode = 1});
+            var result = api.SearchByRelease("Heroes", new S4ULimits { Season = 1, Episode = 1});
 
             Assert.That(result, Is.Not.Null);
         }
