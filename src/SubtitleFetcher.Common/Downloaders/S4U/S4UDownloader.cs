@@ -18,7 +18,9 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
 
         public IEnumerable<FileInfo> SaveSubtitle(Subtitle subtitle)
         {
-            throw new System.NotImplementedException();
+            string fileName = Path.Combine(Path.GetTempPath(), subtitle.FileName);
+            new WebDownloader().DownloadFile(subtitle.Id, fileName);
+            return new[] { new FileInfo(fileName) };
         }
 
         public string GetName()
