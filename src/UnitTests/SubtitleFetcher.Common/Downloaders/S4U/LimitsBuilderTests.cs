@@ -1,4 +1,5 @@
-﻿using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+﻿using System.Collections.Generic;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using NUnit.Framework;
 using SubtitleFetcher.Common.Downloaders.S4U;
 
@@ -37,6 +38,20 @@ namespace UnitTests.SubtitleFetcher.Common.Downloaders.S4U
             var result = limitsBuilder.BuildString(limits);
 
             Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test, AutoFakeData]
+        public void BuildString_CustomLimits_CustomsAreIncludedInString(
+            KeyValuePair<string, string> custom,
+            S4ULimits limits,
+            LimitsBuilder sut)
+        {
+            var expected = custom.Key + "=" + custom.Value;
+            limits.Custom.Add(custom);
+
+            var result = sut.BuildString(limits);
+
+            Assert.That(result.Contains(expected));
         }
     }
 }

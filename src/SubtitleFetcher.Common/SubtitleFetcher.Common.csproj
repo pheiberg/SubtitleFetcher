@@ -72,11 +72,17 @@
     <Compile Include="Downloaders\OpenSubtitles\OpenSubtitlesSettings.cs" />
     <Compile Include="Downloaders\OpenSubtitles\StatusCodes.cs" />
     <Compile Include="Downloaders\OpenSubtitles\XmlRpcStructs.cs" />
+    <Compile Include="Downloaders\S4U\Error.cs" />
+    <Compile Include="Downloaders\S4U\Info.cs" />
     <Compile Include="Downloaders\S4U\LimitsBuilder.cs" />
+    <Compile Include="Downloaders\S4U\Response.cs" />
     <Compile Include="Downloaders\S4U\S4UApi.cs" />
     <Compile Include="Downloaders\S4U\S4UDownloader.cs" />
     <Compile Include="Downloaders\S4U\S4ULimits.cs" />
     <Compile Include="Downloaders\S4U\S4USettings.cs" />
+    <Compile Include="Downloaders\S4U\Serie.cs" />
+    <Compile Include="Downloaders\S4U\Sub.cs" />
+    <Compile Include="Downloaders\S4U\Warning.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancement.cs" />
     <Compile Include="Downloaders\SubDb\Enhancement\SubDbFileHashEnhancer.cs" />
     <Compile Include="Downloaders\Subscene\LanguageMappings.cs" />

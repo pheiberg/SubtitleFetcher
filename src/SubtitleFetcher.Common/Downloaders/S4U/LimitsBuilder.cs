@@ -7,8 +7,8 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
     {
         public string BuildString(S4ULimits limits)
         {
-            var entries = new List<KeyValuePair<string, string>>();
-            
+            var entries = limits.Custom.Select(extra => new KeyValuePair<string, string>(extra.Key, extra.Value)).ToList();
+
             if (limits.Season.HasValue)
             {
                 entries.Add(new KeyValuePair<string, string>("Season", limits.Season.Value.ToString()));

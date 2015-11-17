@@ -29,7 +29,7 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
         public IEnumerable<Subtitle> SearchSubtitles(SearchQuery query)
         {
             var results = _api.SearchByTitle(query.SeriesTitle, new S4ULimits {Season = query.Season, Episode = query.Episode});
-            return results.serie.First().subs.Select(r => new Subtitle(r.download_file, r.file_name, SupportedLanguages.Single()));
+            return results.Series.First().Subs.Select(r => new Subtitle(r.download_file, r.file_name, SupportedLanguages.Single()));
         }
 
         public IEnumerable<Language> SupportedLanguages => new[] { KnownLanguages.GetLanguageByName("Swedish")};
