@@ -5,13 +5,20 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
 {
     public class Serie
     {
-        public int sub_hits { get; set; }
-        public string imdb { get; set; }
-        public string title { get; set; }
-        public string title_sv { get; set; }
-        public string year { get; set; }
-        public string tvdb { get; set; }
-        public string seasons { get; set; }
+        [XmlElement("sub_hits")]
+        public int SubHits { get; set; }
+        [XmlElement("imdb")]
+        public string Imdb { get; set; }
+        [XmlElement("title")]
+        public string Title { get; set; }
+        [XmlElement("title_sv")]
+        public string TitleSv { get; set; }
+        [XmlElement("year")]
+        public string Year { get; set; }
+        [XmlElement("tvdb")]
+        public string Tvdb { get; set; }
+        [XmlElement("seasons")]
+        public int Seasons { get; set; }
         [XmlElement("sub")]
         public List<Sub> Subs { get; set; }
     }

@@ -5,15 +5,24 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
 {
     public class Info
     {
-        public string status { get; set; }
-        public string version { get; set; }
-        public int dl_left { get; set; }
-        public string query { get; set; }
-        public int hits { get; set; }
-        public int hits_movie { get; set; }
-        public int hits_movie_sub { get; set; }
-        public int hits_serie { get; set; }
-        public int hits_serie_sub { get; set; }
+        [XmlElement("status")]
+        public bool Status { get; set; }
+        [XmlElement("version")]
+        public string Version { get; set; }
+        [XmlElement("dl_left")]
+        public int DownloadsLeft { get; set; }
+        [XmlElement("query")]
+        public string Query { get; set; }
+        [XmlElement("hits")]
+        public int Hits { get; set; }
+        [XmlElement("hits_movie")]
+        public int HitsMovie { get; set; }
+        [XmlElement("hits_movie_sub")]
+        public int HitsMovieSub { get; set; }
+        [XmlElement("hits_serie")]
+        public int HitsSerie { get; set; }
+        [XmlElement("hits_serie_sub")]
+        public int HitsSerieSub { get; set; }
         [XmlElement("error")]
         public List<Error> Errors { get; set; }
         [XmlElement("warning")]
