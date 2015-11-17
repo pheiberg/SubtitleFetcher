@@ -111,10 +111,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PortedSubtitleDownloaders\PortedSubtitleDownloaders.csproj">
-      <Project>{1f92747b-92bf-4ef4-ab50-9ae5c7763b6c}</Project>
-      <Name>PortedSubtitleDownloaders</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SubtitleFetcher.Common\SubtitleFetcher.Common.csproj">
       <Project>{F95C79D9-1A9E-4F58-AF2A-F7D78AB26071}</Project>
       <Name>SubtitleFetcher.Common</Name>
