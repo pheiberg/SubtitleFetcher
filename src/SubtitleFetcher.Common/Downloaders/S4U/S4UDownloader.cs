@@ -11,8 +11,12 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
     {
         private readonly S4UApi _api;
 
-        public S4UDownloader(S4USettings settings)
+        public S4UDownloader(IApplicationSettings applicationSettings)
         {
+            var settings = new S4USettings
+            {
+                ApiKey = applicationSettings.GetSetting("S4UApiKey")
+            };
             _api = new S4UApi(settings);
         }
 

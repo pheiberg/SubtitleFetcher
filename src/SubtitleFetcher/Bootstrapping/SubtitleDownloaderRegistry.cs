@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 using SubtitleFetcher.Common.Downloaders;
+using SubtitleFetcher.Common.Downloaders.S4U;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Enhancement.Tvdb;
 using SubtitleFetcher.Common.Infrastructure;
