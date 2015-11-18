@@ -20,8 +20,8 @@ namespace SubtitleFetcher
         [Option('i', "ignore", MetaValue = "FILE", HelpText = "Path of the FILE containing ignored shows. The file is a text file with a show name on each line. E.g. \"The.IT.Crowd.4x05.(PDTV-FoV).[VTV].mp4\" will be ignored with a line of \"the it crowd\" in the file.")]
         public string IgnoreFileName { get; set; }
 
-        [OptionList('l', "languages", ',', HelpText = "The subtitle language requested as a list in the order of preference.")]
-        public List<string> Languages { get; set; }
+        [OptionList('l', "languages", ',', HelpText = "The subtitle language requested as a list in the order of preference.", DefaultValue = new[] { "eng" })]
+        public IEnumerable<string> Languages { get; set; }
 
         [Option('g', "giveupdays", MetaValue = "INT", DefaultValue = 7, HelpText = "The number of days after which the program gives up getting a subtitle and writes a .nosrt file.")]
         public int GiveupDays { get; set; }
@@ -51,7 +51,5 @@ namespace SubtitleFetcher
         }
 
         public readonly IList<string> AcceptedExtensions = new List<string> { ".avi", ".mkv", ".mp4" };
-
-        public string DefaultLanguage => "eng";
     }
 }

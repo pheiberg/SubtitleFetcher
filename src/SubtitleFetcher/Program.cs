@@ -27,11 +27,6 @@ namespace SubtitleFetcher
                                             settings.MutuallyExclusive = true;
                                         });
             var options = parser.ParseArguments<Options>(args);
-            if (options.Languages.Count == 0)
-            {
-                options.Languages.Add(options.DefaultLanguage);
-            }
-
             return options;
         }
 
