@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SubtitleFetcher;
 using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Orchestration;
+using SubtitleFetcher.Settings;
 
 namespace UnitTests.SubtitleFetcher
 {

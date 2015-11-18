@@ -12,6 +12,7 @@ using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 using SubtitleFetcher.Common.Orchestration;
+using SubtitleFetcher.Settings;
 
 namespace SubtitleFetcher.Bootstrapping
 {
@@ -38,6 +39,10 @@ namespace SubtitleFetcher.Bootstrapping
             For<LanguageSettings>().Use(new LanguageSettings(languages));
             For<FileTypeSettings>().Use(new FileTypeSettings(options.AcceptedExtensions));
             For<EnhancerRegistry>().Singleton().Use<EnhancerRegistry>();
+            For<OptionsParserSettings>().Use(new OptionsParserSettings
+            {
+                HelpWriter = Console.Error
+            });
         }
         
         private class RegisterAllSubtitleDownloadersConvention : IRegistrationConvention

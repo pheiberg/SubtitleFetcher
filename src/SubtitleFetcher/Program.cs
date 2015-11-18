@@ -1,21 +1,33 @@
 ﻿using System;
+using System.Linq;
 using CommandLine;
 using StructureMap;
 using SubtitleFetcher.Bootstrapping;
+using SubtitleFetcher.Common;
+using SubtitleFetcher.Settings;
 
 namespace SubtitleFetcher
 {
-    class Program
+    public class Program
     {
         private static readonly SubtitleDownloaderCapabilitiesProvider CapabilitiesProvider = new SubtitleDownloaderCapabilitiesProvider();
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var options = ParseOptions(args);
+            HandleParseErrors(options);
             HandleHelpRequests(options);
 
             var application = InitializeApplication(options);
             application.Run(options);
+        }
+
+        private static void HandleParseErrors(Options options)
+        {
+            if(options.ParseErrors.Any())
+            {
+                Environment.Exit(1);
+            }
         }
 
         private static Options ParseOptions(string[] args)
@@ -24,9 +36,14 @@ namespace SubtitleFetcher
                                         {
                                             settings.IgnoreUnknownArguments = false;
                                             settings.HelpWriter = Console.Error;
-                                            settings.MutuallyExclusive = true;
+                                            settings.EnableDashDash = true;
                                         });
-            var options = parser.ParseArguments<Options>(args);
+            var results = parser.ParseArguments<Options>(args);
+            if(results.Tag == ParserResultType.Parsed)
+                return ((Parsed<Options>)results).Value;
+
+            var options = new Options();
+            options.ParseErrors.AddRange(((NotParsed<Options>) results).Errors);
             return options;
         }
 

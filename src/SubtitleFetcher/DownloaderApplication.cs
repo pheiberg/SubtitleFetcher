@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SubtitleFetcher.Common.Infrastructure;
 using SubtitleFetcher.Common.Orchestration;
+using SubtitleFetcher.Settings;
 
 namespace SubtitleFetcher
 {
@@ -24,7 +25,7 @@ namespace SubtitleFetcher
             var state = _serializer.LoadState();
             state.Cleanup(options.GiveupDays, _fileSystem.CreateNosrtFile);
 
-            var filesToProcess = _fileSystem.GetFilesToProcess(options.Files, options.Languages);
+            var filesToProcess = _fileSystem.GetFilesToProcess(new [] { options.Directory }, options.Languages);
             var failedFiles = ProcessFiles(filesToProcess, ignoredShows);
 
             state.Update(failedFiles);
