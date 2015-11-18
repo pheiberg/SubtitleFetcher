@@ -8,7 +8,6 @@ namespace SubtitleFetcher.Settings
     {
         public Options()
         {
-            DownloaderNames = new List<string>();
             ParseErrors = new List<Error>();
         }
 
@@ -34,7 +33,7 @@ namespace SubtitleFetcher.Settings
         public bool ListLanguages { get; set; }
 
         [Option('d', "downloaders", Separator = ',', HelpText = "(Default: All available) Download providers that should be used. Use list-downloaders, to list valid providers.")]
-        public IList<string> DownloaderNames { get; set; }
+        public IEnumerable<string> DownloaderNames { get; set; }
 
         [Value(0, Default = ".", HelpText = "Path to the folder that contains the files that should be used in the subtitle search")]
         public string Directory { get; set; }
