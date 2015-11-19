@@ -18,7 +18,7 @@ namespace SubtitleFetcher.Common.Downloaders.S4U
         [XmlElement("tvdb")]
         public string Tvdb { get; set; }
         [XmlElement("seasons")]
-        public int Seasons { get; set; }
+        public string Seasons { get; set; }
         [XmlElement("sub")]
         public List<Sub> Subs { get; set; }
     }
