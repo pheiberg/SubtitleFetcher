@@ -40,6 +40,9 @@ namespace SubtitleFetcher.Common.Hashing
 
         private static byte[] ReadBeginningAndEnd(Stream stream)
         {
+            if (stream.Length < BlockSize)
+                return new byte[0];
+
             using (var binaryReader = new BinaryReader(stream))
             {
                 var buffer = new byte[BlockSize * 2];

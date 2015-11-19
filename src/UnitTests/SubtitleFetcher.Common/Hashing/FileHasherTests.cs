@@ -28,10 +28,25 @@ namespace UnitTests.SubtitleFetcher.Common
                 Assert.That(result, Is.EquivalentTo(expectedHash));
             }
         }
-        
-        private static byte[] CreateData()
+
+        [Test, AutoFakeData]
+        public void CreateHash_StreamSmallerThan64k_ReturnsEmptyHash(
+            [Frozen] IHashCalculator hashProvider,
+            FileHasher sut)
         {
-            return new Fixture().CreateMany<byte>(128 * 1024).ToArray();
+            var expectedHash = new byte[0];
+            var data = new byte[0];
+
+            using (var stream = new MemoryStream(data))
+            {
+                var result = sut.CreateHash(stream);
+                Assert.That(result, Is.EquivalentTo(expectedHash));
+            }
+        }
+        
+        private static byte[] CreateData(int bytes = 128)
+        {
+            return new Fixture().CreateMany<byte>(bytes * 1024).ToArray();
         }
     }
 }
