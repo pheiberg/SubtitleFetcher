@@ -12,6 +12,9 @@ namespace SubtitleFetcher.Common.Downloaders.OpenSubtitles.Enhancement
         {
             var byteSize = new FileInfo(filePath).Length;
             var fileHash = Hasher.ComputeHash(filePath);
+            if (string.IsNullOrEmpty(fileHash))
+                return null;
+
             return new OpenSubtitlesFileHashEnhancement
             {
                 FileByteSize = byteSize,
