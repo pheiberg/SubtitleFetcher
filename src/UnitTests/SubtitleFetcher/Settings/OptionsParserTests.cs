@@ -127,5 +127,27 @@ namespace UnitTests.SubtitleFetcher.Settings
 
             Assert.That(options.Languages, Is.EquivalentTo(expectedLanguageCodes));
         }
+
+        [Test]
+        public void ParseOptions_InvalidDownloaderOptionSet_FailedWithErrors()
+        {
+            var invalidDownloader = "xx";
+
+            var options = _sut.ParseOptions(new[] { "-d", invalidDownloader });
+
+            var downloaderErrors = options.CustomParseErrors.Where(e => e.Message.StartsWith("Invalid downloader"));
+            Assert.That(downloaderErrors.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void ParseOptions_ValidDownloaderOptionSet_SuccessfulWithDownloadersSet()
+        {
+            var expectedDownloaders = new []{ "SubDb", "OpenSubtitles" };
+            var downloaderString = string.Join(",", expectedDownloaders);
+
+            var options = _sut.ParseOptions(new[] { "-d", downloaderString });
+
+            Assert.That(options.DownloaderNames, Is.EquivalentTo(expectedDownloaders));
+        }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using CommandLine;
+using SubtitleFetcher.Bootstrapping;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Settings
@@ -31,6 +32,7 @@ namespace SubtitleFetcher.Settings
             {
                 options = ((Parsed<Options>)results).Value;
                 ValidateLanguages(options);
+                ValidateDownloaders(options);
                 return options;
             }
 
@@ -49,6 +51,19 @@ namespace SubtitleFetcher.Settings
             var parserErrors = invalidLanguages.Select(language => 
                 new ParseError($"Invalid language '{language}'"));
             
+            options.CustomParseErrors.AddRange(parserErrors);
+        }
+
+        private static void ValidateDownloaders(Options options)
+        {
+            var downloaders = ReflectionHelper.GetAllConcreteImplementors<ISubtitleDownloader>();
+            var knownDownloaderNames = downloaders.Select(downloader => downloader.Name.TrimSuffix("Downloader"));
+            var invalidDownloaders = options.DownloaderNames.Where(downloader =>
+                !knownDownloaderNames.Contains(downloader, StringComparer.OrdinalIgnoreCase));
+
+            var parserErrors = invalidDownloaders.Select(downloader =>
+                new ParseError($"Invalid downloader '{downloader}'"));
+
             options.CustomParseErrors.AddRange(parserErrors);
         }
     }
