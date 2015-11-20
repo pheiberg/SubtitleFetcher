@@ -104,5 +104,28 @@ namespace UnitTests.SubtitleFetcher.Settings
 
             Assert.That(options.ParseErrors, Is.Not.Empty);
         }
+
+        [Test]
+        public void ParseOptions_InvalidLangaugeOptionSet_FailedWithErrors()
+        {
+            var invalidLanguageCode = "xx";
+
+            var options = _sut.ParseOptions(new[] { "-l", invalidLanguageCode });
+
+            var languageErrors = options.CustomParseErrors.Where(e => e.Message.StartsWith("Invalid language"));
+            Assert.That(languageErrors, Is.Not.Empty);
+        }
+
+        [Test]
+        public void ParseOptions_ValidLangugeOptionSet_SuccessfulWithLanguagesSet()
+        {
+            var expectedLanguages = KnownLanguages.AllLanguages.Take(3);
+            var expectedLanguageCodes = expectedLanguages.Select(l => l.TwoLetterIsoName);
+            var languageString = string.Join(",", expectedLanguageCodes);
+
+            var options = _sut.ParseOptions(new[] { "-l", languageString });
+
+            Assert.That(options.Languages, Is.EquivalentTo(expectedLanguageCodes));
+        }
     }
 }

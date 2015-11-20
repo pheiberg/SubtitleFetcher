@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using CommandLine;
 using StructureMap;
 using SubtitleFetcher.Bootstrapping;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Settings;
 
 namespace SubtitleFetcher
@@ -22,29 +21,41 @@ namespace SubtitleFetcher
             application.Run(options);
         }
 
+        private static Options ParseOptions(string[] args)
+        {
+            var parserSettings = new OptionsParserSettings
+            {
+                HelpWriter = Console.Error
+            };
+            var parser = new OptionsParser(parserSettings);
+            return parser.ParseOptions(args);
+        }
+
         private static void HandleParseErrors(Options options)
         {
             if(options.ParseErrors.Any())
             {
                 Environment.Exit(1);
             }
+            if (options.CustomParseErrors.Any())
+            {
+                PrintCustomErrorInfo(options.CustomParseErrors);
+                Environment.Exit(1);
+            }
         }
 
-        private static Options ParseOptions(string[] args)
+        private static void PrintCustomErrorInfo(IEnumerable<ParseError> customParseErrors)
         {
-            var parser = new Parser(settings =>
-                                        {
-                                            settings.IgnoreUnknownArguments = false;
-                                            settings.HelpWriter = Console.Error;
-                                            settings.EnableDashDash = true;
-                                        });
-            var results = parser.ParseArguments<Options>(args);
-            if(results.Tag == ParserResultType.Parsed)
-                return ((Parsed<Options>)results).Value;
-
-            var options = new Options();
-            options.ParseErrors.AddRange(((NotParsed<Options>) results).Errors);
-            return options;
+            Console.Error.WriteLine(CommandLine.Text.HeadingInfo.Default);
+            Console.Error.WriteLine(CommandLine.Text.CopyrightInfo.Default);
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("  ERROR(S): ");
+            foreach (var error in customParseErrors)
+            {
+                Console.Error.WriteLine($"\t{error.Message}");
+            }
+            Console.Error.WriteLine();
+            CapabilitiesProvider.ListAvailableLanguages();
         }
 
         private static void HandleHelpRequests(Options options)

@@ -8,7 +8,8 @@ namespace SubtitleFetcher.Settings
     {
         public Options()
         {
-            ParseErrors = new List<Error>();
+            ParseErrors = new List<ParseError>();
+            CustomParseErrors = new List<ParseError>();
         }
 
         [Option('s', "state", Default = "FetcherState.xml", MetaValue = "FILE", HelpText = "Path of state FILE. The state file keeps track of previously unresolved scanned files.")]
@@ -40,6 +41,17 @@ namespace SubtitleFetcher.Settings
         
         public readonly IList<string> AcceptedExtensions = new List<string> { ".avi", ".mkv", ".mp4" };
 
-        public IList<Error> ParseErrors { get; }
+        public IList<ParseError> ParseErrors { get; }
+        public IList<ParseError> CustomParseErrors { get; set; }
+    }
+
+    public class ParseError
+    {
+        public ParseError(string message)
+        {
+            Message = message;
+        }
+
+        public string Message { get; }
     }
 }

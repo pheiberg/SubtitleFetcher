@@ -1,32 +1,55 @@
-﻿using CommandLine;
+﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices;
+using CommandLine;
 using SubtitleFetcher.Common;
+using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Settings
 {
     public class OptionsParser
     {
         private readonly OptionsParserSettings _settings;
+        private readonly Parser _parser;
 
         public OptionsParser(OptionsParserSettings settings)
         {
             _settings = settings;
+            _parser = new Parser(parserSettings =>
+            {
+                parserSettings.IgnoreUnknownArguments = false;
+                parserSettings.HelpWriter = _settings.HelpWriter;
+                parserSettings.EnableDashDash = true;
+            });
         }
 
         public Options ParseOptions(string[] args)
         {
-            var parser = new Parser(settings =>
-            {
-                settings.IgnoreUnknownArguments = false;
-                settings.HelpWriter = _settings.HelpWriter;
-                settings.EnableDashDash = true;
-            });
-            var results = parser.ParseArguments<Options>(args);
+            Options options;
+            var results = _parser.ParseArguments<Options>(args);
             if (results.Tag == ParserResultType.Parsed)
-                return ((Parsed<Options>)results).Value;
+            {
+                options = ((Parsed<Options>)results).Value;
+                ValidateLanguages(options);
+                return options;
+            }
 
-            var options = new Options();
-            options.ParseErrors.AddRange(((NotParsed<Options>)results).Errors);
+            options = new Options();
+            var errors = ((NotParsed<Options>)results).Errors;
+            var parseErrors = errors.Select(e => new ParseError(e.Tag.ToString()));
+            options.ParseErrors.AddRange(parseErrors);
             return options;
+        }
+
+        private static void ValidateLanguages(Options options)
+        {
+            var knownLanguageCodes = KnownLanguages.AllLanguages.Select(l => l.TwoLetterIsoName);
+            var invalidLanguages = options.Languages.Where(language => 
+                    !knownLanguageCodes.Contains(language, StringComparer.OrdinalIgnoreCase));
+            var parserErrors = invalidLanguages.Select(language => 
+                new ParseError($"Invalid language '{language}'"));
+            
+            options.CustomParseErrors.AddRange(parserErrors);
         }
     }
 }
