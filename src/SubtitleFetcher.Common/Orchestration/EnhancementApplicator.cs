@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SubtitleFetcher.Common.Enhancement;
@@ -17,12 +18,24 @@ namespace SubtitleFetcher.Common.Orchestration
 
         public void ApplyEnhancements(string filePath, TvReleaseIdentity identity)
         {
-            var enhancementRequests = _downloaders.SelectMany(d => d.EnhancementRequests);
-            var enhancements = enhancementRequests.Select(
-                er => _enhancementProvider.GetEnhancement(er.EnhancementType, filePath, identity))
-                .Where(enhancement => enhancement != null);
+            Type[] enhancementRequests = GetDistinctEnhancementRequestsFromDownloaders();
+            var enhancements = GetEnhancements(filePath, identity, enhancementRequests);
 
             identity.Enhancements.AddRange(enhancements);
+        }
+
+        private Type[] GetDistinctEnhancementRequestsFromDownloaders()
+        {
+            return _downloaders.SelectMany(d => d.EnhancementRequests)
+                .Select(er => er.EnhancementType)
+                .Distinct().ToArray();
+        }
+
+        private IEnumerable<IEnhancement> GetEnhancements(string filePath, TvReleaseIdentity identity, Type[] enhancementTypes)
+        {
+            return enhancementTypes.Select(
+                enhancementType => _enhancementProvider.GetEnhancement(enhancementType, filePath, identity))
+                .Where(enhancement => enhancement != null);
         }
     }
 }
