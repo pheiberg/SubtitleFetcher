@@ -33,14 +33,14 @@ namespace SubtitleFetcher.Common.Orchestration
         {
             var languageArray = languages.ToArray();
             var query = CreateSearchQuery(tvReleaseIdentity, languageArray);
-            IEnumerable<Subtitle> searchResult;
+            Subtitle[] searchResult;
             try
             {
                 _logger.Debug("SubtitleDownloaderWrapper", "Searching with downloader {0}", Name);
                 var watch = Stopwatch.StartNew();
                 searchResult = _downloader.SearchSubtitles(query).ToArray();
                 watch.Stop();
-                _logger.Debug("SubtitleDownloaderWrapper", "Done searching with downloader {0} in {1} ms", Name, watch.ElapsedMilliseconds);
+                _logger.Debug("SubtitleDownloaderWrapper", "Done searching with downloader {0} in {1} ms - found {2} candidate(s)", Name, watch.ElapsedMilliseconds, searchResult.Length);
             }
             catch (Exception ex)
             {
