@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="LocalAddin.cs" />
     <Compile Include="SubtitleFetcher.Common\ByteExtensionTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculatorTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\S4U\LimitsBuilderTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\S4U\S4UApiTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\Subscene\LanguageMappingsTests.cs" />
@@ -109,9 +110,7 @@
       <Name>SubtitleFetcher.Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SubtitleFetcher.Common\Downloaders\OpenSubtitles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
