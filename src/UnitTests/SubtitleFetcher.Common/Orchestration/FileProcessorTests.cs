@@ -106,13 +106,13 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             [Frozen]LanguageSettings languageSettings,
             [Frozen]IEpisodeParser episodeParser,
             [Frozen]ISubtitleDownloadService subtitleService,
-            [Frozen]IFileSystem fileSystem,
+            [Frozen]IFileOperations fileOperations,
             FileProcessor sut)
         {
             var languages = languageSettings.Languages.ToArray();
             var alreadyDownloadedLanguages = languages.Skip(1);
             var expected = languages.Take(1);
-            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(fileName, 
+            A.CallTo(() => fileOperations.GetDowloadedSubtitleLanguages(fileName, 
                 A<IEnumerable<Language>>.That.IsSameSequenceAs(languages)))
                .Returns(alreadyDownloadedLanguages);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
@@ -148,15 +148,15 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             ILogger logger,
             IEpisodeParser episodeParser,
             ISubtitleDownloadService subtitleService,
-            [Frozen]IFileSystem fileSystem,
+            [Frozen]IFileOperations fileOperations,
             FileProcessor sut)
         {
             var settings = new LanguageSettings(languages);
-            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, languages)).Returns(languages);
+            A.CallTo(() => fileOperations.GetDowloadedSubtitleLanguages(A<string>._, languages)).Returns(languages);
             A.CallTo(() => subtitleService.DownloadSubtitle(A<string>._, A<TvReleaseIdentity>._, A<IEnumerable<Language>>._))
                 .Returns(false);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
-            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileSystem, settings);
+            var processor = new FileProcessor(episodeParser, logger, subtitleService, fileOperations, settings);
 
             bool result = processor.ProcessFile(fileName, new string[0]);
 

@@ -8,24 +8,24 @@ namespace SubtitleFetcher
 {
     public class DownloaderApplication
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileOperations _fileOperations;
         private readonly IStateSerializer _serializer;
         private readonly IFileProcessor _fileProcessor;
 
-        public DownloaderApplication(IFileSystem fileSystem, IStateSerializer serializer, IFileProcessor fileProcessor)
+        public DownloaderApplication(IFileOperations fileOperations, IStateSerializer serializer, IFileProcessor fileProcessor)
         {
-            _fileSystem = fileSystem;
+            _fileOperations = fileOperations;
             _serializer = serializer;
             _fileProcessor = fileProcessor;
         }
 
         public void Run(Options options)
         {
-            var ignoredShows = _fileSystem.GetIgnoredShows(options.IgnoreFileName);
+            var ignoredShows = _fileOperations.GetIgnoredShows(options.IgnoreFileName);
             var state = _serializer.LoadState();
-            state.Cleanup(options.GiveupDays, _fileSystem.CreateNosrtFile);
+            state.Cleanup(options.GiveupDays, _fileOperations.CreateNosrtFile);
 
-            var filesToProcess = _fileSystem.GetFilesToProcess(new [] { options.Directory }, options.Languages);
+            var filesToProcess = _fileOperations.GetFilesToProcess(new [] { options.Directory }, options.Languages);
             var failedFiles = ProcessFiles(filesToProcess, ignoredShows);
 
             state.Update(failedFiles);

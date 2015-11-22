@@ -98,7 +98,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             string resultFile,
             string fileName,
             [Frozen]ISubtitleDownloader downloader,
-            [Frozen]IFileSystem fileSystem,
+            [Frozen]IFileOperations fileOperations,
             SubtitleDownloaderWrapper sut)
         {
             var fileInfo = new FileInfo(resultFile);
@@ -106,7 +106,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
 
             sut.TryDownloadSubtitle(subtitle, fileName);
 
-            A.CallTo(() => fileSystem.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.Language.TwoLetterIsoName + ".srt")).MustHaveHappened();
+            A.CallTo(() => fileOperations.RenameSubtitleFile(fileInfo.FullName, fileName + "." + subtitle.Language.TwoLetterIsoName + ".srt")).MustHaveHappened();
         }
         
         [Test, AutoFakeData]

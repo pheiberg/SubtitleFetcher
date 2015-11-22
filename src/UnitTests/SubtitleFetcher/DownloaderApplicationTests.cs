@@ -16,7 +16,7 @@ namespace UnitTests.SubtitleFetcher
         [Test]
         public void Run_FilesAreCleanedUp_CleanedFilesGetsNosrtWritten()
         {
-            var fileSystem = A.Fake<IFileSystem>();
+            var fileSystem = A.Fake<IFileOperations>();
             var serializer = A.Fake<IStateSerializer>();
             var subtitleState = new SubtitleState();
             subtitleState.Entries.Add(new SubtitleStateEntry("cleaned1", DateTime.Now.AddDays(-100)));
@@ -37,7 +37,7 @@ namespace UnitTests.SubtitleFetcher
         public void Run_IfFilesFail_AddsThemToState()
         {
             var files = new[] {"fail1.avi", "success.avi", "fail2.avi"};
-            var fileSystem = A.Fake<IFileSystem>();
+            var fileSystem = A.Fake<IFileOperations>();
             A.CallTo(() => fileSystem.GetFilesToProcess(A<IEnumerable<string>>._, A<IEnumerable<string>>._)).Returns(files);
             var serializer = A.Fake<IStateSerializer>();
             var subtitleState = new SubtitleState();
@@ -56,7 +56,7 @@ namespace UnitTests.SubtitleFetcher
         [Test]
         public void Run_Always_SavesState()
         {
-            var fileSystem = A.Fake<IFileSystem>();
+            var fileSystem = A.Fake<IFileOperations>();
             var serializer = A.Fake<IStateSerializer>();
             var subtitleState = new SubtitleState();
             A.CallTo(() => serializer.LoadState()).Returns(subtitleState);

@@ -14,16 +14,16 @@ namespace SubtitleFetcher.Common.Orchestration
         private readonly IEpisodeParser _episodeParser;
         private readonly ILogger _logger;
         private readonly ISubtitleDownloadService _subtitleService;
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileOperations _fileOperations;
         private readonly LanguageSettings _languageSettings;
 
         public FileProcessor(IEpisodeParser episodeParser, ILogger logger, ISubtitleDownloadService subtitleService, 
-                             IFileSystem fileSystem, LanguageSettings languageSettings)
+                             IFileOperations fileOperations, LanguageSettings languageSettings)
         {
             _episodeParser = episodeParser;
             _logger = logger;
             _subtitleService = subtitleService;
-            _fileSystem = fileSystem;
+            _fileOperations = fileOperations;
             _languageSettings = languageSettings;
         }
 
@@ -78,7 +78,7 @@ namespace SubtitleFetcher.Common.Orchestration
 
         private IEnumerable<Language> GetAlreadyDownloadedLanguages(string fileName)
         {
-            return _fileSystem.GetDowloadedSubtitleLanguages(fileName, _languageSettings.Languages);
+            return _fileOperations.GetDowloadedSubtitleLanguages(fileName, _languageSettings.Languages);
         }
 
         private bool DownloadSubtitle(string fileName, TvReleaseIdentity tvReleaseIdentity, 

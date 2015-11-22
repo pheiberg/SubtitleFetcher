@@ -17,14 +17,14 @@ namespace SubtitleFetcher.Common.Orchestration
         private readonly ISubtitleDownloader _downloader;
         private readonly IEpisodeParser _nameParser;
         private readonly ILogger _logger;
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileOperations _fileOperations;
 
-        public SubtitleDownloaderWrapper(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileSystem fileSystem)
+        public SubtitleDownloaderWrapper(ISubtitleDownloader downloader, IEpisodeParser nameParser, ILogger logger, IFileOperations fileOperations)
         {
             _downloader = downloader;
             _nameParser = nameParser;
             _logger = logger;
-            _fileSystem = fileSystem;
+            _fileOperations = fileOperations;
         }
 
         public string Name => _downloader.GetName();
@@ -67,7 +67,7 @@ namespace SubtitleFetcher.Common.Orchestration
                 var subtitleFile = DownloadSubtitleFile(_downloader, subtitle);
                 string targetSubtitleFileName = CreateSubtitleFileName(targetSubtitleFile, subtitle);
                 _logger.Debug("SubtitleDownloaderWrapper", "Renaming from {0} to {1}...", subtitleFile, targetSubtitleFileName);
-                _fileSystem.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
+                _fileOperations.RenameSubtitleFile(subtitleFile, targetSubtitleFileName);
                 return true;
             }
             catch (Exception e)
@@ -86,7 +86,7 @@ namespace SubtitleFetcher.Common.Orchestration
 
         private static string CreateSubtitleFileName(string targetSubtitleFile, Subtitle subtitle)
         {
-            return FileSystem.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language.TwoLetterIsoName + ".srt");
+            return FileOperations.CreateSubtitleFileName(targetSubtitleFile, "." + subtitle.Language.TwoLetterIsoName + ".srt");
         }
 
         private IEnumerable<Subtitle> FilterOutSubtitlesNotMatching(TvReleaseIdentity tvReleaseIdentity, IEnumerable<Subtitle> searchResult)

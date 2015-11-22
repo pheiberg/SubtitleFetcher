@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
@@ -31,6 +32,7 @@ namespace SubtitleFetcher.Bootstrapping
                 scan.WithDefaultConventions();
             });
 
+            For<IFileSystem>().Use<FileSystem>();
             For<ILogger>().Use<Logger>().Ctor<LogLevel>().Is(options.Logging);
             For<IStateSerializer>().Use<StateSerializer>().Ctor<string>("stateFileName").Is(options.StateFileName);
             var languages = options.Languages.Select(KnownLanguages.GetLanguageByTwoLetterIso);

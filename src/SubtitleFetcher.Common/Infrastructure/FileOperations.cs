@@ -1,20 +1,23 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using SubtitleFetcher.Common.Languages;
 using SubtitleFetcher.Common.Logging;
 
 namespace SubtitleFetcher.Common.Infrastructure
 {
-    public class FileSystem : IFileSystem
+    public class FileOperations : IFileOperations
     {
         private readonly IEnumerable<string> _acceptedExtensions;
         private readonly ILogger _logger;
+        private readonly IFileSystem _fileSystem;
 
-        public FileSystem(FileTypeSettings fileTypeSettings, ILogger logger)
+        public FileOperations(FileTypeSettings fileTypeSettings, ILogger logger, IFileSystem fileSystem)
         {
             _acceptedExtensions = fileTypeSettings.AcceptedExtensions;
             _logger = logger;
+            _fileSystem = fileSystem;
         }
 
         public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, 
@@ -26,14 +29,14 @@ namespace SubtitleFetcher.Common.Infrastructure
             var files = new List<string>();
             foreach (string path in paths)
             {
-                if (Directory.Exists(path))
+                if (_fileSystem.Directory.Exists(path))
                 {
                     _logger.Verbose("FileSystem", "Processing directory {0}...", path);
-                    var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
+                    var validFiles = _fileSystem.Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
                         .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f, languages));
                     files.AddRange(validFiles);
                 }
-                else if (File.Exists(path) && IsFileOfAcceptableType(path))
+                else if (_fileSystem.File.Exists(path) && IsFileOfAcceptableType(path))
                 {
                     files.Add(path);
                 }
@@ -55,13 +58,13 @@ namespace SubtitleFetcher.Common.Infrastructure
             var filesToCheck = languages.ToDictionary(
                 language => language, 
                 language => CreateSubtitleFileName(filePath, $".{language.TwoLetterIsoName}.srt"));
-            return filesToCheck.Where(item => File.Exists(item.Value)).Select(item => item.Key);
+            return filesToCheck.Where(item => _fileSystem.File.Exists(item.Value)).Select(item => item.Key);
         }
 
         public bool HasDownloadedSubtitle(string filePath, IEnumerable<string> languages)
         {
             var subNames = GetSubtitleNamesIndicatingNoDownloadShouldBeMade(filePath, languages);
-            return subNames.Any(File.Exists);
+            return subNames.Any(_fileSystem.File.Exists);
         }
 
         private bool IsFileOfAcceptableType(string fileName)
@@ -73,7 +76,7 @@ namespace SubtitleFetcher.Common.Infrastructure
         public void CreateNosrtFile(SubtitleStateEntry entry)
         {
             string fileName = CreateSubtitleFileName(entry.File, ".nosrt");
-            using (var writer = File.CreateText(fileName))
+            using (var writer = _fileSystem.File.CreateText(fileName))
             {
                 writer.Write("No subtitle available");
             }
@@ -98,7 +101,7 @@ namespace SubtitleFetcher.Common.Infrastructure
             if (ignoreFileName == null)
                 return Enumerable.Empty<string>();
 
-            if(!File.Exists(ignoreFileName))
+            if(!_fileSystem.File.Exists(ignoreFileName))
             {
                 _logger.Error("Options", "The specified ignore shows file can't be found.");
                 return Enumerable.Empty<string>();
@@ -119,8 +122,8 @@ namespace SubtitleFetcher.Common.Infrastructure
 
         public void RenameSubtitleFile(string sourceFileName, string targetSubtitleFile)
         {
-            File.Delete(targetSubtitleFile);
-            File.Move(sourceFileName, targetSubtitleFile);
+            _fileSystem.File.Delete(targetSubtitleFile);
+            _fileSystem.File.Move(sourceFileName, targetSubtitleFile);
         }
     }
 }
