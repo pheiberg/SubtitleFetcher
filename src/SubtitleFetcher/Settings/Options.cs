@@ -41,6 +41,8 @@ namespace SubtitleFetcher.Settings
         
         public readonly IList<string> AcceptedExtensions = new List<string> { ".avi", ".mkv", ".mp4" };
 
+        public readonly IList<string> AcceptedSubtitleExtensions = new List<string> { ".srt", ".smi", ".ssa", ".ass", ".pgs" };
+
         public IList<ParseError> ParseErrors { get; }
         public IList<ParseError> CustomParseErrors { get; set; }
     }
