@@ -8,16 +8,17 @@ namespace SubtitleFetcher.Common.Infrastructure
 {
     public class FileSystem : IFileSystem
     {
-        private readonly IEnumerable<string> acceptedExtensions;
-        private readonly ILogger logger;
+        private readonly IEnumerable<string> _acceptedExtensions;
+        private readonly ILogger _logger;
 
         public FileSystem(FileTypeSettings fileTypeSettings, ILogger logger)
         {
-            this.acceptedExtensions = fileTypeSettings.AcceptedExtensions;
-            this.logger = logger;
+            _acceptedExtensions = fileTypeSettings.AcceptedExtensions;
+            _logger = logger;
         }
 
-        public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, IEnumerable<string> languages)
+        public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, 
+            IEnumerable<string> languages)
         {
             var inPaths = fileLocations.ToList();
             var paths = inPaths.Any() ? inPaths : new List<string> { "." };
@@ -27,7 +28,7 @@ namespace SubtitleFetcher.Common.Infrastructure
             {
                 if (Directory.Exists(path))
                 {
-                    logger.Verbose("FileSystem", "Processing directory {0}...", path);
+                    _logger.Verbose("FileSystem", "Processing directory {0}...", path);
                     var validFiles = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
                         .Where(f => IsFileOfAcceptableType(f) && !HasDownloadedSubtitle(f, languages));
                     files.AddRange(validFiles);
@@ -51,7 +52,9 @@ namespace SubtitleFetcher.Common.Infrastructure
 
         public IEnumerable<Language> GetDowloadedSubtitleLanguages(string filePath, IEnumerable<Language> languages)
         {
-            var filesToCheck = languages.ToDictionary(language => language, language => CreateSubtitleFileName(filePath, string.Format(".{0}.srt", language)));
+            var filesToCheck = languages.ToDictionary(
+                language => language, 
+                language => CreateSubtitleFileName(filePath, $".{language.TwoLetterIsoName}.srt"));
             return filesToCheck.Where(item => File.Exists(item.Value)).Select(item => item.Key);
         }
 
@@ -64,7 +67,7 @@ namespace SubtitleFetcher.Common.Infrastructure
         private bool IsFileOfAcceptableType(string fileName)
         {
             var ext = Path.GetExtension(fileName);
-            return acceptedExtensions.Contains(ext);
+            return _acceptedExtensions.Contains(ext);
         }
 
         public void CreateNosrtFile(SubtitleStateEntry entry)
@@ -97,7 +100,7 @@ namespace SubtitleFetcher.Common.Infrastructure
 
             if(!File.Exists(ignoreFileName))
             {
-                logger.Error("Options", "The specified ignore shows file can't be found.");
+                _logger.Error("Options", "The specified ignore shows file can't be found.");
                 return Enumerable.Empty<string>();
             }
 
@@ -110,7 +113,7 @@ namespace SubtitleFetcher.Common.Infrastructure
                     ignoredShows.Add(line.Trim());
                 }
             }
-            logger.Debug("FileSystem", string.Format("Ignore shows file loaded. {0} shows ignored.", ignoredShows.Count()));
+            _logger.Debug("FileSystem", $"Ignore shows file loaded. {ignoredShows.Count} shows ignored.");
             return ignoredShows;
         }
 
@@ -118,21 +121,6 @@ namespace SubtitleFetcher.Common.Infrastructure
         {
             File.Delete(targetSubtitleFile);
             File.Move(sourceFileName, targetSubtitleFile);
-        }
-    }
-
-    public class FileTypeSettings
-    {
-        private readonly IEnumerable<string> acceptedExtensions;
-
-        public FileTypeSettings(IEnumerable<string> acceptedExtensions)
-        {
-            this.acceptedExtensions = acceptedExtensions;
-        }
-
-        public IEnumerable<string> AcceptedExtensions
-        {
-            get { return acceptedExtensions; }
         }
     }
 }

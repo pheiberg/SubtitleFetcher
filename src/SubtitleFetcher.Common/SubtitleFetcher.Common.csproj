@@ -105,6 +105,7 @@
     <Compile Include="IApplicationSettings.cs" />
     <Compile Include="Hashing\IHashCalculator.cs" />
     <Compile Include="Infrastructure\FileSystem.cs" />
+    <Compile Include="Infrastructure\FileTypeSettings.cs" />
     <Compile Include="Infrastructure\IFileSystem.cs" />
     <Compile Include="Infrastructure\IStateSerializer.cs" />
     <Compile Include="Infrastructure\StateSerializer.cs" />

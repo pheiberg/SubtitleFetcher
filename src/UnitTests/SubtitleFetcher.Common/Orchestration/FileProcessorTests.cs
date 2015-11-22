@@ -112,7 +112,7 @@ namespace UnitTests.SubtitleFetcher.Common.Orchestration
             var languages = languageSettings.Languages.ToArray();
             var alreadyDownloadedLanguages = languages.Skip(1);
             var expected = languages.Take(1);
-            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(A<string>._, 
+            A.CallTo(() => fileSystem.GetDowloadedSubtitleLanguages(fileName, 
                 A<IEnumerable<Language>>.That.IsSameSequenceAs(languages)))
                .Returns(alreadyDownloadedLanguages);
             A.CallTo(() => episodeParser.ParseEpisodeInfo(A<string>._)).Returns(tvRelease);
