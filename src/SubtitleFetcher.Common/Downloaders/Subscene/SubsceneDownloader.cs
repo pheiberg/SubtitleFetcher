@@ -80,7 +80,7 @@ namespace SubtitleFetcher.Common.Downloaders.Subscene
 
         private IEnumerable<SubsceneSubtitle> GetSubtitlesFromPage(HtmlDocument document)
         {
-            var anchors = document.DocumentNode.SelectNodes("//*/table/tr/td/a");
+            var anchors = document.DocumentNode.SelectNodes("//a");
 
             var subtitles = from anchor in anchors
                             let link = anchor.Attributes["href"].Value
