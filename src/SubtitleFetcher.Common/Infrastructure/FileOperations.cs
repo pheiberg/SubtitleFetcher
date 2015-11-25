@@ -23,8 +23,8 @@ namespace SubtitleFetcher.Common.Infrastructure
         public IEnumerable<string> GetFilesToProcess(IEnumerable<string> fileLocations, 
             IEnumerable<string> languages)
         {
-            var inPaths = fileLocations.ToList();
-            var paths = inPaths.Any() ? inPaths : new List<string> { "." };
+            var inPaths = fileLocations.ToArray();
+            var paths = inPaths.Any() ? inPaths : new[] { "." };
 
             var files = new List<string>();
             foreach (string path in paths)

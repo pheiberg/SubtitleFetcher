@@ -73,6 +73,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.118, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.118\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocalAddin.cs" />
@@ -87,6 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AutoFakeDataAttribute.cs" />
     <Compile Include="SubtitleFetcher.Common\Hashing\FileHasherTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Infrastructure\FileOperationsTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Orchestration\EnhancementApplicatorTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Orchestration\SubtitleMatcherTests.cs" />
     <Compile Include="SubtitleFetcher\DownloaderApplicationTests.cs" />
