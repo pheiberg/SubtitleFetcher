@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteExtensions.cs" />
+    <Compile Include="Downloaders\Addic7ed\Addic7edDownloader.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancement.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />
