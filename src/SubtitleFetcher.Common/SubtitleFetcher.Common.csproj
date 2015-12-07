@@ -42,6 +42,7 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SharpCompress, Version=0.10.3.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
       <HintPath>..\packages\sharpcompress.0.11.1\lib\net40\SharpCompress.dll</HintPath>
       <Private>True</Private>
@@ -60,6 +61,8 @@
   <ItemGroup>
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\Addic7ed\Addic7edDownloader.cs" />
+    <Compile Include="Downloaders\Addic7ed\Addic7edScraper.cs" />
+    <Compile Include="Downloaders\Addic7ed\Addic7edSubtitle.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancement.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />
