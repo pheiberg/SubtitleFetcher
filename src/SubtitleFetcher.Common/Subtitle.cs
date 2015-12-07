@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common
 {
+    [DebuggerDisplay("{SeriesName}.S{Season}.E{Episode}-{ReleaseGroup}-{Language.Name}")]
     public class Subtitle
     {
         public Subtitle(string id, string fileName, Language language)

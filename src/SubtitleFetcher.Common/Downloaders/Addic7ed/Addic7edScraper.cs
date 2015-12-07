@@ -46,30 +46,33 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
             var web = CreateHtmlWeb();
             var document = web.Load(url);
             var subtitleContainers = document.DocumentNode.SelectNodes("//tr[contains(@class, 'completed')]");
-            var subtitles = subtitleContainers.Select(sc => new Addic7edSubtitle
+            var addic7EdSubtitles = subtitleContainers.Select(sc => new Addic7edSubtitle
             {
-                Season = int.Parse(sc.SelectSingleNode("./td[1]").InnerText),
-                Episode = int.Parse(sc.SelectSingleNode("./td[2]").InnerText),
-                Version = sc.SelectSingleNode("./td[3]").InnerText,
-                DowloadLink = sc.SelectSingleNode(".//a[text()='Download']").Attributes["href"].Value,
-                Language = sc.SelectSingleNode("./td[4]").InnerText,
-                HearingImpaired = sc.SelectSingleNode("./td[5]").InnerText == "✔",
-                Corrected = sc.SelectSingleNode("./td[6]").InnerText == "✔",
-                HighDefinition = sc.SelectSingleNode("./td[7]").InnerText == "✔"
+                Season = int.Parse(sc.SelectSingleNode("./td[1]").InnerText.Trim()),
+                Episode = int.Parse(sc.SelectSingleNode("./td[2]").InnerText.Trim()),
+                Version = sc.SelectSingleNode("./td[5]").InnerText.Trim(),
+                DowloadLink = sc.SelectSingleNode(".//a[text()='Download']").Attributes["href"].Value.Trim(),
+                Language = sc.SelectSingleNode("./td[4]").InnerText.Trim(),
+                HearingImpaired = sc.SelectSingleNode("./td[5]").InnerText.Trim() == "✔",
+                Corrected = sc.SelectSingleNode("./td[6]").InnerText.Trim() == "✔",
+                HighDefinition = sc.SelectSingleNode("./td[7]").InnerText.Trim() == "✔"
             });
 
-            return subtitles.Select(s => 
-                new Subtitle(s.DowloadLink, 
-                $"{seriesTitle}.S{s.Season.ToString("00")}.E{s.Episode.ToString("00")}.DUMMY-{s.Version}", 
-                ParseLanguage(s.Language))
+            var subtitles = addic7EdSubtitles.Select(s =>
+                new Subtitle(s.DowloadLink,
+                    $"{seriesTitle}.S{s.Season.ToString("00")}.E{s.Episode.ToString("00")}.DUMMY-{s.Version}",
+                    ParseLanguage(s.Language))
                 {
                     SeriesName = seriesTitle,
                     Season = s.Season,
                     Episode = s.Episode,
                     EndEpisode = s.Episode,
                     ReleaseGroup = s.Version
-                })
-                .Where(s => languages.Contains(s.Language));
+                });
+            return subtitles
+                .Where(s => languages.Contains(s.Language) 
+                && s.Season == season
+                && s.Episode == episode);
         }
 
         private static Language ParseLanguage(string language)
