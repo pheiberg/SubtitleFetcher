@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using SubtitleFetcher.Common;
 using SubtitleFetcher.Common.Downloaders.Addic7ed;
-using SubtitleFetcher.Common.Languages;
 
 namespace UnitTests.SubtitleFetcher.Common.Downloaders.Addic7ed
 {
@@ -28,17 +26,10 @@ namespace UnitTests.SubtitleFetcher.Common.Downloaders.Addic7ed
         [Test, AutoFakeData]
         public void SearchSubtitles_EpisodeThatHasReleases_ReturnsReleasesWithCorrectData(Addic7edScraper sut)
         {
-            var english = KnownLanguages.GetLanguageByName("English");
+            var results = sut.SearchSubtitles(15, 5).ToArray();
 
-            var results = sut.SearchSubtitles(15, "House", 5, 1, new []{ english }).ToArray();
-
-            Assert.That(results, Has.All.Matches<Subtitle>(s => 
-                s.SeriesName == "House" &&
-                s.Season == 5 &&
-                s.Episode == 1 &&
-                s.EndEpisode == 1 &&
-                s.Language == english
-                ));
+            Assert.That(results, Has.All.Matches<Addic7edSubtitle>(s => 
+                s.Season == 5));
         }
     }
 }

@@ -62,7 +62,13 @@
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="Downloaders\Addic7ed\Addic7edDownloader.cs" />
     <Compile Include="Downloaders\Addic7ed\Addic7edScraper.cs" />
+    <Compile Include="Downloaders\Addic7ed\Addic7edShow.cs" />
     <Compile Include="Downloaders\Addic7ed\Addic7edSubtitle.cs" />
+    <Compile Include="Downloaders\Addic7ed\IAddic7edScraper.cs" />
+    <Compile Include="Downloaders\Addic7ed\ISubtitleFilter.cs" />
+    <Compile Include="Downloaders\Addic7ed\ISubtitleMapper.cs" />
+    <Compile Include="Downloaders\Addic7ed\SubtitleFilter.cs" />
+    <Compile Include="Downloaders\Addic7ed\SubtitleMapper.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesFileHashEnhancement.cs" />
     <Compile Include="Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculator.cs" />

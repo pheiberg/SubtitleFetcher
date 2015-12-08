@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using HtmlAgilityPack;
-using SubtitleFetcher.Common.Languages;
 
 namespace SubtitleFetcher.Common.Downloaders.Addic7ed
 {
-    public class Addic7edScraper
+    public class Addic7edScraper : IAddic7edScraper
     {
         const string BaseUrl = "http://www.addic7ed.com";
         const string UserAgent = "User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86";
         const string Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        const string AcceptEncoding = "gzip, deflate, sdch";
-        const string AcceptCharset = "UTF-8";
        
         public int? FindSeries(string seriesName)
         {
@@ -40,13 +37,13 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
             return result;
         }
 
-        public IEnumerable<Subtitle> SearchSubtitles(int seriesId, string seriesTitle, int season, int episode, IEnumerable<Language> languages)
+        public IEnumerable<Addic7edSubtitle> SearchSubtitles(int seriesId, int season)
         {
             var url = $"{BaseUrl}/ajax_loadShow.php?show={seriesId}&season={season}&langs=|1|8|11|7|9|10|26|&hd=0&hi=0";
             var web = CreateHtmlWeb();
             var document = web.Load(url);
             var subtitleContainers = document.DocumentNode.SelectNodes("//tr[contains(@class, 'completed')]");
-            var addic7EdSubtitles = subtitleContainers.Select(sc => new Addic7edSubtitle
+            var subtitles = subtitleContainers.Select(sc => new Addic7edSubtitle
             {
                 Season = int.Parse(sc.SelectSingleNode("./td[1]").InnerText.Trim()),
                 Episode = int.Parse(sc.SelectSingleNode("./td[2]").InnerText.Trim()),
@@ -58,28 +55,9 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
                 HighDefinition = sc.SelectSingleNode("./td[7]").InnerText.Trim() == "✔"
             });
 
-            var subtitles = addic7EdSubtitles.Select(s =>
-                new Subtitle(s.DowloadLink,
-                    $"{seriesTitle}.S{s.Season.ToString("00")}.E{s.Episode.ToString("00")}.DUMMY-{s.Version}",
-                    ParseLanguage(s.Language))
-                {
-                    SeriesName = seriesTitle,
-                    Season = s.Season,
-                    Episode = s.Episode,
-                    EndEpisode = s.Episode,
-                    ReleaseGroup = s.Version
-                });
-            return subtitles
-                .Where(s => languages.Contains(s.Language) 
-                && s.Season == season
-                && s.Episode == episode);
+            return subtitles;
         }
-
-        private static Language ParseLanguage(string language)
-        {
-            return KnownLanguages.AllLanguages.SingleOrDefault(l => string.Equals(l.Name, language, StringComparison.OrdinalIgnoreCase));
-        }
-
+        
         private static HtmlWeb CreateHtmlWeb()
         {
             return new HtmlWeb
@@ -95,10 +73,5 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
                 }
             };
         }
-    }
-    public class Addic7edShow
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

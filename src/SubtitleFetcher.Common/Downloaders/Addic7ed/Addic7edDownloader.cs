@@ -8,11 +8,26 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
 {
     public class Addic7edDownloader : ISubtitleDownloader
     {
-        private readonly Addic7edScraper _scraper;
+        private readonly IAddic7edScraper _scraper;
+        private readonly ISubtitleFilter _filter;
+        private readonly ISubtitleMapper _mapper;
 
-        public Addic7edDownloader()
+        public Addic7edDownloader() : this(
+            new Addic7edScraper(), 
+            new SubtitleFilter(), 
+            new SubtitleMapper())
         {
-            _scraper = new Addic7edScraper();
+
+        }
+
+        public Addic7edDownloader(
+            IAddic7edScraper scraper, 
+            ISubtitleFilter filter,
+            ISubtitleMapper mapper)
+        {
+            _scraper = scraper;
+            _filter = filter;
+            _mapper = mapper;
         }
 
         public string GetName() => "Addic7ed";
@@ -30,7 +45,9 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
             if (!seriesId.HasValue)
                 return Enumerable.Empty<Subtitle>();
 
-            return _scraper.SearchSubtitles(seriesId.Value, query.SeriesTitle, query.Season, query.Episode, query.Languages);
+            var listedSubtitles = _scraper.SearchSubtitles(seriesId.Value, query.Season);
+            var subtitles = _mapper.Map(listedSubtitles, query.SeriesTitle);
+            return _filter.Apply(subtitles, query);
         }
         
         public IEnumerable<Language> SupportedLanguages => new[]

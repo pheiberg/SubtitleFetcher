@@ -47,6 +47,7 @@
     <Reference Include="FakeItEasy">
       <HintPath>..\packages\FakeItEasy.1.8.0\lib\NET40\FakeItEasy.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="nunit.core.interfaces, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoFixture.NUnit2.3.36.9\lib\net40\nunit.core.interfaces.dll</HintPath>
       <Private>True</Private>
@@ -81,6 +82,7 @@
   <ItemGroup>
     <Compile Include="LocalAddin.cs" />
     <Compile Include="SubtitleFetcher.Common\ByteExtensionTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Downloaders\Addic7ed\Addic7edDownloaderTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\Addic7ed\Addic7edScraperTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculatorTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\S4U\LimitsBuilderTests.cs" />
