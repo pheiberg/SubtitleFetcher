@@ -84,6 +84,7 @@
     <Compile Include="SubtitleFetcher.Common\ByteExtensionTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\Addic7ed\Addic7edDownloaderTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\Addic7ed\Addic7edScraperTests.cs" />
+    <Compile Include="SubtitleFetcher.Common\Downloaders\Addic7ed\ReleaseGroupParserTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\OpenSubtitles\Enhancement\OpenSubtitlesHashCalculatorTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\S4U\LimitsBuilderTests.cs" />
     <Compile Include="SubtitleFetcher.Common\Downloaders\S4U\S4UApiTests.cs" />

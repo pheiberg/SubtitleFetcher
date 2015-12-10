@@ -6,6 +6,13 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
 {
     public class SubtitleMapper : ISubtitleMapper
     {
+        ReleaseGroupParser _groupParser;
+
+        public SubtitleMapper()
+        {
+            _groupParser = new ReleaseGroupParser();
+        }
+
         public Subtitle Map(Addic7edSubtitle subtitle, string title)
         {
             return new Subtitle(subtitle.DowloadLink,
@@ -16,7 +23,7 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
                 Season = subtitle.Season,
                 Episode = subtitle.Episode,
                 EndEpisode = subtitle.Episode,
-                ReleaseGroup = subtitle.Version
+                ReleaseGroup = _groupParser.Parse(subtitle.Version)
             };
         }
 

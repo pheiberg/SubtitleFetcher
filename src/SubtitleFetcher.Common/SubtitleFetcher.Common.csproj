@@ -67,6 +67,7 @@
     <Compile Include="Downloaders\Addic7ed\IAddic7edScraper.cs" />
     <Compile Include="Downloaders\Addic7ed\ISubtitleFilter.cs" />
     <Compile Include="Downloaders\Addic7ed\ISubtitleMapper.cs" />
+    <Compile Include="Downloaders\Addic7ed\ReleaseGroupParser.cs" />
     <Compile Include="Downloaders\Addic7ed\SubtitleFilter.cs" />
     <Compile Include="Downloaders\Addic7ed\SubtitleMapper.cs" />
     <Compile Include="Downloaders\DownloaderBase.cs" />
