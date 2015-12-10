@@ -48,7 +48,7 @@ namespace SubtitleFetcher.Common.Downloaders.Addic7ed
                 Season = int.Parse(sc.SelectSingleNode("./td[1]").InnerText.Trim()),
                 Episode = int.Parse(sc.SelectSingleNode("./td[2]").InnerText.Trim()),
                 Version = sc.SelectSingleNode("./td[5]").InnerText.Trim(),
-                DowloadLink = sc.SelectSingleNode(".//a[text()='Download']").Attributes["href"].Value.Trim(),
+                DowloadLink = BaseUrl + "/" + sc.SelectSingleNode(".//a[text()='Download']").Attributes["href"].Value.Trim(),
                 Language = sc.SelectSingleNode("./td[4]").InnerText.Trim(),
                 HearingImpaired = sc.SelectSingleNode("./td[5]").InnerText.Trim() == "✔",
                 Corrected = sc.SelectSingleNode("./td[6]").InnerText.Trim() == "✔",
