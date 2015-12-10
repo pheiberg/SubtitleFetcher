@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using StructureMap.Configuration.DSL;
+using StructureMap;
 using StructureMap.Graph;
+using StructureMap.Graph.Scanning;
 using SubtitleFetcher.Common.Downloaders;
 using SubtitleFetcher.Common.Enhancement;
 using SubtitleFetcher.Common.Enhancement.Tvdb;
@@ -53,22 +54,38 @@ namespace SubtitleFetcher.Bootstrapping
             {
                 _downloaderNames = downloaderNames;
             }
-
-            public void Process(Type type, Registry registry)
+            
+            public void ScanTypes(TypeSet types, Registry registry)
             {
-                bool isCompatibleType = typeof (ISubtitleDownloader).IsAssignableFrom(type)
-                                     && !type.IsAbstract
-                                     && !type.IsInterface;
-                bool isNameMatchingDownloaderOptions = !_downloaderNames.Any() 
-                                                    || _downloaderNames.Any(d => type.Name.StartsWith(d, StringComparison.OrdinalIgnoreCase));
-                 
-                if (!isCompatibleType || !isNameMatchingDownloaderOptions)
-                    return;
+                var matchingTypes = types.FindTypes(TypeClassification.Concretes | TypeClassification.Closed)
+                                         .Where(type => typeof(ISubtitleDownloader).IsAssignableFrom(type)
+                                         && IsNameMatchingDownloaderOptions(type.Name));
 
-                registry.For(typeof(ISubtitleDownloader)).Add(type).Named(type.Name);
-                registry.For<IEpisodeSubtitleDownloader>().Add<SubtitleDownloaderWrapper>()
-                    .Ctor<ISubtitleDownloader>().IsNamedInstance(type.Name);
+                matchingTypes.Each(type =>
+                {
+                    registry.For(typeof(ISubtitleDownloader)).Add(type).Named(type.Name);
+                    registry.For<IEpisodeSubtitleDownloader>().Add<SubtitleDownloaderWrapper>()
+                            .Ctor<ISubtitleDownloader>().IsNamedInstance(type.Name);
+                });
             }
+
+            private bool IsNameMatchingDownloaderOptions(string name)
+            {
+                return !_downloaderNames.Any()
+                       || _downloaderNames.Any(d => name.StartsWith(d, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+    }
+
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<T> Each<T>(this IEnumerable<T> items, Action<T> action)
+        {
+            foreach(var item in items)
+            {
+                action(item);
+            }
+            return items;
         }
     }
 }
